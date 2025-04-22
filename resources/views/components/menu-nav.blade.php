@@ -22,7 +22,7 @@
                         </li>
 
 
-                        <li class="nav-item {{ Request::is('profile') ? 'active' : '' }}">
+                        {{-- <li class="nav-item {{ Request::is('profile') ? 'active' : '' }}">
                             <a class="nav-link" href="./profile">
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <!-- Download SVG icon from http://tabler.io/icons/icon/checkbox -->
@@ -35,11 +35,11 @@
                                 </span>
                                 <span class="nav-link-title"> Profile </span>
                             </a>
-                        </li>
+                        </li> --}}
 
                         <li
-                            class="nav-item dropdown {{ Request::is('profile', 'chat', 'photogrid', 'pricing') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown"
+                            class="nav-item dropdown {{ Request::is('pengaturan/sistem', 'pengaturan/akses', 'pengaturan/pembaruan', 'pengaturan/pemeliharaan') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle" href="#navbar-admin" data-bs-toggle="dropdown"
                                 data-bs-auto-close="outside" role="button" aria-expanded="false">
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -49,19 +49,29 @@
                                             d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
                                     </svg>
                                 </span>
-                                <span class="nav-link-title"> Extra </span>
+                                <span class="nav-link-title">Administrator</span>
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item {{ Request::is('profile') ? 'active' : '' }}" href="/profile">
-                                    Activity </a>
-                                <a class="dropdown-item {{ Request::is('chat') ? 'active' : '' }}" href="./chat.html">
-                                    Chat </a>
-                                <a class="dropdown-item {{ Request::is('photogrid') ? 'active' : '' }}"
-                                    href="./photogrid.html"> Photogrid </a>
-                                <a class="dropdown-item {{ Request::is('pricing') ? 'active' : '' }}"
-                                    href="./pricing.html"> Pricing cards </a>
+                                <a class="dropdown-item {{ request()->routeIs('pengaturan.sistem') ? 'active' : '' }}"
+                                    href="{{ route('pengaturan.sistem') }}">
+                                    Pengaturan Sistem
+                                </a>
+                                <a class="dropdown-item {{ request()->routeIs('pengaturan.akses') ? 'active' : '' }}"
+                                    href="{{ route('pengaturan.akses') }}">
+                                    Pengaturan Akses
+                                </a>
+                                <a class="dropdown-item {{ request()->routeIs('pengaturan.pembaruan') ? 'active' : '' }}"
+                                    href="{{ route('pengaturan.pembaruan') }}">
+                                    Pembaruan Aplikasi
+                                </a>
+                                <a class="dropdown-item {{ request()->routeIs('pengaturan.pemeliharaan') ? 'active' : '' }}"
+                                    href="{{ route('pengaturan.pemeliharaan') }}">
+                                    Pemeliharaan
+                                </a>
                             </div>
+
                         </li>
+
 
 
                         <li class="nav-item dropdown">

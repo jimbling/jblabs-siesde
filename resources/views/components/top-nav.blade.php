@@ -203,7 +203,7 @@
 
                     <div class="dropdown-divider"></div>
 
-                    <a href="{{ route('pengaturan.index') }}" class="dropdown-item">Pengaturan</a>
+
 
                     <!-- Tombol Logout yang membuka modal konfirmasi -->
                     <a href="#" class="dropdown-item text-pink" data-bs-toggle="modal"

@@ -1,6 +1,7 @@
 @extends('layouts.tabler') <!-- Gunakan layout utama Tabler -->
 
-@section('title', 'Dashboard')
+@section('title', $title ?? 'Dashboard')
+
 
 @section('page-title', 'Welcome to the Dashboard')
 
@@ -15,13 +16,9 @@
                         <div class="list-group list-group-transparent">
                             <a href="#" data-target="my-account"
                                 class="list-group-item list-group-item-action active">Akun</a>
-                            <a href="#" data-target="notifications"
-                                class="list-group-item list-group-item-action">Pembaruan</a>
-                            <a href="#" data-target="connected-apps"
-                                class="list-group-item list-group-item-action">Pemeliharaan</a>
-                            <a href="#" data-target="plans" class="list-group-item list-group-item-action">Hak
+                            <a href="#" data-target="hak-akses" class="list-group-item list-group-item-action">Hak
                                 Akses</a>
-                            <a href="#" data-target="billing" class="list-group-item list-group-item-action">Ijin</a>
+                            <a href="#" data-target="ijin" class="list-group-item list-group-item-action">Ijin</a>
                         </div>
                     </div>
                 </div>
@@ -67,28 +64,49 @@
 
 
 
-                        <!-- Notifications -->
-                        <div id="notifications" class="settings-section d-none">
-                            <h2 class="mb-4">Pembaruan</h2>
-                            <p>Pengaturan pembaruan aplikasi</p>
+                        <!-- Hak Akses -->
+                        <div id="hak-akses" class="settings-section d-none">
+                            <h2 class="mb-4">Hak Akses Saya</h2>
+
+                            @php
+                                $permissions = auth()->user()->getPermissionNames();
+                            @endphp
+
+                            @if ($permissions->isEmpty())
+                                <div class="alert alert-warning">
+                                    Anda belum memiliki hak akses khusus.
+                                </div>
+                            @else
+                                <ul class="list-group">
+                                    @foreach ($permissions as $permission)
+                                        <li class="list-group-item">
+                                            {{ $permission }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
 
-                        <!-- Connected Apps -->
-                        <div id="connected-apps" class="settings-section d-none">
-                            <h2 class="mb-4">Pemeliharaan</h2>
-                            <p>Kelola dan Backup Database Sistem</p>
-                        </div>
-
-                        <!-- Plans -->
-                        <div id="plans" class="settings-section d-none">
-                            <h2 class="mb-4">Plans</h2>
-                            <p>Kelola paket langganan Anda.</p>
-                        </div>
 
                         <!-- Billing & Invoices -->
-                        <div id="billing" class="settings-section d-none">
-                            <h2 class="mb-4">Billing & Invoices</h2>
-                            <p>Kelola tagihan dan faktur Anda.</p>
+                        <div id="ijin" class="settings-section d-none">
+                            <h2 class="mb-4">Peran Saya</h2>
+                            @php
+                                $roles = auth()->user()->getRoleNames();
+                            @endphp
+
+                            @if ($roles->isEmpty())
+                                <div class="alert alert-info">
+                                    Anda belum memiliki peran (role).
+                                </div>
+                            @else
+                                <ul class="list-group mb-4">
+                                    @foreach ($roles as $role)
+                                        <li class="list-group-item">{{ $role }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+
                         </div>
                     </div>
                 </div>

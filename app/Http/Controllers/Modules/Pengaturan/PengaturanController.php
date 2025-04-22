@@ -18,20 +18,24 @@ class PengaturanController extends Controller
     public function index()
     {
         return view('modules.admin.pengaturan', [
-            'title' => 'Pengaturan',
+            'title' => 'Pengaturan Akun',
             'breadcrumbs' => BreadcrumbHelper::generate([
-                ['name' => 'Pengaturan']
+                ['name' => 'Pengaturan Akun']
             ]),
             'user' => Auth::user(),
         ]);
     }
+
+    //
+
+
 
     public function lisensi()
     {
         return view('modules.admin.lisensi', [
             'title' => 'Lisensi',
             'breadcrumbs' => BreadcrumbHelper::generate([
-                ['name' => 'Pengaturan', 'url' => route('pengaturan.index')],
+
                 ['name' => 'Lisensi']
             ])
         ]);
