@@ -37,16 +37,24 @@
                             </a>
                         </li> --}}
 
-                        <li
-                            class="nav-item dropdown {{ Request::is('pengaturan/sistem', 'pengaturan/akses', 'pengaturan/pembaruan', 'pengaturan/pemeliharaan') ? 'active' : '' }}">
+                        <li class="nav-item dropdown {{ Request::is('pengaturan/*') ? 'active' : '' }}">
                             <a class="nav-link dropdown-toggle" href="#navbar-admin" data-bs-toggle="dropdown"
                                 data-bs-auto-close="outside" role="button" aria-expanded="false">
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-shield-cog">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path
-                                            d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
+                                            d="M12 21a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3c.568 1.933 .635 3.957 .223 5.89" />
+                                        <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                        <path d="M19.001 15.5v1.5" />
+                                        <path d="M19.001 21v1.5" />
+                                        <path d="M22.032 17.25l-1.299 .75" />
+                                        <path d="M17.27 20l-1.3 .75" />
+                                        <path d="M15.97 17.25l1.3 .75" />
+                                        <path d="M20.733 20l1.3 .75" />
                                     </svg>
                                 </span>
                                 <span class="nav-link-title">Administrator</span>

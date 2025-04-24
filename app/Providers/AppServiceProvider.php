@@ -23,8 +23,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('*', function ($view) {
-            $view->with('user', Auth::user());
+            $user = Auth::user();
+            $role = null;
+
+            if ($user) {
+                $role = $user->roles->first()->name ?? null;
+            }
+
+            $view->with([
+                'user' => $user,
+                'userRole' => $role,
+            ]);
         });
+
         Carbon::setLocale('id');
     }
 }

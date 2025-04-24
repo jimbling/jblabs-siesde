@@ -20,24 +20,20 @@ class AksesController extends Controller
             'breadcrumbs' => BreadcrumbHelper::generate([['name' => 'Pengaturan Akses']]),
             'user' => Auth::user(),
             'users' => User::all(),
-            'totalUsers' => User::count(),  // Menambahkan jumlah total pengguna
-            'roles' => Role::where('name', '!=', 'super-admin')->get(), // <-- Memfilter role yang bukan super-admin
+            'totalUsers' => User::count(),
+            'roles' => Role::where('name', '!=', 'super-admin')->get(),
         ]);
     }
 
-
     public function editPermission(Request $request)
     {
-        // Pastikan hanya Super Admin yang dapat mengakses halaman ini
         if (!auth()->user()->hasRole('super-admin')) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Exclude super-admin dari daftar role yang bisa diedit
         $roles = Role::where('name', '!=', 'super-admin')->get();
         $permissions = Permission::all()->groupBy('group');
 
-        // Ambil role yang dipilih berdasarkan request
         $selectedRole = null;
         if ($request->has('role_id')) {
             $selectedRole = Role::where('name', '!=', 'super-admin')
@@ -55,8 +51,6 @@ class AksesController extends Controller
             'selectedRole' => $selectedRole
         ]);
     }
-
-
 
     public function updatePermission(Request $request)
     {
@@ -83,7 +77,6 @@ class AksesController extends Controller
 
         $selectedRole->permissions()->sync($request->permissions ?? []);
 
-        // Tambahkan ini
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         return redirect()
@@ -91,18 +84,11 @@ class AksesController extends Controller
             ->with('success', 'Perubahan hak akses berhasil disimpan!');
     }
 
-
-
-
-
     public function updateRole(Request $request)
     {
-        // Temukan user berdasarkan ID
         $user = User::findOrFail($request->user_id);
 
-        // Pastikan role yang dipilih ada di dalam daftar role yang tersedia
         if (Role::where('name', $request->role)->exists()) {
-            // Sinkronkan role user dengan role baru
             $user->syncRoles([$request->role]);
             return back()->with('success', 'Peran berhasil diperbarui.');
         } else {
@@ -110,38 +96,20 @@ class AksesController extends Controller
         }
     }
 
-
     public function editRole($id)
     {
         $user = User::findOrFail($id);
-        // tampilkan form untuk ubah peran
         return view('modules.admin.edit-role', compact('user'));
     }
-
-
 
     public function resetPassword(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->password = bcrypt('defaultpassword'); // atau generate password acak
+        $user->password = bcrypt('defaultpassword');
         $user->save();
 
         return back()->with('success', 'Password berhasil direset!');
     }
-
-    // public function hapusAkun(Request $request)
-    // {
-    //     dd($request->all());  // Menampilkan seluruh data yang dikirimkan
-
-    //     $ids = $request->input('user_ids', []);
-    //     if (empty($ids)) {
-    //         return back()->with('error', 'Tidak ada pengguna yang dipilih.');
-    //     }
-
-    //     User::whereIn('id', $ids)->delete();
-
-    //     return back()->with('success', 'Akun pengguna berhasil dihapus.');
-    // }
 
     public function hapusAkun(Request $request)
     {

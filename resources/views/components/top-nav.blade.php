@@ -191,10 +191,11 @@
                     <span class="avatar avatar-sm"
                         style="background-image: url({{ asset('storage/avatars/' . ($user->avatar ?? 'default-avatar.png')) }})"></span>
                     <div class="d-none d-xl-block ps-2">
-                        <div>Paweł Kuna</div>
-                        <div class="mt-1 small text-secondary">UI Designer</div>
+                        <div>{{ $user->name ?? 'Guest' }}</div>
+                        <div class="mt-1 small text-secondary">{{ $userRole ?? '-' }}</div>
                     </div>
                 </a>
+
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                     <a href="/profile" class="dropdown-item">Profile</a>
                     <a href="#" class="dropdown-item" data-bs-toggle="modal"

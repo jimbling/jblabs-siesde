@@ -104,17 +104,14 @@ class PengaturanController extends Controller
     {
         $user = $request->user();
 
-        // Validasi file avatar
         $request->validate([
             'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1048',
         ]);
 
-        // Hapus avatar lama jika ada
         if ($user->avatar && Storage::exists('public/avatars/' . $user->avatar)) {
             Storage::delete('public/avatars/' . $user->avatar);
         }
 
-        // Upload avatar baru
         $avatarPath = $request->file('avatar')->store('avatars', 'public');
         $user->avatar = basename($avatarPath);
         $user->save();
@@ -127,13 +124,12 @@ class PengaturanController extends Controller
     {
         $user = $request->user();
 
-        // Pastikan ada file avatar yang terkait
+
         if ($user->avatar && Storage::exists('public/avatars/' . $user->avatar)) {
             // Hapus file avatar dari storage
             Storage::delete('public/avatars/' . $user->avatar);
         }
 
-        // Set avatar di database menjadi null
         $user->avatar = null;
         $user->save();
 
