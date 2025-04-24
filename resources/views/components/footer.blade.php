@@ -1,5 +1,5 @@
 <!--  BEGIN FOOTER  -->
-<footer class="footer footer-transparent d-print-none">
+<footer class="footer footer-transparent d-print-none mt-auto py-3 text-center">
     <div class="container-xl">
         <div class="row text-center align-items-center flex-row-reverse">
             <div class="col-lg-auto ms-lg-auto">

@@ -1,5 +1,19 @@
 @import "@tabler/core/dist/css/tabler.min.css"; /* Pindahkan @import Tabler ke bagian atas */
 
+tr.bg-super-admin {
+    background-color: #ff4066;
+}
+
+.dark tr.bg-super-admin {
+    color: #000 !important;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+
+
+
 
 
 

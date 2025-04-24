@@ -16,12 +16,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
+
+
 </head>
 
 
 
 <body class="d-flex flex-column">
-    <div class="wrapper">
+    <div class="wrapper flex-grow-1">
         <!-- Navbar -->
         @include('components.top-nav') <!-- Include Navbar -->
         @include('components.menu-nav') <!-- Include Navbar -->
@@ -95,6 +97,8 @@
 
     <!-- Skrip JS, jika menggunakan Vite -->
     @vite('resources/js/app.js') <!-- Jika menggunakan Vite -->
+    @stack('scripts')
+
     @if (session('success'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {

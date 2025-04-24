@@ -1,6 +1,8 @@
 import './bootstrap';
 import autosize from 'autosize';
 import imask from 'imask';
+import List from 'list.js';
+window.List = List;
 
 import "@tabler/core/dist/js/tabler.min.js";
 import Swal from 'sweetalert2';

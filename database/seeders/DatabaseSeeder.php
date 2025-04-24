@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -15,20 +14,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Pastikan role 'admin' ada
-        Role::firstOrCreate(['name' => 'admin']);
+        // Panggil seeder untuk role dan permission
+        $this->call([
+            UserSeeder::class,
 
+        ]);
+
+        // Pastikan user admin ada
         $user = User::first();
 
         if (!$user) {
             $user = User::create([
                 'name' => 'Admin',
                 'email' => 'admin@example.com',
-                'password' => bcrypt('password')
+                'password' => bcrypt('password'),
             ]);
         }
 
-        // Assign role ke user
+        // Assign role admin ke user pertama
         $user->assignRole('admin');
     }
 }
