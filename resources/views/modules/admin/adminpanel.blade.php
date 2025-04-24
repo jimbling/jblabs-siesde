@@ -6,9 +6,7 @@
 
 @section('content')
     <div class="container-xl">
-        <div class="card-body">
-            <button class="btn btn-primary" onclick="showTestAlert()">Coba SweetAlert</button>
-        </div>
+
         <div class="row row-deck row-cards">
             <div class="col-sm-6 col-lg-3">
                 <div class="card">
@@ -718,42 +716,13 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Text</label>
-                <input type="text" class="form-control" name="example-text-input" placeholder="Input placeholder" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-control" name="example-password-input"
-                    placeholder="Input placeholder" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Disabled</label>
-                <input type="text" class="form-control" name="example-password-input" placeholder="Input placeholder"
-                    disabled />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Readonly</label>
-                <input type="text" class="form-control" name="example-password-input" value="Readolny value"
-                    readonly />
-            </div>
 
 
         </div>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
 
-            <x-responsive-nav-link :href="route('logout')"
-                onclick="event.preventDefault();
-                                this.closest('form').submit();">
-                {{ __('Log Out') }}
-            </x-responsive-nav-link>
-        </form>
 
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Launch demo modal
-        </button>
+
         <div class="modal" id="exampleModal" tabindex="-1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

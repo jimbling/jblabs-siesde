@@ -4,17 +4,36 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeeder extends Seeder
 {
     public function run()
     {
-        // Membuat beberapa permission dasar
-        Permission::firstOrCreate(['name' => 'atur akses']);
-        Permission::firstOrCreate(['name' => 'atur lisensi']);
-        Permission::firstOrCreate(['name' => 'atur sistem']);
-        Permission::firstOrCreate(['name' => 'atur pemeliharaan']);
-        Permission::firstOrCreate(['name' => 'atur pembaruan']);
-        Permission::firstOrCreate(['name' => 'atur pengaturan']);
+        $permissions = [
+            // Format: [name, group]
+            ['lihat hak akses', 'Administrator'],
+            ['lihat sistem', 'Administrator'],
+            ['lihat pemeliharaan', 'Administrator'],
+            ['lihat pembaruan', 'Administrator'],
+            ['edit hak akses', 'Administrator'],
+            ['update hak akses', 'Administrator'],
+            ['update peran', 'Administrator'],
+            ['reset password', 'Administrator'],
+            ['hapus akun', 'Administrator'],
+
+
+            // GUNAKAN PERINTAH php artisan seed:akses UNTUK MENJALANKAN SEEDER INI
+        ];
+
+        foreach ($permissions as [$name, $group]) {
+            Permission::firstOrCreate(
+                ['name' => $name],
+                ['guard_name' => 'web', 'group' => $group]
+            );
+        }
+
+
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }
 }

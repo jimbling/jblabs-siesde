@@ -22,7 +22,7 @@
         </div>
         <!-- END NAVBAR LOGO -->
         <div class="navbar-nav flex-row order-md-last">
-            <div class="nav-item d-none d-md-flex me-3">
+            {{-- <div class="nav-item d-none d-md-flex me-3">
                 <div class="btn-list">
                     <a href="https://github.com/tabler/tabler" class="btn btn-5" target="_blank" rel="noreferrer">
                         <!-- Download SVG icon from http://tabler.io/icons/icon/brand-github -->
@@ -44,7 +44,7 @@
                         Sponsor
                     </a>
                 </div>
-            </div>
+            </div> --}}
             <div class="d-none d-md-flex">
                 <div class="nav-item">
                     <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode"

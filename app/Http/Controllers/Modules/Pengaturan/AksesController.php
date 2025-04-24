@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class AksesController extends Controller
 {
@@ -59,7 +60,6 @@ class AksesController extends Controller
 
     public function updatePermission(Request $request)
     {
-        // Pastikan hanya Super Admin yang dapat mengupdate hak akses
         if (!auth()->user()->hasRole('super-admin')) {
             abort(403, 'Unauthorized action.');
         }
@@ -75,7 +75,6 @@ class AksesController extends Controller
 
         $selectedRole = Role::findOrFail($request->role_id);
 
-        // Cegah update permission untuk role super-admin
         if ($selectedRole->name === 'super-admin') {
             return redirect()
                 ->back()
@@ -83,6 +82,9 @@ class AksesController extends Controller
         }
 
         $selectedRole->permissions()->sync($request->permissions ?? []);
+
+        // Tambahkan ini
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         return redirect()
             ->route('pengaturan.akses.edit-permission', ['role_id' => $selectedRole->id])
@@ -127,16 +129,25 @@ class AksesController extends Controller
         return back()->with('success', 'Password berhasil direset!');
     }
 
+    // public function hapusAkun(Request $request)
+    // {
+    //     dd($request->all());  // Menampilkan seluruh data yang dikirimkan
+
+    //     $ids = $request->input('user_ids', []);
+    //     if (empty($ids)) {
+    //         return back()->with('error', 'Tidak ada pengguna yang dipilih.');
+    //     }
+
+    //     User::whereIn('id', $ids)->delete();
+
+    //     return back()->with('success', 'Akun pengguna berhasil dihapus.');
+    // }
+
     public function hapusAkun(Request $request)
     {
         $ids = $request->input('user_ids', []);
-
-        if (empty($ids)) {
-            return back()->with('error', 'Tidak ada pengguna yang dipilih.');
-        }
-
         User::whereIn('id', $ids)->delete();
 
-        return back()->with('success', 'Akun pengguna berhasil dihapus.');
+        return redirect()->back()->with('success', 'Akun berhasil dihapus.');
     }
 }

@@ -43,6 +43,7 @@
                                             Hapus Akun
                                         </button>
 
+
                                         <a href="{{ route('pengaturan.akses.edit-permission') }}"
                                             class="btn btn-outline-primary">
                                             Atur Hak Akses
@@ -254,17 +255,17 @@
         </div>
     </x-modal.konfirmasi>
 
-    <!-- Modal Konfirmasi Hapus Akun -->
-    <x-modal.konfirmasi id="modalKonfirmasiHapusAkun" title="Hapus Akun?"
-        body="Apakah Anda yakin ingin menghapus akun-akun ini?" btnLabel="Hapus" btnColor="danger"
-        formAction="{{ route('pengaturan.akses.hapus-akun') }}" method="DELETE">
-        <div id="user-ids-field-container"></div>
-    </x-modal.konfirmasi>
 
-    <!-- Modal Peringatan Tidak Ada Data Terpilih -->
-    <x-modal.peringatan id="modalTidakAdaDataDipilih" title="Tidak ada data terpilih"
-        message="Silakan pilih minimal satu akun sebelum menghapus." icon="warning" statusColor="bg-warning"
-        buttonColor="btn-warning" />
+
+    <x-modal.konfirmasi id="modalKonfirmasiHapusAkun" title="Hapus Akun Pengguna?"
+        body="Akun yang terpilih akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan." btnLabel="Ya, Hapus"
+        btnColor="danger" :formAction="route('pengaturan.akses.hapus-akun')" method="DELETE" />
+
+
+    <x-modal.peringatan id="modalPeringatanTidakAdaData" title="Tidak Ada Data Dipilih"
+        message="Silakan pilih setidaknya satu pengguna untuk dihapus." btnLabel="Tutup" btnColor="warning"
+        formAction="#" method="GET" />
+
 
 
     @push('scripts')
@@ -377,28 +378,43 @@
 
 
         <script>
-            document.getElementById('btn-konfirmasi-hapus-akun').addEventListener('click', function() {
-                const checked = document.querySelectorAll('.table-selectable-check:checked');
-                const ids = Array.from(checked).map(el => el.value);
-                const container = document.getElementById('user-ids-field-container');
+            document.addEventListener('DOMContentLoaded', function() {
+                const tombolHapus = document.getElementById('btn-konfirmasi-hapus-akun');
+                const modalKonfirmasiEl = document.getElementById('modalKonfirmasiHapusAkun');
+                const modalPeringatanEl = document.getElementById('modalPeringatanTidakAdaData');
 
-                container.innerHTML = '';
+                const modalKonfirmasi = new bootstrap.Modal(modalKonfirmasiEl);
+                const modalPeringatan = new bootstrap.Modal(modalPeringatanEl);
 
-                if (ids.length === 0) {
-                    const peringatanModal = new bootstrap.Modal(document.getElementById('modalTidakAdaDataDipilih'));
-                    peringatanModal.show();
-                } else {
+                tombolHapus.addEventListener('click', function() {
+                    const checked = document.querySelectorAll('.table-selectable-check:checked');
+                    const ids = Array.from(checked).map(cb => cb.value);
+
+                    // Selalu pastikan modal lain ditutup dulu
+                    bootstrap.Modal.getInstance(modalKonfirmasiEl)?.hide();
+                    bootstrap.Modal.getInstance(modalPeringatanEl)?.hide();
+
+                    if (ids.length === 0) {
+                        // Tampilkan hanya modal peringatan
+                        modalPeringatan.show();
+                        return;
+                    }
+
+                    // Isi ulang input hidden user_ids di form modal konfirmasi
+                    const form = modalKonfirmasiEl.querySelector('form');
+                    form.querySelectorAll('input[name="user_ids[]"]').forEach(el => el.remove());
+
                     ids.forEach(id => {
-                        const hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.name = 'user_ids[]';
-                        hiddenInput.value = id;
-                        container.appendChild(hiddenInput);
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'user_ids[]';
+                        input.value = id;
+                        form.appendChild(input);
                     });
 
-                    const hapusModal = new bootstrap.Modal(document.getElementById('modalKonfirmasiHapusAkun'));
-                    hapusModal.show();
-                }
+                    // Tampilkan modal konfirmasi
+                    modalKonfirmasi.show();
+                });
             });
         </script>
     @endpush
