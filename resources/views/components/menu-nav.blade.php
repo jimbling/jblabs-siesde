@@ -94,10 +94,10 @@
                                         <path d="M5 12l14 0" />
                                     </svg>
                                 </span>
-                                <span class="nav-link-title"> Addons </span>
+                                <span class="nav-link-title"> Buku Induk </span>
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="./icons.html"> Icons </a>
+                                <a class="dropdown-item" href="{{ route('induk.siswa') }}">Data Siswa</a>
                                 <a class="dropdown-item" href="./emails.html"> Emails </a>
                                 <a class="dropdown-item" href="./flags.html"> Flags </a>
                                 <a class="dropdown-item" href="./illustrations.html"> Illustrations </a>

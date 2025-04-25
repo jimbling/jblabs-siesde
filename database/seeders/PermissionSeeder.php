@@ -21,6 +21,11 @@ class PermissionSeeder extends Seeder
             ['update peran', 'Administrator'],
             ['reset password', 'Administrator'],
             ['hapus akun', 'Administrator'],
+            ['lihat siswa', 'Buku Induk'],
+            ['edit siswa', 'Buku Induk'],
+            ['tambah siswa', 'Buku Induk'],
+            ['hapus siswa', 'Buku Induk'],
+
 
 
             // GUNAKAN PERINTAH php artisan seed:akses UNTUK MENJALANKAN SEEDER INI

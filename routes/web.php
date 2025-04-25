@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Modules\Admin\DashboardController;
+use App\Http\Controllers\Modules\BukuInduk\SiswaController;
 use App\Http\Controllers\Modules\Pengaturan\AksesController;
 use App\Http\Controllers\Modules\Pengaturan\PembaruanController;
 use App\Http\Controllers\Modules\Pengaturan\PemeliharaanController;
@@ -25,7 +26,7 @@ Route::prefix('pengaturan')->middleware(['auth', 'verified'])->name('pengaturan.
         ->can('lihat sistem')->name('sistem');
 
     Route::get('/akses', [AksesController::class, 'akses'])
-        ->can('lihak hak akses')->name('akses');
+        ->can('lihat hak akses')->name('akses');
 
     Route::get('/pembaruan', [PembaruanController::class, 'pembaruan'])
         ->can('lihat pembaruan')->name('pembaruan');
@@ -48,6 +49,14 @@ Route::prefix('pengaturan/akses')->name('pengaturan.akses.')->group(function () 
         ->can('reset password')->name('reset-password');
     Route::delete('hapus-akun', [AksesController::class, 'hapusAkun'])
         ->can('hapus akun')->name('hapus-akun');
+});
+
+// Pengaturan
+Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(function () {
+    Route::get('/siswa', [SiswaController::class, 'index'])
+        ->can('lihat siswa')->name('siswa');
+
+    Route::post('/import-siswa', [SiswaController::class, 'import'])->name('import-siswa');
 });
 
 
