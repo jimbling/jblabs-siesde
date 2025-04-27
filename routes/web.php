@@ -57,6 +57,7 @@ Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(
         ->can('lihat siswa')->name('siswa');
 
     Route::post('/import-siswa', [SiswaController::class, 'import'])->name('import-siswa');
+    Route::get('/siswa/{uuid}', [SiswaController::class, 'show'])->name('siswa.show');
 });
 
 
@@ -69,5 +70,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update-avatar', [PengaturanController::class, 'updateAvatar'])->name('profile.update-avatar');
     Route::get('/profile/delete-avatar', [PengaturanController::class, 'deleteAvatar'])->name('profile.delete-avatar');
 });
+
+Route::post('/clear-session-flash', function (Illuminate\Http\Request $request) {
+    foreach ($request->keys as $key) {
+        session()->forget($key);
+    }
+    return response()->json(['status' => 'success']);
+})->name('clear.session.flash');
 
 require __DIR__ . '/auth.php';

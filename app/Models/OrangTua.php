@@ -25,9 +25,24 @@ class OrangTua extends Model
 
     public $timestamps = true;
 
-    public function students()
+    public function student()
     {
-        return $this->belongsToMany(Student::class, 'student_orang_tua', 'orang_tua_uuid', 'siswa_uuid')
-            ->withPivot('tipe');
+        return $this->belongsTo(Student::class, 'siswa_uuid', 'uuid');
+    }
+
+
+    public function pendidikan()
+    {
+        return $this->belongsTo(Pendidikan::class, 'pendidikan_id');
+    }
+
+    public function pekerjaan()
+    {
+        return $this->belongsTo(Pekerjaan::class, 'pekerjaan_id');
+    }
+
+    public function penghasilan()
+    {
+        return $this->belongsTo(Penghasilan::class, 'penghasilan_id');
     }
 }

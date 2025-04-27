@@ -13,15 +13,14 @@ class RiwayatSekolah extends Model
 
     protected $fillable = [
         'siswa_uuid',
-        'nama_sekolah',
-        'jenis',
+        'sekolah_asal',
+        'jenis_pendaftar',
+        'tanggal_masuk',
     ];
 
     public $timestamps = true;
 
-    /**
-     * Relasi ke model Siswa
-     */
+
     public function siswa()
     {
         return $this->belongsTo(Student::class, 'siswa_uuid', 'siswa_uuid');

@@ -5,20 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pendidikan extends Model
+class Semester extends Model
 {
     use HasFactory;
 
-    protected $table = 'pendidikan';
+    protected $table = 'semester';
 
     protected $fillable = [
-        'jenjang',
+        'semester',
+        'tahun_pelajaran_id',
     ];
 
     public $timestamps = true;
 
-    public function orangTuas()
+
+    public function tahunPelajaran()
     {
-        return $this->hasMany(OrangTua::class, 'pendidikan_id');
+        return $this->belongsTo(TahunPelajaran::class);
     }
 }

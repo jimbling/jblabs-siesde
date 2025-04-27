@@ -16,4 +16,9 @@ class Penghasilan extends Model
     ];
 
     public $timestamps = true;
+
+    public function orangTuas()
+    {
+        return $this->hasMany(OrangTua::class, 'penghasilan_id');
+    }
 }

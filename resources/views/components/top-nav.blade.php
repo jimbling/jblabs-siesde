@@ -1,4 +1,4 @@
-<header class="navbar navbar-expand-md d-print-none">
+<header class="navbar navbar-expand-md d-print-none top-nav">
     <div class="container-xl">
         <!-- BEGIN NAVBAR TOGGLER -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"

@@ -12,6 +12,163 @@ tr.bg-super-admin {
     cursor: not-allowed !important;
 }
 
+.navbar {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    position: relative;
+  }
+/* Warna utama untuk sidebar */
+.navbar-vertical {
+    background-color: #1d3557; /* Biru kehijauan gelap yang profesional */
+    color: white;
+
+}
+
+/* Menyesuaikan warna teks link di sidebar */
+.navbar-vertical .nav-link {
+    color: white;
+}
+
+/* Warna link ketika hover */
+.navbar-vertical .nav-link:hover {
+    background-color: rgba(29, 53, 87, 0.8); /* Efek hover dengan sedikit gradasi */
+    color: white;
+}
+
+/* Warna aktif link di sidebar */
+.navbar-vertical .nav-item.active .nav-link {
+    background-color: #457b9d; /* Biru lebih terang untuk item aktif */
+    color: white;
+}
+
+/* Warna dropdown */
+.navbar-vertical .dropdown-menu {
+    background-color: #1d3557; /* Menyesuaikan dropdown dengan warna utama */
+    color: white;
+}
+
+.navbar-vertical .dropdown-menu .dropdown-item {
+    color: white;
+}
+
+.navbar-vertical .dropdown-menu .dropdown-item:hover {
+    background-color: rgba(29, 53, 87, 0.8); /* Hover efek untuk dropdown */
+    color: white;
+}
+
+
+
+ /* Menambahkan box-sizing agar padding dan margin dihitung dengan benar */
+ * {
+    box-sizing: border-box;
+}
+
+/* Wrapper untuk seluruh layout */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: row;
+    position: relative; /* Pastikan konten wrapper tidak menghalangi navbar */
+
+}
+
+
+/* Konten utama */
+.page-wrapper {
+    margin-left: 0;
+    flex-grow: 1;
+    padding: 5px;
+    transition: margin-left 0.3s ease;
+
+}
+
+/* Jika sidebar ada di desktop */
+@media (min-width: 768px) {
+    .page-wrapper {
+        margin-left: 250px; /* Memberikan ruang untuk sidebar */
+    }
+}
+
+/* Responsif untuk sidebar di perangkat kecil */
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        display: none; /* Menyembunyikan sidebar pada layar kecil */
+    }
+
+    .page-wrapper {
+        margin-left: 0;
+    }
+
+    .sidebar-toggle {
+        display: block; /* Menampilkan tombol toggle untuk sidebar */
+    }
+}
+
+
+/* Untuk menu dropdown pastikan pop-up berada di atas */
+.swal2-popup-custom {
+    border-radius: 10px;
+    z-index: 1060; /* Pastikan popup berada di atas semua elemen */
+}
+
+
+/* styling top-nav */
+.top-nav {
+    border-radius: 10px; /* Tetap mempertahankan sudut rounded */
+    /* overflow: hidden; --> HAPUS baris ini! */
+    position: relative; /* Tambahkan supaya dropdown tetap bisa menggunakan z-index dengan benar */
+    z-index: 1050; /* Pastikan navbar tetap berada di atas konten lain */
+}
+
+/* Umum untuk nav-link */
+.top-nav .nav-link {
+    transition: color 0.3s, background-color 0.3s;
+}
+
+/* Mode Light */
+[data-bs-theme="light"] .top-nav .nav-link {
+    color: #1d3557; /* Biru gelap untuk teks di light mode */
+}
+
+[data-bs-theme="light"] .top-nav .nav-link:hover,
+[data-bs-theme="light"] .top-nav .nav-link:focus {
+    background-color: rgba(29, 53, 87, 0.1); /* Biru muda transparan */
+    color: #003049; /* Biru tua saat hover di light mode */
+}
+
+[data-bs-theme="light"] .top-nav .nav-link.active {
+    background-color: #a8dadc; /* Biru pastel untuk active link */
+    color: #1d3557; /* Tetap biru gelap */
+    border-radius: 6px;
+}
+
+/* Mode Dark */
+[data-bs-theme="dark"] .top-nav .nav-link {
+    color: #fff; /* Putih di dark mode */
+}
+
+[data-bs-theme="dark"] .top-nav .nav-link:hover,
+[data-bs-theme="dark"] .top-nav .nav-link:focus {
+    background-color: rgba(255, 255, 255, 0.1); /* Putih transparan */
+    color: #ffd700; /* Kuning emas saat hover di dark mode */
+}
+
+[data-bs-theme="dark"] .top-nav .nav-link.active {
+    background-color: #457b9d; /* Biru terang untuk active link */
+    color: #fff; /* Putih untuk teks active */
+    border-radius: 6px;
+}
+
+
+.modal {
+    z-index: 1050;
+}
+.modal-backdrop {
+    z-index: 1040;
+}
 
 
 

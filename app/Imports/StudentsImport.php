@@ -6,11 +6,13 @@ use App\Models\Agama;
 use App\Models\Student;
 use App\Models\OrangTua;
 use App\Models\JenisTinggal;
+use App\Models\RiwayatSekolah;
 use App\Models\AlatTransportasi;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 
 class StudentsImport implements ToModel, WithHeadingRow
@@ -33,23 +35,41 @@ class StudentsImport implements ToModel, WithHeadingRow
         Log::info('Data Siswa: ' . json_encode($row));
 
         try {
-            // Konversi tanggal Excel ke format Y-m-d
-            $tanggalLahir = Date::excelToDateTimeObject($row['tanggal_lahir'])->format('Y-m-d');
+            // Konversi tanggal lahir dari format Excel
+            $tanggalLahir = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_lahir'])->format('Y-m-d');
 
-            // Mapping data master
-            $agama = $this->daftarAgama[$row['agama_id']] ?? null;
-            $jenisTinggal = $this->daftarJenisTinggal[$row['jenis_tinggal_id']] ?? null;
-            $alatTransportasi = $this->daftarTransportasi[$row['alat_transportasi_id']] ?? null;
-
-            // Validasi data master
-            if (!$agama || !$jenisTinggal || !$alatTransportasi) {
-                Log::error("Data referensi tidak ditemukan. Agama: $agama, Tinggal: $jenisTinggal, Transportasi: $alatTransportasi");
+            $agama = $this->cariMapping($this->daftarAgama, $row['agama_id']);
+            if (!$agama) {
+                Log::error('Agama tidak ditemukan: ' . $row['agama_id']);
                 return null;
             }
 
-            // Simpan siswa
-            $student = Student::create([
-                'uuid' => $row['uuid'],
+            $jenisTinggal = $this->cariMapping($this->daftarJenisTinggal, $row['jenis_tinggal_id']);
+            if (!$jenisTinggal) {
+                Log::error('Jenis tinggal tidak ditemukan: ' . $row['jenis_tinggal_id']);
+                return null;
+            }
+
+            $alatTransportasi = $this->cariMapping($this->daftarTransportasi, $row['alat_transportasi_id']);
+            if (!$alatTransportasi) {
+                Log::error('Alat transportasi tidak ditemukan: ' . $row['alat_transportasi_id']);
+                return null;
+            }
+
+
+
+            $pendidikanAyah = DB::table('pendidikan')->where('jenjang', $row['pendidikan_id_ayah'])->value('id');
+            $pekerjaanAyah = DB::table('pekerjaan')->where('nama', $row['pekerjaan_id_ayah'])->value('id');
+            $penghasilanAyah = DB::table('penghasilan')->where('rentang', $row['penghasilan_id_ayah'])->value('id');
+
+            $pendidikanIbu = DB::table('pendidikan')->where('jenjang', $row['pendidikan_id_ibu'])->value('id');
+            $pekerjaanIbu = DB::table('pekerjaan')->where('nama', $row['pekerjaan_id_ibu'])->value('id');
+            $penghasilanIbu = DB::table('penghasilan')->where('rentang', $row['penghasilan_id_ibu'])->value('id');
+
+
+            // Simpan data siswa terlebih dahulu
+            $siswa = Student::create([
+
                 'nama' => $row['nama'],
                 'nipd' => $row['nipd'],
                 'jk' => $row['jk'],
@@ -84,72 +104,60 @@ class StudentsImport implements ToModel, WithHeadingRow
                 'anak_ke' => $row['anak_ke'],
                 'no_kk' => $row['no_kk'],
                 'jumlah_saudara_kandung' => $row['jumlah_saudara_kandung'],
-                'jarak_rumah_km' => is_numeric($row['jarak_rumah_km']) ? floor((float)$row['jarak_rumah_km']) : null,
+                'jarak_rumah_km' => is_numeric($row['jarak_rumah_km']) ? floor((float) $row['jarak_rumah_km']) : null,
                 'lintang' => $row['lintang'],
                 'bujur' => $row['bujur'],
                 'agama_id' => $agama,
                 'jenis_tinggal_id' => $jenisTinggal,
                 'alat_transportasi_id' => $alatTransportasi,
-                'riwayat_sekolah_id' => null,
             ]);
 
-            // Simpan data orang tua dan hubungkan
-            foreach (['Ayah', 'Ibu'] as $tipe) {
-                try {
-                    $tipeLower = strtolower($tipe);
-                    $nama = $row['nama_' . $tipeLower] ?? null;
+            // Simpan data orang tua (ayah dan ibu)
+            OrangTua::create([
+                'siswa_uuid' => $siswa->uuid,
+                'tipe' => 'Ayah',
+                'nama' => $row['nama_ayah'],
+                'tahun_lahir' => $row['tahun_lahir_ayah'],
+                'pendidikan_id' => $pendidikanAyah,
+                'pekerjaan_id' => $pekerjaanAyah,
+                'penghasilan_id' => $penghasilanAyah,
+                'nik' => $row['nik_ayah'],
+            ]);
 
-                    if (!$nama) {
-                        Log::warning("Data $tipe tidak tersedia untuk siswa UUID: " . $row['uuid']);
-                        continue;
-                    }
+            OrangTua::create([
+                'siswa_uuid' => $siswa->uuid,
+                'tipe' => 'Ibu',
+                'nama' => $row['nama_ibu'],
+                'tahun_lahir' => $row['tahun_lahir_ibu'],
+                'pendidikan_id' => $pendidikanIbu,
+                'pekerjaan_id' => $pekerjaanIbu,
+                'penghasilan_id' => $penghasilanIbu,
+                'nik' => $row['nik_ibu'],
+            ]);
 
-                    Log::info("Memproses $tipe untuk siswa UUID: " . $row['uuid']);
-
-                    $orangTua = OrangTua::create([
-                        'siswa_uuid' => $row['uuid'],
-                        'tipe' => $tipeLower,
-                        'nama' => $nama,
-                        'tahun_lahir' => $row['tahun_lahir_' . $tipeLower] ?? null,
-                        'pendidikan_id' => $row['pendidikan_id_' . $tipeLower] ?? null,
-                        'pekerjaan_id' => $row['pekerjaan_id_' . $tipeLower] ?? null,
-                        'penghasilan_id' => $row['penghasilan_id_' . $tipeLower] ?? null,
-                        'nik' => $row['nik_' . $tipeLower] ?? null,
-                    ]);
-                } catch (\Exception $e) {
-                    Log::error("Gagal menyimpan data $tipe untuk siswa UUID: " . $row['uuid'] . ' | Error: ' . $e->getMessage());
-                    continue;
-                }
-            }
-
-
-            return $student;
+            // Setelah siswa tersimpan, baru buat RiwayatSekolah
+            $riwayatSekolah = RiwayatSekolah::create([
+                'siswa_uuid' => $siswa->uuid,
+                'sekolah_asal' => $row['sekolah_asal'],
+                'jenis_pendaftar' => $row['jenis_pendaftar'],
+                'tanggal_masuk' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_masuk'])->format('Y-m-d'),
+            ]);
+            // Update siswa, isi riwayat_sekolah_id
+            $siswa->update([
+                'riwayat_sekolah_id' => $riwayatSekolah->id,
+            ]);
         } catch (\Exception $e) {
             Log::error('Error saat memproses baris: ' . $e->getMessage());
-            return null;
         }
     }
 
-    // Fungsi untuk menyimpan atau mencari orang tua
-    private function saveOrFindOrangTua($row, $tipe)
+    private function cariMapping(array $daftar, $cari)
     {
-        // Cari orang tua berdasarkan tipe dan nik
-        $orangTua = OrangTua::where('siswa_uuid', $row['uuid'])->where('tipe', $tipe)->first();
-
-        // Jika tidak ada, buat orang tua baru
-        if (!$orangTua) {
-            $orangTua = OrangTua::create([
-                'siswa_uuid' => $row['uuid'],
-                'tipe' => $tipe,
-                'nama' => $row['nama_' . strtolower($tipe)],
-                'tahun_lahir' => $row['tahun_lahir_' . strtolower($tipe)],
-                'pendidikan_id' => $row['pendidikan_id_' . strtolower($tipe)],
-                'pekerjaan_id' => $row['pekerjaan_id_' . strtolower($tipe)],
-                'penghasilan_id' => $row['penghasilan_id_' . strtolower($tipe)],
-                'nik' => $row['nik_' . strtolower($tipe)],
-            ]);
+        foreach ($daftar as $key => $value) {
+            if (strtolower($key) === strtolower($cari)) {
+                return $value;
+            }
         }
-
-        return $orangTua;
+        return null;
     }
 }

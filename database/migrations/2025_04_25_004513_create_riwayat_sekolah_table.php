@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('siswa_uuid');
             $table->string('nama_sekolah');
-            $table->string('jenis')->nullable(); // TK / SD Lain / Pindahan
+            $table->string('jenis_pendaftaran')->nullable(); // TK / SD Lain / Pindahan
             $table->timestamps();
 
             $table->foreign('siswa_uuid')->references('uuid')->on('students')->onDelete('cascade');

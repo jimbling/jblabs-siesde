@@ -19,11 +19,9 @@ class FotoSiswa extends Model
         'updated_at',
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
-    /**
-     * Relasi ke model Siswa (relasi one-to-one atau one-to-many tergantung implementasi)
-     */
+
     public function siswa()
     {
         return $this->belongsTo(Student::class, 'siswa_uuid', 'siswa_uuid');

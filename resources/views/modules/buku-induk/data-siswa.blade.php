@@ -15,17 +15,17 @@
                                 <div class="col">
                                     <h3 class="card-title mb-0">Peserta Didik</h3>
                                     <p class="text-secondary m-0">Jumlah Peserta Didik : {{ $totalStudents }}</p>
-                                    <!-- Menampilkan jumlah pengguna -->
                                 </div>
                                 <div class="col-md-auto col-sm-12">
                                     <div class="ms-auto d-flex flex-wrap btn-list">
-                                        <a href="{{ route('pengaturan.akses.edit-permission') }}"
-                                            class="btn btn-outline-primary">
+                                        <!-- Tombol untuk membuka modal -->
+                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                            data-bs-target="#importSiswaModal">
                                             Import Siswa
-                                        </a>
+                                        </button>
+
                                         <div class="input-group input-group-flat w-auto">
                                             <span class="input-group-text">
-                                                <!-- Download SVG icon from http://tabler.io/icons/icon/search -->
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -41,16 +41,14 @@
                                             </span>
                                         </div>
 
-
                                         <button type="button" class="btn btn-outline-danger" id="btn-konfirmasi-hapus-pd">
                                             Hapus PD
                                         </button>
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div id="siswa-table">
                             <div class="table-responsive">
                                 <table class="table table-vcenter table-selectable">
@@ -105,6 +103,10 @@
                                                             Aksi
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-end">
+                                                            <a href="{{ route('induk.siswa.show', $student->uuid) }}"
+                                                                class="dropdown-item">
+                                                                Lihat Detail
+                                                            </a>
                                                             <a href="#" class="dropdown-item">Edit</a>
                                                             <form action="#" method="POST" style="display: inline;">
                                                                 @csrf
@@ -113,6 +115,7 @@
                                                                     class="dropdown-item text-danger">Hapus</button>
                                                             </form>
                                                         </div>
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -146,21 +149,39 @@
                         </div>
 
 
-                        <form action="{{ route('induk.import-siswa') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="form-group">
-                                <label for="file">Pilih file Excel (.xlsx)</label>
-                                <input type="file" name="file" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Import</button>
-                        </form>
-
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <!-- Modal Import Siswa -->
+    <div class="modal fade" id="importSiswaModal" tabindex="-1" aria-labelledby="importSiswaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('induk.import-siswa') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importSiswaModalLabel">Import Data Siswa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="file">Pilih file Excel (.xlsx)</label>
+                            <input type="file" name="file" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         let list;

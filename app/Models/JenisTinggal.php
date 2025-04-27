@@ -15,6 +15,6 @@ class JenisTinggal extends Model
         'nama',
     ];
 
-    // Laravel secara otomatis mengelola kolom created_at dan updated_at
-    public $timestamps = true; // Mengaktifkan penggunaan timestamps otomatis
+
+    public $timestamps = true;
 }

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Student extends Model
 {
@@ -54,7 +55,18 @@ class Student extends Model
         'riwayat_sekolah_id'
     ];
 
-    // Contoh relasi ke tabel agama
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = Uuid::uuid4()->toString();
+            }
+        });
+    }
+
+
     public function agama()
     {
         return $this->belongsTo(Agama::class);
@@ -73,7 +85,20 @@ class Student extends Model
 
     public function orangTuas()
     {
-        return $this->belongsToMany(OrangTua::class, 'student_orang_tua', 'siswa_uuid', 'orang_tua_uuid')
-            ->withPivot('tipe');
+        return $this->hasMany(OrangTua::class, 'siswa_uuid', 'uuid');
+    }
+
+    public function riwayatSekolah()
+    {
+        return $this->hasOne(RiwayatSekolah::class, 'siswa_uuid', 'uuid');
+    }
+
+    public function studentRombels()
+    {
+        return $this->hasMany(StudentRombel::class, 'siswa_id', 'id');
+    }
+    public function currentRombel()
+    {
+        return $this->hasOne(StudentRombel::class)->latestOfMany();
     }
 }
