@@ -1,6 +1,6 @@
 <!-- BEGIN PAGE HEADER -->
 <div class="page-header d-print-none">
-    <div class="container-xl">
+    <div class="container-fluid">
         <div class="row g-2 align-items-center">
             <div class="col">
                 <h2 class="page-title">{{ $title ?? 'Dashboard' }}</h2>

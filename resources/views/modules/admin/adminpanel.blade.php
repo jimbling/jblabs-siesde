@@ -5,7 +5,7 @@
 @section('page-title', 'Welcome to the Dashboard')
 
 @section('content')
-    <div class="container-xl">
+    <div class="container-fluid">
 
         <div class="row row-deck row-cards">
             <div class="col-sm-6 col-lg-3">

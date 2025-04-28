@@ -5,7 +5,7 @@
 @section('page-title', 'Welcome to the Dashboard')
 
 @section('content')
-    <div class="container-xl">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
                 <h2 class="card-title mb-0">Manajemen Hak Akses Berdasarkan Peran Pengguna</h2>

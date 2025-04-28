@@ -6,7 +6,7 @@
 @section('page-title', 'Welcome to the Dashboard')
 
 @section('content')
-    <div class="container-xl">
+    <div class="container-fluid">
         <div class="card">
             <div class="row g-0">
                 <!-- Sidebar Menu -->

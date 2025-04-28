@@ -5,7 +5,7 @@
 @section('page-title', 'Welcome to the Dashboard')
 
 @section('content')
-    <div class="container-xl my-auto">
+    <div class="container-fluid my-auto">
         <div class="empty">
             <div class="empty-img">
                 <svg class="img" xmlns="http://www.w3.org/2000/svg" height="256" fill="none" viewBox="0 0 800 600">

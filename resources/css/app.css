@@ -120,7 +120,7 @@ tr.bg-super-admin {
     border-radius: 10px; /* Tetap mempertahankan sudut rounded */
     /* overflow: hidden; --> HAPUS baris ini! */
     position: relative; /* Tambahkan supaya dropdown tetap bisa menggunakan z-index dengan benar */
-    z-index: 1050; /* Pastikan navbar tetap berada di atas konten lain */
+
 }
 
 /* Umum untuk nav-link */
@@ -173,6 +173,236 @@ tr.bg-super-admin {
 
 
 
+/* Off Canvas menu mobile */
 
+
+/* Hover effect pada item menu yang lebih soft */
+.navbar-nav .nav-item .nav-link {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Warna soft untuk hover */
+.navbar-nav .nav-item .nav-link:hover {
+    background-color: rgba(6, 111, 209, 0.1); /* Soft background */
+    color: #066fd1; /* Warna teks tetap kontras */
+    border-radius: 5px;
+}
+
+/* Offcanvas Slide-in animation */
+.offcanvas {
+    transition: transform 0.3s ease-in-out; /* Transisi untuk masuk dan keluar */
+}
+
+.offcanvas-start {
+    transform: translateX(-100%); /* Awalnya offcanvas berada di luar layar */
+}
+
+.offcanvas-end {
+    transform: translateX(100%); /* Offcanvas keluar ke kanan */
+}
+
+/* Ketika offcanvas dibuka */
+.offcanvas.show {
+    transform: translateX(0); /* Muncul ke layar */
+}
+
+/* Animasi pada tombol toggler */
+.navbar-toggler.collapsed {
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+.navbar-toggler:not(.collapsed) {
+    transform: rotate(90deg);
+}
+
+/* Offcanvas layout adjustment */
+.offcanvas {
+    width: 250px; /* Lebar offcanvas yang optimal */
+    padding: 15px 20px; /* Padding yang lebih nyaman */
+}
+
+/* Header dan body yang lebih rapi */
+.offcanvas-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.offcanvas-body {
+    padding: 0;
+    margin-top: 10px;
+}
+
+.offcanvas-body .nav-item {
+    margin-bottom: 10px;
+}
+
+.offcanvas-body .nav-link {
+    padding: 12px 20px;
+}
+
+/* Rotasi icon navbar-toggler dengan efek */
+.navbar-toggler {
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-toggler-icon {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Animasi rotasi ketika toggler ditekan */
+.navbar-toggler.collapsed .navbar-toggler-icon {
+    transform: rotate(0deg);
+}
+
+.navbar-toggler:not(.collapsed) .navbar-toggler-icon {
+    transform: rotate(90deg);
+}
+
+
+/* sidebar */
+/* Setel lebar sidebar saat expand */
+#menu-nav {
+    transition: width 0.3s ease;
+    width: 250px; /* Lebar sidebar saat expand */
+}
+
+/* Setel lebar sidebar saat collapse */
+#menu-nav.collapsed {
+    width: 60px; /* Lebar sidebar saat collapse */
+}
+
+#menu-nav .navbar-brand {
+    overflow: hidden;
+    transition: opacity 0.3s ease;
+}
+
+#menu-nav.collapsed .navbar-brand {
+    opacity: 0; /* Menyembunyikan brand saat sidebar collapse */
+}
+
+/* Menyesuaikan ikon untuk tampilan collapse */
+#menu-nav.collapsed #toggleIcon {
+    transform: rotate(180deg); /* Putar ikon saat collapse */
+}
+
+/* Default sidebar tanpa hover */
+.sidebar {
+    width: 250px;
+    transition: width 0.3s ease, z-index 0.3s ease;
+    position: fixed;
+    height: 100%;
+    z-index: 999; /* Sidebar berada di belakang komponen lainnya secara default */
+}
+
+/* Sidebar saat hover, z-index lebih tinggi */
+#menu-nav:hover {
+    z-index: 1080; /* Sidebar berada di atas komponen lainnya saat hover */
+}
+
+/* Sidebar tetap berada di atas konten saat hover */
+#menu-nav.collapsed:hover {
+    width: 250px; /* Lebar sidebar saat hover */
+}
+
+/* Atur top-nav agar selalu berada di atas sidebar */
+.top-nav {
+    position: relative;
+
+}
+
+/* Atur agar navbar-brand terlihat saat hover */
+#menu-nav.collapsed:hover .navbar-brand {
+    opacity: 1;
+}
+
+
+
+
+.sidebar.collapsed {
+    width: 80px; /* Lebar sidebar ketika collapse */
+}
+
+/* Page Wrapper yang berfungsi untuk menata layout */
+.page-wrapper {
+    display: flex;
+    flex: 1;
+    transition: margin-left 0.3s ease, width 0.3s ease, margin-right 0.3s ease; /* Menambahkan transisi untuk margin dan lebar */
+    margin-left: 250px; /* Margin kiri untuk memberi ruang pada sidebar */
+    margin-right: 20px; /* Menambahkan margin kanan agar konten tidak terlalu mepet */
+    width: calc(100% - 250px); /* Konten utama mengambil ruang sisa */
+}
+
+.page-wrapper.collapsed {
+    margin-left: 80px; /* Mengurangi margin kiri ketika sidebar collapse */
+    width: calc(100% - 80px); /* Mengurangi lebar konten utama sesuai lebar sidebar */
+}
+
+/* Responsif untuk tampilan layar kecil */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Sidebar mengambil seluruh lebar layar */
+        position: absolute; /* Menjaga sidebar di posisi absolute pada layar kecil */
+    }
+
+    .sidebar.collapsed {
+        width: 100%; /* Sidebar tetap mengambil seluruh lebar layar */
+    }
+
+    .page-wrapper {
+        margin-left: 0; /* Tidak ada margin kiri pada perangkat kecil */
+        margin-right: 20px; /* Menambahkan margin kanan pada perangkat kecil */
+        width: 100%; /* Konten utama memenuhi lebar layar */
+    }
+}
+
+
+
+
+/* Toggle Sidebar */
+.toggle-icon {
+    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1); /* Easing lebih smooth */
+    transform-origin: center; /* Mutar di tengah */
+}
+
+.toggle-icon.rotated {
+    transform: rotate(180deg) scale(1.05); /* Tambahkan efek zoom sedikit */
+}
+
+.toggle-icon {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    transform-origin: center;
+}
+#toggleSidebar {
+    display: block; /* Tampil default */
+}
+
+@media (max-width: 768px) {
+    #toggleSidebar {
+        display: none; /* Sembunyikan di layar kecil */
+    }
+}
+
+#menu-nav {
+    transition: all 0.3s ease;
+}
+
+.page-wrapper {
+    transition: margin-left 0.3s ease;
+}
+
+
+.toggle-icon {
+    color: #666; /* Warna default icon */
+    transition: color 0.3s ease, transform 0.3s ease; /* animasi perubahan warna dan rotasi */
+}
+
+.toggle-icon:hover {
+    color: #1e88e5; /* Warna biru saat hover */
+    transform: scale(1.2); /* Membesarkan dikit saat hover */
+}
 
 
