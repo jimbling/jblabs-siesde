@@ -12,13 +12,12 @@ class StudentRombel extends Model
     protected $table = 'student_rombel';
 
     protected $fillable = [
+        'siswa_id',
         'siswa_uuid',
         'rombel_id',
         'tahun_pelajaran_id',
         'semester_id',
-        'tanggal_masuk',
-        'tanggal_keluar',
-        'status',
+
     ];
 
     public $timestamps = true;

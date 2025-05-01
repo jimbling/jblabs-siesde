@@ -72,4 +72,23 @@ class SiswaController extends Controller
 
         ]);
     }
+
+    public function destroy($uuid)
+    {
+        $student = Student::where('uuid', $uuid)->firstOrFail();
+        $student->delete();
+
+        return back()->with('success', 'Siswa berhasil dihapus.');
+    }
+
+
+    public function massDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        Student::whereIn('id', $ids)->delete();
+
+        return redirect()->route('induk.siswa')
+            ->with('success', 'Data siswa berhasil dihapus.');
+    }
 }

@@ -17,4 +17,11 @@ class Rombel extends Model
     ];
 
     public $timestamps = true;
+
+    public function students()
+    {
+        return $this->hasMany(\App\Models\StudentRombel::class, 'rombel_id')
+            ->whereNull('tanggal_keluar') // jika hanya ingin siswa yang masih aktif di rombel ini
+            ->with('siswa'); // include data siswa
+    }
 }

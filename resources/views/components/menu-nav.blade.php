@@ -110,29 +110,70 @@
                     </div>
                 </li>
 
-                <!-- Buku Induk Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#navbar-bukuinduk" data-bs-toggle="dropdown"
-                        role="button" aria-expanded="false">
+                <li class="nav-item dropdown {{ Request::is('induk/*') ? 'active' : '' }}">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button"
+                        aria-expanded="false" data-bs-auto-close="outside">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <!-- Plus Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 5l0 14" />
-                                <path d="M5 12l14 0" />
+                            <!-- Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+                                <path d="M10 16h6" />
+                                <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M4 8h3" />
+                                <path d="M4 12h3" />
+                                <path d="M4 16h3" />
                             </svg>
                         </span>
                         <span class="nav-link-title">Buku Induk</span>
                     </a>
+
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ route('induk.siswa') }}">Data Siswa</a>
-                        <a class="dropdown-item" href="./emails.html">Emails</a>
-                        <a class="dropdown-item" href="./flags.html">Flags</a>
-                        <a class="dropdown-item" href="./illustrations.html">Illustrations</a>
-                        <a class="dropdown-item" href="./payment-providers.html">Payment providers</a>
+                        <a class="dropdown-item {{ request()->routeIs('induk.siswa') ? 'active' : '' }}"
+                            href="{{ route('induk.siswa') }}">
+                            Data Siswa
+                        </a>
+
+                        <!-- Submenu Akademik -->
+                        <div class="dropend">
+                            <a class="dropdown-item dropdown-toggle {{ request()->routeIs('induk.akademik.rombel.index', 'induk.akademik.tahun_pelajaran', 'induk.akademik.semester', 'induk.akademik.kelas.index') ? 'active' : '' }}"
+                                href="#" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button"
+                                aria-expanded="false">
+                                Akademik
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="{{ route('induk.akademik.kelas.index') }}"
+                                    class="dropdown-item {{ request()->routeIs('induk.akademik.kelas.index') ? 'active' : '' }}">
+                                    Kelas
+                                </a>
+                                <a href="{{ route('induk.akademik.rombel.index') }}"
+                                    class="dropdown-item {{ request()->routeIs('induk.akademik.rombel.index') ? 'active' : '' }}">
+                                    Rombel
+                                </a>
+                                <a href="{{ route('induk.akademik.tahun-pelajaran.index') }}"
+                                    class="dropdown-item {{ request()->routeIs('induk.akademik.tahun-pelajaran.index') ? 'active' : '' }}">
+                                    Tahun Pelajaran
+                                </a>
+                                <a href="{{ route('induk.akademik.semester.index') }}"
+                                    class="dropdown-item {{ request()->routeIs('induk.akademik.semester.index') ? 'active' : '' }}">
+                                    Semester
+                                </a>
+
+                            </div>
+                        </div>
+
+
                     </div>
                 </li>
+
+
+
+
+
 
             </ul>
             <!-- End Sidebar Menu -->

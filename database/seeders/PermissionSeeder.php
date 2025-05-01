@@ -25,6 +25,11 @@ class PermissionSeeder extends Seeder
             ['edit siswa', 'Buku Induk'],
             ['tambah siswa', 'Buku Induk'],
             ['hapus siswa', 'Buku Induk'],
+            ['atur rombel', 'Buku Induk'],
+            ['atur tahun pelajaran', 'Buku Induk'],
+            ['atur semester', 'Buku Induk'],
+            ['atur kenaikan', 'Buku Induk'],
+
 
 
 

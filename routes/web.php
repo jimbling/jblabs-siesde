@@ -4,11 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Modules\Admin\DashboardController;
 use App\Http\Controllers\Modules\BukuInduk\SiswaController;
+use App\Http\Controllers\Modules\BukuInduk\RombelController;
 use App\Http\Controllers\Modules\Pengaturan\AksesController;
-use App\Http\Controllers\Modules\Pengaturan\PembaruanController;
-use App\Http\Controllers\Modules\Pengaturan\PemeliharaanController;
-use App\Http\Controllers\Modules\Pengaturan\PengaturanController;
 use App\Http\Controllers\Modules\Pengaturan\SistemController;
+use App\Http\Controllers\Modules\BukuInduk\KenaikanController;
+use App\Http\Controllers\Modules\BukuInduk\SemesterController;
+use App\Http\Controllers\Modules\Pengaturan\PembaruanController;
+use App\Http\Controllers\Modules\Pengaturan\PengaturanController;
+use App\Http\Controllers\Modules\Pengaturan\PemeliharaanController;
+use App\Http\Controllers\Modules\BukuInduk\TahunPelajaranController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -51,14 +55,54 @@ Route::prefix('pengaturan/akses')->name('pengaturan.akses.')->group(function () 
         ->can('hapus akun')->name('hapus-akun');
 });
 
-// Pengaturan
+// Buku Induk
 Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])
         ->can('lihat siswa')->name('siswa');
-
+    Route::delete('/siswa/mass-delete', [SiswaController::class, 'massDelete'])->name('siswa.massDelete');
     Route::post('/import-siswa', [SiswaController::class, 'import'])->name('import-siswa');
     Route::get('/siswa/{uuid}', [SiswaController::class, 'show'])->name('siswa.show');
+    Route::delete('/siswa/{uuid}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
 });
+
+
+
+Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(function () {
+
+    Route::prefix('akademik')->name('akademik.')->group(function () {
+        Route::resource('kelas', RombelController::class)
+            ->middleware('can:atur kelas');
+
+        Route::resource('tahun-pelajaran', TahunPelajaranController::class)
+            ->middleware('can:atur tahun pelajaran');
+
+        Route::resource('semester', SemesterController::class)
+            ->middleware('can:atur semester');
+
+        Route::resource('rombel', KenaikanController::class)
+            ->middleware('can:atur rombel');
+    });
+});
+
+Route::prefix('induk')->name('induk.')->group(function () {
+    Route::delete('/kelas/mass-delete', [RombelController::class, 'massDelete'])->name('kelas.massDelete');
+});
+
+Route::get('/rombel/siswa/by-tingkat', [KenaikanController::class, 'filterByTingkat'])->name('rombel.siswa.by-tingkat');
+Route::post('/rombel/naikkan', [KenaikanController::class, 'naikkan'])->name('rombel.naikkan');
+
+// Route untuk menampilkan halaman dengan filter tingkat dan tahun pelajaran
+Route::get('rombel/siswa', [KenaikanController::class, 'index'])->name('rombel.siswa.index');
+
+// Route untuk proses naik kelas (naikkan siswa ke rombel baru)
+Route::post('rombel/siswa/naikkelas', [KenaikanController::class, 'naikKelas'])->name('rombel.siswa.naikkelas');
+
+// Route untuk hapus rombel siswa
+Route::delete('rombel/siswa/{uuid}/hapusrombel', [KenaikanController::class, 'hapusRombel'])->name('rombel.siswa.hapusrombel');
+Route::post('rombel/siswa/move', [KenaikanController::class, 'moveToNextClass'])->name('rombel.siswa.moveToNextClass');
+Route::get('/rombel/siswa/json', [KenaikanController::class, 'getFilteredStudents'])->name('rombel.siswa.json');
+Route::delete('/rombel/siswa/hapus-rombel', [KenaikanController::class, 'hapusDariRombel'])->name('rombel.siswa.hapus-rombel');
+
 
 
 

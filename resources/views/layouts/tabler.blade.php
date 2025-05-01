@@ -84,6 +84,33 @@
         </script>
     @endif
 
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Ada kesalahan dalam input!',
+                    html: `
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                `,
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'swal2-popup-custom'
+                    }
+                });
+            });
+        </script>
+    @endif
+
+
 </body>
 
 </html>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -99,6 +100,11 @@ class Student extends Model
     }
     public function currentRombel()
     {
-        return $this->hasOne(StudentRombel::class)->latestOfMany();
+        return $this->hasOne(StudentRombel::class, 'siswa_uuid', 'uuid')->latestOfMany();
+    }
+
+    public function getTanggalLahirFormattedAttribute()
+    {
+        return Carbon::parse($this->tanggal_lahir)->translatedFormat('F d, Y');
     }
 }

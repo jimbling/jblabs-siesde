@@ -19,7 +19,7 @@ tr.bg-super-admin {
   }
 /* Warna utama untuk sidebar */
 .navbar-vertical {
-    background-color: #1d3557; /* Biru kehijauan gelap yang profesional */
+    background-color: #223958; /* Biru kehijauan gelap yang profesional */
     color: white;
 
 }
@@ -287,14 +287,6 @@ tr.bg-super-admin {
     transform: rotate(180deg); /* Putar ikon saat collapse */
 }
 
-/* Default sidebar tanpa hover */
-.sidebar {
-    width: 250px;
-    transition: width 0.3s ease, z-index 0.3s ease;
-    position: fixed;
-    height: 100%;
-    z-index: 999; /* Sidebar berada di belakang komponen lainnya secara default */
-}
 
 /* Sidebar saat hover, z-index lebih tinggi */
 #menu-nav:hover {
@@ -403,6 +395,20 @@ tr.bg-super-admin {
 .toggle-icon:hover {
     color: #1e88e5; /* Warna biru saat hover */
     transform: scale(1.2); /* Membesarkan dikit saat hover */
+}
+
+.dropdown-item.active {
+    background-color: #dbeafe; /* biru muda */
+    color: #1e40af; /* biru navy */
+    font-weight: 600;
+}
+
+
+#rombel-tabler .table td,
+#rombel-tabler .table th {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    /* atau shorthand: padding: 12px 8px; */
 }
 
 
