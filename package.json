@@ -17,6 +17,7 @@
         "autosize": "^6.0.1",
         "imask": "^7.6.1",
         "list.js": "^2.3.1",
+        "litepicker": "^2.0.12",
         "sweetalert2": "^11.17.2"
     }
 }

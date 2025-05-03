@@ -303,6 +303,10 @@
 
                             // Menampilkan data siswa
                             data.students.forEach(siswa => {
+                                const rombelNama = siswa.student_rombels && siswa.student_rombels.length >
+                                    0 ?
+                                    siswa.student_rombels[0].rombel?.tingkat :
+                                    '-';
                                 const row = `
                                     <tr>
                                         <td>
@@ -314,7 +318,7 @@
                                         </td>
                                         <td>${siswa.nama}</td>
                                         <td>${siswa.nisn ?? '-'}</td>
-                                        <td>${siswa.student_rombel?.[0]?.rombel?.tingkat ?? '-'}</td>
+                                         <td>${rombelNama}</td>
                                     </tr>
                                 `;
                                 tbody.insertAdjacentHTML('beforeend', row);

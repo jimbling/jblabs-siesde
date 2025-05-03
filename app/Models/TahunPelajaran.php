@@ -13,8 +13,7 @@ class TahunPelajaran extends Model
 
     protected $fillable = [
         'tahun_ajaran',
-        'tanggal_mulai',
-        'tanggal_selesai',
+
     ];
 
     public $timestamps = true;

@@ -2,7 +2,12 @@ import './bootstrap';
 import autosize from 'autosize';
 import imask from 'imask';
 import List from 'list.js';
+import Litepicker from 'litepicker';
+import 'litepicker/dist/css/litepicker.css';
+
 window.List = List;
+window.Litepicker = Litepicker;
+
 
 import "@tabler/core/dist/js/tabler.min.js";
 import Swal from 'sweetalert2';
@@ -29,15 +34,16 @@ function setTheme(theme) {
 // Terapkan tema saat halaman dimuat
 setTheme(currentTheme);
 
-// Mengatur tombol untuk mengubah tema
-document.querySelector('.hide-theme-dark')?.addEventListener('click', function () {
-    setTheme('dark');
-});
 
-document.querySelector('.hide-theme-light')?.addEventListener('click', function () {
-    setTheme('light');
-});
 
+// Tangani klik pada tombol ubah tema secara umum
+document.querySelectorAll('[data-theme]').forEach(button => {
+    button.addEventListener('click', function (e) {
+        e.preventDefault(); // Mencegah reload halaman
+        const theme = this.getAttribute('data-theme');
+        setTheme(theme);
+    });
+});
 
 import Alpine from 'alpinejs';
 window.Alpine = Alpine;

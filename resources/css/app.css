@@ -412,3 +412,30 @@ tr.bg-super-admin {
 }
 
 
+.litepicker {
+    z-index: 1056 !important; /* lebih tinggi dari modal Bootstrap (1055) */
+  }
+
+
+/* Light theme */
+html[data-bs-theme="light"] .tooltip .tooltip-arrow::before {
+    border-top-color: #000 !important;
+}
+
+/* Dark theme */
+html[data-bs-theme="dark"] .tooltip .tooltip-arrow::before {
+    border-top-color: #fff !important;
+}
+
+
+/* Light theme */
+html[data-bs-theme="light"] .tooltip-inner {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+/* Dark theme */
+html[data-bs-theme="dark"] .tooltip-inner {
+    background-color: #fff !important;
+    color: #000 !important;
+}

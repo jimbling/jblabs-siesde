@@ -14,6 +14,7 @@
 
     @vite('resources/css/app.css')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body class="d-flex flex-column">
@@ -74,7 +75,7 @@
                     icon: 'error',
                     title: '{{ session('error') }}',
                     showConfirmButton: false,
-                    timer: 3000,
+                    timer: 7000,
                     timerProgressBar: true,
                     customClass: {
                         popup: 'swal2-popup-custom'
@@ -100,7 +101,7 @@
                     </ul>
                 `,
                     showConfirmButton: false,
-                    timer: 5000,
+                    timer: 7000,
                     timerProgressBar: true,
                     customClass: {
                         popup: 'swal2-popup-custom'

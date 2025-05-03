@@ -140,7 +140,7 @@
 
                         <!-- Submenu Akademik -->
                         <div class="dropend">
-                            <a class="dropdown-item dropdown-toggle {{ request()->routeIs('induk.akademik.rombel.index', 'induk.akademik.tahun_pelajaran', 'induk.akademik.semester', 'induk.akademik.kelas.index') ? 'active' : '' }}"
+                            <a class="dropdown-item dropdown-toggle {{ request()->routeIs('induk.akademik.rombel.index', 'induk.akademik.tahun-pelajaran.index', 'induk.akademik.semester', 'induk.akademik.kelas.index') ? 'active' : '' }}"
                                 href="#" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button"
                                 aria-expanded="false">
                                 Akademik
@@ -158,10 +158,7 @@
                                     class="dropdown-item {{ request()->routeIs('induk.akademik.tahun-pelajaran.index') ? 'active' : '' }}">
                                     Tahun Pelajaran
                                 </a>
-                                <a href="{{ route('induk.akademik.semester.index') }}"
-                                    class="dropdown-item {{ request()->routeIs('induk.akademik.semester.index') ? 'active' : '' }}">
-                                    Semester
-                                </a>
+
 
                             </div>
                         </div>
