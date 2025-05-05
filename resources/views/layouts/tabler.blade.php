@@ -25,13 +25,13 @@
     </div>
 
     <!-- Konten Utama -->
-    <div class="page-wrapper">
+    <div class="page-wrapper d-flex flex-column flex-grow-1">
         <!-- Navbar -->
         @include('components.top-nav') <!-- Include Navbar -->
 
         @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs ?? []])
 
-        <div class="page-content">
+        <div class="page-content flex-grow-1">
             <div class="page-body">
                 @yield('content') <!-- Konten halaman spesifik -->
             </div>
@@ -46,6 +46,30 @@
 
     @vite('resources/js/app.js')
     @stack('scripts')
+
+    @if (session('import_error_file'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Proses impor sebagian gagal!',
+                    html: `
+                <p>Ada beberapa data yang tidak valid.</p>
+                <p>Silakan cek kesalahan pada baris terakhir data siswa Anda untuk mengetahui letak masalahnya.</p>
+                <a href="{{ session('import_error_file') }}" target="_blank" onclick="Swal.close()" class="swal2-confirm swal2-styled" style="display: inline-block; margin-top: 10px;">
+                    Unduh File Kesalahan
+                </a>
+            `,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Tutup',
+                    customClass: {
+                        popup: 'swal2-popup-custom'
+                    }
+                });
+            });
+        </script>
+    @endif
+
 
     @if (session('success'))
         <script>
@@ -66,7 +90,7 @@
         </script>
     @endif
 
-    @if (session('error'))
+    @if (session('error') && !session('import_error_file'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 Swal.fire({
@@ -84,6 +108,8 @@
             });
         </script>
     @endif
+
+
 
     @if ($errors->any())
         <script>

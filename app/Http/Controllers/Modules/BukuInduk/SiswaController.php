@@ -25,19 +25,46 @@ class SiswaController extends Controller
         ]);
     }
 
+
     public function import(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls',
+        ], [
+            'file.required' => 'Silakan unggah file Excel terlebih dahulu.',
+            'file.mimes'    => 'Format file tidak valid. Harus berupa file dengan ekstensi .xlsx atau .xls.',
         ]);
 
         try {
-            Excel::import(new StudentsImport, $request->file('file'));
-            return redirect()->route('induk.siswa')->with('success', 'Data siswa berhasil diimpor')->withInput([]);
+            $importer = new StudentsImport;
+            Excel::import($importer, $request->file('file'));
+
+            // Cek apakah ada error dari proses import
+            if ($importer->hasErrors()) {
+                return back()->with('import_error_file', session('import_error_file'));
+            }
+
+            return redirect()->route('induk.siswa')->with('success', 'Data siswa berhasil diimpor');
         } catch (\Exception $e) {
-            return back()->withErrors('Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function show($uuid)
     {

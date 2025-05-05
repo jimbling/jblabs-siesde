@@ -100,7 +100,7 @@
                                     <input type="hidden" name="siswa_terpilih" id="siswa_terpilih">
                                     <input type="hidden" name="tingkat_tujuan" id="tingkat_tujuan_input">
                                     <input type="hidden" name="tahun_pelajaran_tujuan" id="tahun_pelajaran_tujuan_input">
-
+                                    <input type="hidden" name="semester_id" id="semester_id" value="">
                                     {{-- Tambahan untuk validasi di controller --}}
                                     <input type="hidden" name="tingkat_awal" id="tingkat_awal_input">
                                     <input type="hidden" name="tahun_pelajaran_awal" id="tahun_pelajaran_awal_input">
@@ -177,21 +177,30 @@
                                 </select>
                             </div>
 
-                            <!-- Form Select Tahun Pelajaran Tujuan -->
+
+
+                            <!-- Form Select Tahun Pelajaran Tujuan dan Semester -->
                             <div class="mb-3 d-flex align-items-center">
-                                <label for="tahun_pelajaran_tujuan" class="me-3 mb-0" style="width: 350px;">Tahun
-                                    Pelajaran Tujuan</label>
-                                <select class="form-select" name="tahun_pelajaran_tujuan" id="tahun_pelajaran_tujuan"
+                                <label for="semester_tujuan" class="me-3 mb-0" style="width: 350px;">Tahun Pelajaran &
+                                    Semester Tujuan</label>
+                                <select class="form-select" name="pilihan_semester_tujuan" id="tahun_pelajaran_tujuan"
                                     required>
-                                    <option value="">-- Pilih Tahun Pelajaran Tujuan --</option>
+                                    required>
+                                    <option value="">-- Pilih Tahun Pelajaran dan Semester Tujuan --</option>
                                     @foreach ($tahunPelajarans as $tahun)
-                                        <option value="{{ $tahun->id }}"
-                                            {{ $tahun->id == old('tahun_pelajaran_tujuan') ? 'selected' : '' }}>
-                                            {{ $tahun->tahun_ajaran }}
-                                        </option>
+                                        @foreach ($tahun->semesters as $sem)
+                                            <option value="{{ $tahun->id }}|{{ $sem->id }}"
+                                                {{ $sem->id == old('semester_tujuan') ? 'selected' : '' }}>
+                                                {{ $tahun->tahun_ajaran }} - {{ ucfirst($sem->semester) }}
+                                            </option>
+                                        @endforeach
                                     @endforeach
                                 </select>
                             </div>
+
+
+
+
                         </form>
 
 
@@ -252,27 +261,52 @@
     @push('scripts')
         {{-- Script Card Kiri --}}
         <script>
+            let selectedTahunId = '';
+            let selectedSemesterId = '';
             document.addEventListener('DOMContentLoaded', function() {
+                const tahunSelect = document.getElementById('tahun_pelajaran_tujuan');
+                const semesterInput = document.getElementById('semester_id');
+                const tahunInput = document.getElementById('tahun_pelajaran_tujuan_input'); // Input hidden untuk tahun
                 const tingkatSelect = document.getElementById('tingkat');
-                const tahunSelect = document.getElementById('tahun_pelajaran_id');
+                const tahunSelect2 = document.getElementById('tahun_pelajaran_id');
                 const tbody = document.getElementById('siswa-table-body');
-
                 const selectAllCheckbox = document.getElementById('select-all');
                 const form = document.getElementById('form-pindah');
                 const siswaInput = document.getElementById('siswa_terpilih');
                 const tingkatInput = document.getElementById('tingkat_tujuan_input');
-                const tahunInput = document.getElementById('tahun_pelajaran_tujuan_input');
                 const btnPindah = document.getElementById('btn-pindah');
                 const konfirmasiModal = new bootstrap.Modal(document.getElementById('konfirmasiModal'));
                 const btnKonfirmasiPindah = document.getElementById('btn-konfirmasi-pindah');
                 const siswaListKonfirmasi = document.getElementById('siswa-list-konfirmasi');
 
+                // Menangani perubahan pada tahun pelajaran dan semester
+                tahunSelect.addEventListener('change', function() {
+                    const selectedValue = this.value;
+
+                    if (selectedValue) {
+                        const [tahunId, semesterId] = selectedValue.split('|');
+
+                        // Set nilai ke hidden input
+                        semesterInput.value = semesterId;
+                        tahunInput.value = tahunId;
+
+                        // JANGAN LUPA: Set juga ke variabel global
+                        selectedTahunId = tahunId;
+                        selectedSemesterId = semesterId;
+                    } else {
+                        semesterInput.value = '';
+                        tahunInput.value = '';
+                        selectedTahunId = '';
+                        selectedSemesterId = '';
+                    }
+                });
+
+
                 // Fungsi untuk fetch siswa
                 function fetchStudents() {
                     const tingkat = tingkatSelect.value || ''; // Jika tidak ada tingkat, set ke string kosong
-                    const tahun = tahunSelect.value || ''; // Jika tidak ada tahun, set ke string kosong
+                    const tahun = tahunSelect2.value || ''; // Jika tidak ada tahun, set ke string kosong
 
-                    // Bangun URL dengan parameter yang sudah dipilih (biarkan kosong jika tidak dipilih)
                     let url = `/rombel/siswa/json?tingkat=${tingkat}&tahun_pelajaran_id=${tahun}`;
 
                     // Jika tingkat dan tahun kosong, cari siswa yang belum memiliki kelas
@@ -290,41 +324,37 @@
                         .then(data => {
                             tbody.innerHTML = '';
 
-                            // Jika tidak ada data siswa yang ditemukan
                             if (!data.students || data.students.length === 0) {
                                 tbody.innerHTML = `
-                                    <tr>
-                                        <td colspan="4" class="text-center text-warning">
-                                            Tidak ada siswa yang ditemukan.
-                                        </td>
-                                    </tr>`;
+                        <tr>
+                            <td colspan="4" class="text-center text-warning">
+                                Tidak ada siswa yang ditemukan.
+                            </td>
+                        </tr>`;
                                 return;
                             }
 
-                            // Menampilkan data siswa
                             data.students.forEach(siswa => {
                                 const rombelNama = siswa.student_rombels && siswa.student_rombels.length >
                                     0 ?
-                                    siswa.student_rombels[0].rombel?.tingkat :
-                                    '-';
+                                    siswa.student_rombels[0].rombel?.tingkat : '-';
                                 const row = `
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox"
-                                                   class="form-check-input siswa-checkbox"
-                                                   data-id="${siswa.id}"
-                                                   data-uuid="${siswa.uuid}"
-                                                   data-nama="${siswa.nama}">
-                                        </td>
-                                        <td>${siswa.nama}</td>
-                                        <td>${siswa.nisn ?? '-'}</td>
-                                         <td>${rombelNama}</td>
-                                    </tr>
-                                `;
+                        <tr>
+                            <td>
+                                <input type="checkbox"
+                                       class="form-check-input siswa-checkbox"
+                                       data-id="${siswa.id}"
+                                       data-uuid="${siswa.uuid}"
+                                       data-nama="${siswa.nama}">
+                            </td>
+                            <td>${siswa.nama}</td>
+                            <td>${siswa.nisn ?? '-'}</td>
+                            <td>${rombelNama}</td>
+                        </tr>
+                    `;
                                 tbody.insertAdjacentHTML('beforeend', row);
                             });
 
-                            // Tambahkan event listener untuk checkbox
                             document.querySelectorAll('.siswa-checkbox').forEach(box => {
                                 box.addEventListener('change', handleCheckboxChange);
                             });
@@ -332,33 +362,29 @@
                         .catch(err => {
                             console.error('Error:', err);
                             tbody.innerHTML = `
-                                <tr>
-                                    <td colspan="4" class="text-center text-danger">
-                                        Terjadi kesalahan saat memuat data siswa.
-                                    </td>
-                                </tr>`;
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            Terjadi kesalahan saat memuat data siswa.
+                        </td>
+                    </tr>`;
                         });
                 }
 
-                // Jalankan fetchStudents saat halaman pertama kali dimuat
                 fetchStudents();
 
-                // Menangani perubahan di dropdown tingkat dan tahun
                 tingkatSelect.addEventListener('change', fetchStudents);
-                tahunSelect.addEventListener('change', fetchStudents);
+                tahunSelect2.addEventListener('change', fetchStudents);
 
-                // Menangani aksi select all checkboxes
                 selectAllCheckbox.addEventListener('change', function() {
                     const isChecked = selectAllCheckbox.checked;
                     document.querySelectorAll('.siswa-checkbox').forEach(checkbox => {
                         checkbox.checked = isChecked;
                     });
 
-                    handleCheckboxChange(); // <--- ini penting untuk mengisi input hidden
+                    handleCheckboxChange();
                     updateSiswaTerpilih();
                 });
 
-                // Fungsi untuk memperbarui siswa yang terpilih
                 function handleCheckboxChange() {
                     const selectedCheckboxes = Array.from(document.querySelectorAll('.siswa-checkbox:checked'));
                     const selectedSiswa = selectedCheckboxes.map(cb => ({
@@ -370,14 +396,12 @@
                     siswaInput.value = JSON.stringify(selectedSiswa);
                 }
 
-                // Fungsi untuk memperbarui daftar siswa terpilih
                 function updateSiswaTerpilih() {
                     const selectedCheckboxes = Array.from(document.querySelectorAll('.siswa-checkbox:checked'));
                     const siswaNames = selectedCheckboxes.map(cb => cb.dataset.nama).join(', ');
                     siswaListKonfirmasi.innerText = siswaNames;
                 }
 
-                // Menangani klik tombol pindah siswa
                 btnPindah.addEventListener('click', function(e) {
                     e.preventDefault();
 
@@ -389,26 +413,25 @@
                     }));
 
                     if (selectedSiswa.length === 0) {
-                        // Tampilkan modal peringatan jika tidak ada siswa yang terpilih
                         const modalPeringatan = new bootstrap.Modal(document.getElementById(
                             'modalPeringatanTidakAdaData'));
                         modalPeringatan.show();
                         return;
                     }
 
-                    // Set nilai tujuan
+                    // ✅ Set semua input hidden dengan nilai terbaru
                     tingkatInput.value = document.getElementById('tingkat_tujuan').value;
-                    tahunInput.value = document.getElementById('tahun_pelajaran_tujuan').value;
+                    tahunInput.value = selectedTahunId;
+                    semesterInput.value = selectedSemesterId;
 
-                    // Set nilai awal
                     document.getElementById('tingkat_awal_input').value = document.getElementById('tingkat')
                         .value;
                     document.getElementById('tahun_pelajaran_awal_input').value = document.getElementById(
                         'tahun_pelajaran_id').value;
 
-                    // Tampilkan modal konfirmasi
                     konfirmasiModal.show();
                 });
+
             });
         </script>
 

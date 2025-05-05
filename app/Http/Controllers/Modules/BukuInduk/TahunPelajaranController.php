@@ -23,7 +23,7 @@ class TahunPelajaranController extends Controller
     {
         $tahunPelajaran = $this->tahunPelajaranService->getAllTahunPelajaran();
 
-        // Flatten agar 1 baris per semester
+
         $data = [];
         foreach ($tahunPelajaran as $tp) {
             if ($tp->semesters->count()) {
@@ -31,13 +31,13 @@ class TahunPelajaranController extends Controller
                     $data[] = (object) [
                         'tp_id' => $tp->id,
                         'tahun_ajaran' => $tp->tahun_ajaran,
-                        'tanggal_mulai_indo' => $semester->tanggal_mulai_indo, // ambil dari semester
-                        'tanggal_selesai_indo' => $semester->tanggal_selesai_indo, // ambil dari semester
+                        'tanggal_mulai_indo' => $semester->tanggal_mulai_indo,
+                        'tanggal_selesai_indo' => $semester->tanggal_selesai_indo,
                         'semester' => $semester,
                     ];
                 }
             } else {
-                // Tidak punya semester, jadi tanggal tidak bisa ditampilkan
+
                 $data[] = (object) [
                     'tp_id' => $tp->id,
                     'tahun_ajaran' => $tp->tahun_ajaran,
@@ -54,27 +54,18 @@ class TahunPelajaranController extends Controller
             'breadcrumbs' => BreadcrumbHelper::generate([
                 ['name' => 'Tahun Pelajaran']
             ]),
-            'data' => $data, // <--- ini yang dipakai di blade
+            'data' => $data,
         ]);
     }
 
-
-
-
     public function store(StoreTahunPelajaranRequest $request)
     {
-        // Validasi  oleh FormRequest
+
         $validated = $request->validated();
-
-        // Buat data TahunPelajaran baru
         TahunPelajaran::create($validated);
-
         return redirect()->route('induk.akademik.tahun-pelajaran.index')
             ->with('success', 'Tahun pelajaran berhasil ditambahkan.');
     }
-
-
-
 
 
     public function bulkDestroy(Request $request)

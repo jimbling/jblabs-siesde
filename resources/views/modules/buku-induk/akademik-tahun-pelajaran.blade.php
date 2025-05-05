@@ -1,5 +1,4 @@
-@extends('layouts.tabler') <!-- Gunakan layout utama Tabler -->
-
+@extends('layouts.tabler')
 @section('title', $title ?? 'Dashboard')
 
 @section('page-title', 'Welcome to the Dashboard')
@@ -412,7 +411,7 @@
     {{-- Modal Konfirmasi Hapus --}}
     <x-modal.konfirmasi id="modalKonfirmasiHapus" title="Hapus Data Terpilih?"
         body="Data yang dipilih akan dihapus permanen. Tindakan ini tidak dapat dibatalkan." btnLabel="Ya, Hapus"
-        btnColor="danger" :formAction="''" {{-- formAction dikosongkan, nanti diisi JS --}} method="DELETE" />
+        btnColor="danger" :formAction="''" method="DELETE" />
 
 
     {{-- Modal Peringatan Tidak Ada Data --}}
@@ -646,7 +645,6 @@
                 };
             });
 
-            // Fungsi untuk memilih semua checkbox
             document.getElementById('select-all').addEventListener('change', function() {
                 const isChecked = this.checked;
                 const checkboxes = document.querySelectorAll('.row-checkbox');
@@ -665,8 +663,6 @@
                 });
             });
         </script>
-
-
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 const tanggalMulaiDisplay = document.getElementById('tanggal_mulai_display');
@@ -694,7 +690,7 @@
                     }
                 });
 
-                // Saat form akan dikirim, pastikan hidden input punya nilai
+
                 document.querySelector('#modalTambahSemester form').addEventListener('submit', function(e) {
                     if (!tanggalMulai.value && tanggalMulaiDisplay.value) {
                         const d = pickerMulai.getDate();

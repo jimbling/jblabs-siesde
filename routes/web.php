@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Modules\Admin\DashboardController;
 use App\Http\Controllers\Modules\BukuInduk\SiswaController;
@@ -128,6 +129,8 @@ Route::prefix('rombel/siswa')
 
 
 
+
+
 // Profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [PengaturanController::class, 'edit'])->name('profile.edit');
@@ -136,6 +139,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update-avatar', [PengaturanController::class, 'updateAvatar'])->name('profile.update-avatar');
     Route::get('/profile/delete-avatar', [PengaturanController::class, 'deleteAvatar'])->name('profile.delete-avatar');
 });
+
+
 
 Route::post('/clear-session-flash', function (Illuminate\Http\Request $request) {
     foreach ($request->keys as $key) {

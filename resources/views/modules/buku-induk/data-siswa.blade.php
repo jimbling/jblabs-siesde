@@ -6,6 +6,10 @@
 
 @section('content')
     <div class="container-fluid">
+
+
+
+
         <div class="card">
             <div class="card-body p-0">
                 <div class="card">
@@ -16,6 +20,8 @@
                                     <h3 class="card-title mb-0">Peserta Didik</h3>
                                     <p class="text-secondary m-0">Jumlah Peserta Didik : {{ $totalStudents }}</p>
                                 </div>
+
+
                                 <div class="col-md-auto col-sm-12">
                                     <div class="ms-auto d-flex flex-wrap btn-list">
                                         <!-- Tombol untuk membuka modal -->
@@ -109,7 +115,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="table-tbody">
-                                        @foreach ($students as $student)
+                                        @forelse ($students as $student)
                                             <tr>
                                                 <td>
                                                     <input class="form-check-input m-0 align-middle table-selectable-check"
@@ -188,7 +194,27 @@
                                                 </td>
 
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted py-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2"
+                                                        width="48" height="48" viewBox="0 0 24 24"
+                                                        stroke-width="1.5" stroke="currentColor" fill="none"
+                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <circle cx="12" cy="12" r="9" />
+                                                        <line x1="12" y1="8" x2="12"
+                                                            y2="12" />
+                                                        <line x1="12" y1="16" x2="12.01"
+                                                            y2="16" />
+                                                    </svg>
+                                                    <div><strong>Tidak ada data siswa yang tersedia.</strong></div>
+                                                    <div class="small text-muted">Silakan tambahkan data atau periksa
+                                                        filter pencarian Anda.</div>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+
                                     </tbody>
 
                                 </table>
@@ -231,17 +257,57 @@
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('induk.import-siswa') }}" method="POST" enctype="multipart/form-data">
+                <form id="importForm" action="{{ route('induk.import-siswa') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="importSiswaModalLabel">Import Data Siswa</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
+
+                        <div class="mb-3">
+                            <div class="alert alert-info" role="alert">
+                                <strong>Informasi:</strong> Silakan unduh dan isi file template Excel dengan benar sebelum
+                                melakukan import.
+                            </div>
+
+                            <a href="{{ asset('storage/panduan/dummy_siswa_22.xlsx') }}"
+                                class="btn btn-outline-primary btn-sm mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-cloud-down">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M12 18.004h-5.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.38 0 2.573 .813 3.13 1.99" />
+                                    <path d="M19 16v6" />
+                                    <path d="M22 19l-3 3l-3 -3" />
+                                </svg>
+                                Template Excel
+                            </a>
+
+                            <a href="{{ asset('storage/panduan/panduan.pdf') }}"
+                                class="btn btn-outline-warning btn-sm mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book-download">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 20h-6a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12v5" />
+                                    <path d="M13 16h-7a2 2 0 0 0 -2 2" />
+                                    <path d="M15 19l3 3l3 -3" />
+                                    <path d="M18 22v-9" />
+                                </svg>
+                                Panduan
+                            </a>
+                        </div>
+
                         <div class="form-group">
                             <label for="file">Pilih file Excel (.xlsx)</label>
-                            <input type="file" name="file" class="form-control" required>
+                            <input type="file" name="file" class="form-control">
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -251,6 +317,7 @@
             </div>
         </div>
     </div>
+
 
     {{-- Modal Konfirmasi Hapus --}}
     <x-modal.konfirmasi id="modalKonfirmasiHapus" title="Hapus Data Terpilih?"
@@ -397,6 +464,67 @@
                     form.onsubmit = function(e) {
 
                     };
+                });
+            });
+        </script>
+
+        <script>
+            document.getElementById('importForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Memproses Import...',
+                    text: 'Mohon tunggu beberapa saat.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Submit form setelah SweetAlert ditampilkan
+                setTimeout(() => {
+                    e.target.submit();
+                }, 300);
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const importForm = document.getElementById('importForm');
+                const submitButton = importForm.querySelector('button[type="submit"]');
+                const fileInput = importForm.querySelector('input[name="file"]');
+
+                // Validasi saat file dipilih (format file)
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (!file) return;
+
+                    const allowedExtensions = ['xls', 'xlsx'];
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Format file tidak didukung',
+                            text: 'Silakan pilih file dengan format .xls atau .xlsx',
+                        });
+                        this.value = ''; // reset input
+                    }
+                });
+
+                // Validasi sebelum submit (file kosong)
+                submitButton.addEventListener('click', function(e) {
+                    const file = fileInput.files[0];
+
+                    if (!file) {
+                        e.preventDefault(); // Hentikan submit jika file kosong
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'File belum dipilih',
+                            text: 'Silakan pilih file Excel terlebih dahulu sebelum mengimpor.',
+                        });
+                    }
                 });
             });
         </script>
