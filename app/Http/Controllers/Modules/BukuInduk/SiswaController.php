@@ -80,6 +80,7 @@ class SiswaController extends Controller
             'studentRombels.tahunPelajaran',
             'studentRombels.semester',
             'studentRombels.rombel',
+            'fotoTerbaru',
         ])->where('uuid', $uuid)->firstOrFail();
 
         $riwayatSekolah = $student->riwayatSekolah->first();

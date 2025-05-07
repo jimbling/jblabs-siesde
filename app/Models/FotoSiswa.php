@@ -14,7 +14,11 @@ class FotoSiswa extends Model
     protected $fillable = [
         'siswa_uuid',
         'path_foto',
-        'kelas',
+        'tahun_pelajaran_id',
+        'rombel_id',
+        'semester_id',
+        'path_foto',
+        'path_foto_asli',
         'created_at',
         'updated_at',
     ];
@@ -24,6 +28,21 @@ class FotoSiswa extends Model
 
     public function siswa()
     {
-        return $this->belongsTo(Student::class, 'siswa_uuid', 'siswa_uuid');
+        return $this->belongsTo(Student::class, 'siswa_uuid', 'uuid');
+    }
+
+    public function tahunPelajaran()
+    {
+        return $this->belongsTo(TahunPelajaran::class, 'tahun_pelajaran_id');
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semester_id');
+    }
+
+    public function rombel()
+    {
+        return $this->belongsTo(Rombel::class, 'rombel_id');
     }
 }

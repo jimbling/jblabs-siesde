@@ -29,7 +29,9 @@
         <!-- Navbar -->
         @include('components.top-nav') <!-- Include Navbar -->
 
-        @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs ?? []])
+        @if (!empty($breadcrumbs))
+            @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+        @endif
 
         <div class="page-content flex-grow-1">
             <div class="page-body">

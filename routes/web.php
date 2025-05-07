@@ -10,6 +10,7 @@ use App\Http\Controllers\Modules\Pengaturan\AksesController;
 use App\Http\Controllers\Modules\Pengaturan\SistemController;
 use App\Http\Controllers\Modules\BukuInduk\KenaikanController;
 use App\Http\Controllers\Modules\BukuInduk\SemesterController;
+use App\Http\Controllers\Modules\BukuInduk\FotoSiswaController;
 use App\Http\Controllers\Modules\Pengaturan\PembaruanController;
 use App\Http\Controllers\Modules\Pengaturan\PengaturanController;
 use App\Http\Controllers\Modules\Pengaturan\PemeliharaanController;
@@ -108,6 +109,28 @@ Route::prefix('induk')->name('induk.')->group(function () {
     Route::delete('/kelas/mass-delete', [RombelController::class, 'massDelete'])
         ->middleware('can:atur rombel')->name('kelas.massDelete');
 });
+
+// Buku Induk -  Foto Siswa
+Route::prefix('induk/akademik')
+    ->name('induk.akademik.')
+    ->middleware(['auth', 'can:atur foto'])
+    ->group(function () {
+
+        // Route khusus menampilkan semua foto untuk siswa tertentu
+        Route::get('foto-siswa/by/{siswa_uuid}', [FotoSiswaController::class, 'index'])
+            ->name('foto-siswa.by-siswa');
+
+        // Resource route standar (show, create, store, etc)
+        Route::resource('foto-siswa', FotoSiswaController::class)
+            ->parameters(['foto-siswa' => 'foto_siswa']); // Hindari bentrok dengan siswa_uuid
+    });
+
+Route::middleware(['auth', 'can:atur foto'])->group(function () {
+    Route::get('/get-semesters/{tahunPelajaranId}', function ($id) {
+        return \App\Models\Semester::where('tahun_pelajaran_id', $id)->get();
+    })->name('get-semesters');
+});
+
 
 // Rombel Siswa (Kenaikan Kelas)
 Route::prefix('rombel/siswa')

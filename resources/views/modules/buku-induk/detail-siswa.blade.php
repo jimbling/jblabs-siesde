@@ -11,12 +11,16 @@
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
                         <div class="avatar avatar-xl me-3"
-                            style="background-image: url('{{ $student->foto_url ?? asset('default-avatar.png') }}')"></div>
+                            style="background-image: url('{{ $student->fotoTerbaru ? asset('storage/' . $student->fotoTerbaru->path_foto) : asset('default-avatar.png') }}');
+                               background-size: cover;
+                               background-position: center;">
+                        </div>
                         <div>
                             <h2 class="card-title mb-0">{{ $student->nama }}</h2>
                             <small class="text-muted">{{ $student->nipd }} | {{ $student->nisn }}</small>
                         </div>
                     </div>
+
 
                     <div class="card-body">
                         <!-- Tabs Navigation -->

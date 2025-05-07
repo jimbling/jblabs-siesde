@@ -107,4 +107,14 @@ class Student extends Model
     {
         return Carbon::parse($this->tanggal_lahir)->translatedFormat('F d, Y');
     }
+
+    public function rombels()
+    {
+        return $this->hasMany(StudentRombel::class, 'siswa_uuid', 'uuid');
+    }
+
+    public function fotoTerbaru()
+    {
+        return $this->hasOne(FotoSiswa::class, 'siswa_uuid', 'uuid')->latestOfMany('created_at');
+    }
 }

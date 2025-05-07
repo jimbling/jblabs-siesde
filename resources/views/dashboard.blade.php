@@ -276,33 +276,7 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-10">
-                                <h3 class="h1">Tabler Icons</h3>
-                                <div class="markdown text-secondary">
-                                    All icons come from the Tabler Icons set and are MIT-licensed. Visit
-                                    <a href="https://tabler.io/icons" target="_blank" rel="noopener">tabler.io/icons</a>,
-                                    download any of the 5844 icons in SVG, PNG
-                                    or&nbsp;React and use them in your favourite design tools.
-                                </div>
-                                <div class="mt-3">
-                                    <a href="https://tabler.io/icons" class="btn btn-primary" target="_blank"
-                                        rel="noopener">
-                                        <!-- Download SVG icon from http://tabler.io/icons/icon/download -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-                                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                                            <path d="M7 11l5 5l5 -5" />
-                                            <path d="M12 4l0 12" />
-                                        </svg>
-                                        Download icons
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
