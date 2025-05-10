@@ -110,7 +110,7 @@
                     </div>
                 </li>
 
-                <li class="nav-item dropdown {{ Request::is('induk/*') ? 'active' : '' }}">
+                <li class="nav-item dropdown {{ request()->routeIs('induk.*') ? 'active' : '' }}">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button"
                         aria-expanded="false" data-bs-auto-close="outside">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -162,6 +162,11 @@
 
                             </div>
                         </div>
+
+                        <a class="dropdown-item {{ request()->routeIs('induk.index') ? 'active' : '' }}"
+                            href="{{ route('induk.index') }}">
+                            Cetak
+                        </a>
 
 
                     </div>

@@ -1,0 +1,680 @@
+<!-- Modal Import Siswa -->
+<div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+            <div class="modal-header custom-header">
+                <h5 class="modal-title" id="tambahSiswaModalLabel">Tambah Data Siswa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form Import Siswa -->
+                <form action="{{ route('induk.siswa.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="card-body">
+                        <!-- Identitas Pribadi -->
+                        <div class="card mb-4">
+                            <div class="card-header card-header-custom d-flex justify-content-between align-items-center bg-outline-success"
+                                data-bs-toggle="collapse" href="#identitasPribadi" style="cursor: pointer;">
+                                <h5 class="mb-0">Identitas Pribadi</h5>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down collapse-icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </div>
+                            <div class="collapse show" id="identitasPribadi">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Nama Lengkap</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nama"
+                                                placeholder="Nama lengkap sesuai akta" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nama Panggilan</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nama_panggilan"
+                                                placeholder="Nama panggilan sehari-hari">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Jenis Kelamin</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="jk" required>
+                                                <option value="">Pilih Jenis Kelamin</option>
+                                                <option value="L">Laki-laki</option>
+                                                <option value="P">Perempuan</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Tanggal Lahir</label>
+                                        <div class="col-md-9">
+                                            <!-- Input yang akan terlihat -->
+                                            <input type="text" id="tanggal_lahir_display" class="form-control"
+                                                placeholder="Pilih tanggal..." required>
+
+                                            <!-- Input tersembunyi untuk dikirim ke server -->
+                                            <input type="hidden" id="tanggal_lahir" name="tanggal_lahir" required>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Tempat Lahir</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="tempat_lahir"
+                                                placeholder="Kota/kabupaten lahir" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">NIK</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nik"
+                                                placeholder="Nomor Induk Kependudukan" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Agama</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="agama_id" required>
+                                                @foreach ($agamas as $agama)
+                                                    <option value="{{ $agama->id }}">{{ $agama->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Kewarganegaraan</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="kewarganegaraan" required>
+                                                <option value="WNI">WNI</option>
+                                                <option value="WNA">WNA</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">No. KK</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="no_kk"
+                                                placeholder="Nomor Kartu Keluarga">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Anak Ke-</label>
+                                        <div class="col-md-9">
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" name="anak_ke"
+                                                    placeholder="Anak keberapa">
+                                                <span class="input-group-text">dari</span>
+                                                <input type="number" class="form-control"
+                                                    name="jumlah_saudara_kandung" placeholder="Jumlah saudara">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Saudara Tiri</label>
+                                        <div class="col-md-9">
+                                            <input type="number" class="form-control" name="saudara_tiri"
+                                                placeholder="Saudara Tiri">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Saudara Angkat</label>
+                                        <div class="col-md-9">
+                                            <input type="number" class="form-control" name="saudara_angkat"
+                                                placeholder="Saudara Angkat">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Status Anak</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="status_anak">
+                                                <option value="Kandung">Kandung</option>
+                                                <option value="Tiri">Tiri</option>
+                                                <option value="Angkat">Angkat</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Bahasa Sehari-hari</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="bahasa_keseharian"
+                                                placeholder="Bahasa yang digunakan">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Kebutuhan Khusus</label>
+                                        <div class="col-md-9">
+                                            <select id="select-kebutuhan-khusus" class="form-select"
+                                                name="kebutuhan_khusus" data-toggle="select">
+                                                @foreach ($kebutuhanKhususes as $item)
+                                                    <option value="{{ $item->nama }}">{{ $item->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alamat -->
+                        <div class="card mb-4">
+                            <div class="card-header card-header-custom d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse" href="#alamat" style="cursor: pointer;">
+                                <h5 class="mb-0">Alamat</h5>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down collapse-icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </div>
+                            <div class="collapse show" id="alamat">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Alamat Jalan</label>
+                                        <div class="col-md-9">
+                                            <textarea class="form-control" name="alamat" rows="2" placeholder="Jalan, nomor rumah, blok/komplek"
+                                                required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">RT / RW</label>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" name="rt"
+                                                placeholder="RT, misal: 001">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input type="text" class="form-control" name="rw"
+                                                placeholder="RW, misal: 002">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Dusun</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="dusun"
+                                                placeholder="Nama dusun / lingkungan">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Provinsi</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="provinsi" id="provinsi"
+                                                required></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Kabupaten / Kota</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="kabupaten" id="kabupaten"
+                                                required></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Kecamatan</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="kecamatan" id="kecamatan"
+                                                required></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">Kelurahan / Desa</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="kelurahan" id="kelurahan"
+                                                required></select>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Kode Pos</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="kode_pos"
+                                                placeholder="Kode pos wilayah">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Jarak ke Sekolah (km)</label>
+                                        <div class="col-md-9">
+                                            <input type="number" step="0.1" class="form-control"
+                                                name="jarak_rumah_km" placeholder="Dalam kilometer">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Alat Transportasi</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="alat_transportasi_id">
+                                                @foreach ($alatTransportasis as $transport)
+                                                    <option value="{{ $transport->id }}">{{ $transport->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Jenis Tinggal</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="jenis_tinggal_id">
+                                                @foreach ($jenisTinggals as $tinggal)
+                                                    <option value="{{ $tinggal->id }}">{{ $tinggal->nama }}</option>
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Koordinat (Lintang)</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="lintang"
+                                                placeholder="Koordinat lintang">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Koordinat (Bujur)</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="bujur"
+                                                placeholder="Koordinat bujur">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kontak -->
+                        <div class="card mb-4">
+                            <div class="card-header card-header-custom d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse" href="#kontak" style="cursor: pointer;">
+                                <h5 class="mb-0">Kontak</h5>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down collapse-icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </div>
+                            <div class="collapse show" id="kontak">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nomor Telepon</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="telepon"
+                                                placeholder="Nomor telepon rumah">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nomor HP</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="hp"
+                                                placeholder="Nomor handphone aktif">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Email</label>
+                                        <div class="col-md-9">
+                                            <input type="email" class="form-control" name="email"
+                                                placeholder="Alamat email aktif">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orang Tua -->
+
+                        <div class="card mb-4">
+                            <div class="card-header card-header-custom d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse" href="#orangTua" style="cursor: pointer;">
+                                <h5 class="mb-0">Data Orang Tua/Wali</h5>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down collapse-icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </div>
+                            <div class="collapse show" id="orangTua">
+                                <div class="card-body">
+                                    <!-- Ayah -->
+                                    <div class="parent-form-section form-ayah" data-title="Data Ayah">
+                                        <div class="form-header">
+                                            <h6 class="mb-0 text-primary"><i
+                                                    class="bi bi-gender-male me-2"></i>Informasi Ayah</h6>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Nama Ayah</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="ayah_nama"
+                                                    placeholder="Nama Ayah" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Tahun Lahir</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="ayah_tahun_lahir"
+                                                    placeholder="Tahun Lahir" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Pendidikan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ayah_pendidikan_id">
+                                                    <option value="">Pilih Pendidikan</option>
+                                                    @foreach ($pendidikans as $pendidikan)
+                                                        <option value="{{ $pendidikan->id }}">
+                                                            {{ $pendidikan->jenjang }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Pekerjaan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ayah_pekerjaan_id">
+                                                    <option value="">Pilih Pekerjaan</option>
+                                                    @foreach ($pekerjaans as $pekerjaan)
+                                                        <option value="{{ $pekerjaan->id }}">
+                                                            {{ $pekerjaan->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Penghasilan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ayah_penghasilan_id">
+                                                    <option value="">Pilih Penghasilan</option>
+                                                    @foreach ($penghasilans as $penghasilan)
+                                                        <option value="{{ $penghasilan->id }}">
+                                                            {{ $penghasilan->rentang }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">NIK</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="ayah_nik"
+                                                    placeholder="Nomor Induk Kependudukan" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Ibu -->
+                                    <div class="parent-form-section form-ibu" data-title="Data Ibu">
+                                        <div class="form-header">
+                                            <h6 class="mb-0 text-pink"><i
+                                                    class="bi bi-gender-female me-2"></i>Informasi Ibu</h6>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Nama Ibu</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="ibu_nama"
+                                                    placeholder="Nama Ibu" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Tahun Lahir</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="ibu_tahun_lahir"
+                                                    placeholder="Tahun Lahir" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Pendidikan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ibu_pendidikan_id">
+                                                    <option value="">Pilih Pendidikan</option>
+                                                    @foreach ($pendidikans as $pendidikan)
+                                                        <option value="{{ $pendidikan->id }}">
+                                                            {{ $pendidikan->jenjang }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Pekerjaan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ibu_pekerjaan_id">
+                                                    <option value="">Pilih Pekerjaan</option>
+                                                    @foreach ($pekerjaans as $pekerjaan)
+                                                        <option value="{{ $pekerjaan->id }}">
+                                                            {{ $pekerjaan->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">Penghasilan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ibu_penghasilan_id">
+                                                    <option value="">Pilih Penghasilan</option>
+                                                    @foreach ($penghasilans as $penghasilan)
+                                                        <option value="{{ $penghasilan->id }}">
+                                                            {{ $penghasilan->rentang }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label">NIK</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="ibu_nik"
+                                                    placeholder="Nomor Induk Kependudukan" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <!-- Data Lainnya -->
+                        <div class="card mb-4">
+                            <div class="card-header card-header-custom d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse" href="#dataLainnya" style="cursor: pointer;">
+                                <h5 class="mb-0">Data Lainnya</h5>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down collapse-icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </div>
+                            <div class="collapse show" id="dataLainnya">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Penerima KPS</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="penerima_kps">
+                                                <option value="0">Tidak</option>
+                                                <option value="1">Ya</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nomor KPS</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="no_kps"
+                                                placeholder="Jika penerima KPS">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Penerima KIP</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="penerima_kip">
+                                                <option value="0">Tidak</option>
+                                                <option value="1">Ya</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nomor KIP</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nomor_kip"
+                                                placeholder="Jika penerima KIP">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nama di KIP</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nama_di_kip"
+                                                placeholder="Nama sesuai KIP">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nomor KKS</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nomor_kks"
+                                                placeholder="Nomor Kartu Keluarga Sejahtera">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Layak PIP</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="layak_pip">
+                                                <option value="0">Tidak</option>
+                                                <option value="1">Ya</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Alasan Layak PIP</label>
+                                        <div class="col-md-9">
+                                            <textarea class="form-control" name="alasan_layak_pip" rows="2" placeholder="Alasan jika layak PIP"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">No. Registrasi Akta</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="no_registrasi_akta"
+                                                placeholder="Nomor akta kelahiran">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">SKHUN</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="skhun"
+                                                placeholder="Nomor SKHUN">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">NIPD</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nipd"
+                                                placeholder="Nomor Induk Peserta Didik" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">NISN</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nisn"
+                                                placeholder="Nomor Induk Siswa Nasional">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Bank</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="bank"
+                                                placeholder="Nama bank">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Nomor Rekening</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="nomor_rekening"
+                                                placeholder="Nomor rekening bank">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Atas Nama Rekening</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="rekening_atas_nama"
+                                                placeholder="Nama pemilik rekening">
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer text-end">
+                        <button type="reset" class="btn btn-outline-secondary me-2">
+                            <i class="ti ti-reload me-1"></i> Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-device-floppy me-1"></i> Simpan Data
+                        </button>
+                    </div>
+                </form>
+
+                <!-- JavaScript untuk toggle icon -->
+
+            </div>
+        </div>
+    </div>
+</div>

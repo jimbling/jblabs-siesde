@@ -53,8 +53,10 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="me-auto">
-                                        <h3 class="card-title mb-1">{{ $siswa->nama ?? '-' }}</h3>
-                                        <div class="text-muted">
+                                        <h3 class="card-title mb-1" data-bs-placement="top" data-bs-toggle="tooltip"
+                                            title="Nama Siswa">{{ $siswa->nama ?? '-' }}</h3>
+                                        <div class="text-muted" data-bs-placement="top" data-bs-toggle="tooltip"
+                                            title="Tanggal Lahir">
                                             <small>{{ $tanggal_lahir_formatted ?? '-' }}</small>
                                         </div>
                                     </div>
@@ -270,7 +272,7 @@
 
                                     <a href="{{ asset('storage/' . $foto->path_foto) }}"
                                         class="btn btn-icon btn-outline-secondary ms-auto" download
-                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Download Foto">
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Unduh Foto">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                             fill="none" stroke-linecap="round" stroke-linejoin="round">

@@ -25,6 +25,21 @@
                                 <div class="col-md-auto col-sm-12">
                                     <div class="ms-auto d-flex flex-wrap btn-list">
                                         <!-- Tombol untuk membuka modal -->
+                                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                                            data-bs-target="#tambahSiswaModal">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-users-plus">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                                <path d="M3 21v-2a4 4 0 0 1 4 -4h4c.96 0 1.84 .338 2.53 .901" />
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                                <path d="M16 19h6" />
+                                                <path d="M19 16v6" />
+                                            </svg>
+                                            Tambah Siswa
+                                        </button>
                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
                                             data-bs-target="#importSiswaModal">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -354,6 +369,8 @@
         message="Silakan pilih setidaknya satu data untuk dihapus." btnLabel="Tutup" btnColor="warning" formAction="#"
         method="GET" />
 
+    @include('components.modal.tambah-siswa')
+
 
     @push('scripts')
         <script>
@@ -552,6 +569,167 @@
                     }
                 });
             });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Fungsi untuk update icon
+                const updateChevron = (trigger) => {
+                    const target = document.querySelector(trigger.getAttribute('href'));
+                    const icon = trigger.querySelector('.collapse-icon path:last-child');
+
+                    if (target.classList.contains('show')) {
+                        icon.setAttribute('d', 'M6 15l6 -6l6 6'); // Chevron up
+                    } else {
+                        icon.setAttribute('d', 'M6 9l6 6l6 -6'); // Chevron down
+                    }
+                };
+
+                // Inisialisasi untuk semua collapse element
+                document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(trigger => {
+                    const target = document.querySelector(trigger.getAttribute('href'));
+
+                    // Update icon saat pertama kali load
+                    updateChevron(trigger);
+
+                    // Gunakan event Bootstrap resmi
+                    target.addEventListener('shown.bs.collapse', () => updateChevron(trigger));
+                    target.addEventListener('hidden.bs.collapse', () => updateChevron(trigger));
+
+                    // Fallback untuk click langsung
+                    trigger.addEventListener('click', () => {
+                        setTimeout(() => updateChevron(trigger), 50);
+                    });
+                });
+            });
+        </script>
+
+        <script>
+            function initTomSelectWithTheme() {
+                const isDark = document.body.classList.contains('theme-dark');
+                const select = new TomSelect("#select-kebutuhan-khusus", {
+                    render: {
+                        option: function(data, escape) {
+                            return `<div class="${isDark ? 'bg-dark text-white' : ''}">${escape(data.text)}</div>`;
+                        }
+                    }
+                });
+            }
+
+            // Jika Anda punya tombol toggle dark/light:
+            document.getElementById('themeToggleBtn')?.addEventListener('click', function() {
+                // Hapus dan inisialisasi ulang (atau perbarui class)
+                document.querySelectorAll('.ts-wrapper').forEach(el => el.remove());
+                initTomSelectWithTheme();
+            });
+
+            // Panggil saat pertama
+            initTomSelectWithTheme();
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modalEl = document.getElementById('tambahSiswaModal');
+
+                modalEl.addEventListener('shown.bs.modal', function() {
+                    window.initializeFlatpickr("#tanggal_lahir_display", {
+                        altInput: true,
+                        altFormat: "d F Y",
+                        dateFormat: "Y-m-d",
+                        maxDate: "today",
+                        defaultDate: "1994-01-01",
+                        locale: "id",
+                        onChange: function(selectedDates, dateStr) {
+                            document.getElementById('tanggal_lahir').value = dateStr;
+                        }
+                    });
+                });
+            });
+        </script>
+
+
+        <script>
+            const apiUrl = "https://jimbling.github.io/api-wilayah-indonesia/api";
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const provinsiSelect = document.getElementById('provinsi');
+                const kabupatenSelect = document.getElementById('kabupaten');
+                const kecamatanSelect = document.getElementById('kecamatan');
+                const kelurahanSelect = document.getElementById('kelurahan');
+
+                // Ambil daftar provinsi
+                fetch(`${apiUrl}/provinces.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                        provinsiSelect.innerHTML = `<option value="">-- Pilih Provinsi --</option>`;
+                        data.forEach(item => {
+                            provinsiSelect.innerHTML +=
+                                `<option value="${item.id}" data-nama="${item.name}">${item.name}</option>`;
+                        });
+                    });
+
+                // Saat provinsi dipilih
+                provinsiSelect.addEventListener('change', function() {
+                    const provinsiId = this.value;
+                    kabupatenSelect.innerHTML = `<option value="">-- Pilih Kabupaten/Kota --</option>`;
+                    kecamatanSelect.innerHTML = `<option value="">-- Pilih Kecamatan --</option>`;
+                    kelurahanSelect.innerHTML = `<option value="">-- Pilih Kelurahan --</option>`;
+
+                    if (!provinsiId) return;
+
+                    fetch(`${apiUrl}/regencies/${provinsiId}.json`)
+                        .then(res => res.json())
+                        .then(data => {
+                            data.forEach(item => {
+                                kabupatenSelect.innerHTML +=
+                                    `<option value="${item.id}" data-nama="${item.name}">${item.name}</option>`;
+                            });
+                        });
+                });
+
+                // Saat kabupaten dipilih
+                kabupatenSelect.addEventListener('change', function() {
+                    const kabupatenId = this.value;
+                    kecamatanSelect.innerHTML = `<option value="">-- Pilih Kecamatan --</option>`;
+                    kelurahanSelect.innerHTML = `<option value="">-- Pilih Kelurahan --</option>`;
+
+                    if (!kabupatenId) return;
+
+                    fetch(`${apiUrl}/districts/${kabupatenId}.json`)
+                        .then(res => res.json())
+                        .then(data => {
+                            data.forEach(item => {
+                                kecamatanSelect.innerHTML +=
+                                    `<option value="${item.id}" data-nama="${item.name}">${item.name}</option>`;
+                            });
+                        });
+                });
+
+                // Saat kecamatan dipilih
+                kecamatanSelect.addEventListener('change', function() {
+                    const kecamatanId = this.value;
+                    kelurahanSelect.innerHTML = `<option value="">-- Pilih Kelurahan --</option>`;
+
+                    if (!kecamatanId) return;
+
+                    fetch(`${apiUrl}/villages/${kecamatanId}.json`)
+                        .then(res => res.json())
+                        .then(data => {
+                            data.forEach(item => {
+                                kelurahanSelect.innerHTML +=
+                                    `<option value="${item.name}" data-nama="${item.name}">${item.name}</option>`;
+                            });
+                        });
+                });
+            });
+
+            // Fungsi untuk ambil nama dari select sebelum disubmit (jika dibutuhkan)
+            function getSelectedWilayahNames() {
+                return {
+                    provinsi: document.getElementById('provinsi').selectedOptions[0]?.dataset.nama || '',
+                    kabupaten: document.getElementById('kabupaten').selectedOptions[0]?.dataset.nama || '',
+                    kecamatan: document.getElementById('kecamatan').selectedOptions[0]?.dataset.nama || '',
+                    kelurahan: document.getElementById('kelurahan').selectedOptions[0]?.dataset.nama || ''
+                };
+            }
         </script>
     @endpush
 

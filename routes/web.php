@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Modules\Admin\DashboardController;
 use App\Http\Controllers\Modules\BukuInduk\SiswaController;
+use App\Http\Controllers\Modules\BukuInduk\BindukController;
 use App\Http\Controllers\Modules\BukuInduk\RombelController;
 use App\Http\Controllers\Modules\Pengaturan\AksesController;
 use App\Http\Controllers\Modules\Pengaturan\SistemController;
@@ -63,8 +64,10 @@ Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(
         ->can('lihat siswa')->name('siswa');
     Route::delete('/siswa/mass-delete', [SiswaController::class, 'massDelete'])->name('siswa.massDelete');
     Route::post('/import-siswa', [SiswaController::class, 'import'])->name('import-siswa');
+    Route::get('/siswa/tambah-baru', [SiswaController::class, 'addSiswa'])->name('siswa.tambah-baru');
     Route::get('/siswa/{uuid}', [SiswaController::class, 'show'])->name('siswa.show');
     Route::delete('/siswa/{uuid}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+    Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
 });
 
 
@@ -129,6 +132,15 @@ Route::middleware(['auth', 'can:atur foto'])->group(function () {
     Route::get('/get-semesters/{tahunPelajaranId}', function ($id) {
         return \App\Models\Semester::where('tahun_pelajaran_id', $id)->get();
     })->name('get-semesters');
+});
+
+// Buku Induk - Cetak Dokumen
+Route::prefix('induk')->name('induk.')->middleware(['auth', 'can:cetak buku induk'])->group(function () {
+    Route::get('/', [BindukController::class, 'index'])->name('index');
+    Route::post('/generate-nomor-dokumen', [BindukController::class, 'generateNomorDokumen'])->name('generateNomorDokumen');
+    Route::get('/generate-pdf/{uuid}', [BindukController::class, 'generatePDF'])->name('generatePDF');
+    Route::post('/verifikasi-dokumen/{uuid}', [BindukController::class, 'verifikasiDokumen'])->name('verifikasiDokumen');
+    Route::get('/siswa/{uuid}/detail', [BindukController::class, 'showStudentDetail'])->name('siswa.detail');
 });
 
 

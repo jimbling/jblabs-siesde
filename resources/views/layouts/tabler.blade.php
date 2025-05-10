@@ -14,6 +14,7 @@
 
     @vite('resources/css/app.css')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 
 </head>
 
@@ -46,8 +47,11 @@
 
     </div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     @vite('resources/js/app.js')
     @stack('scripts')
+
 
     @if (session('import_error_file'))
         <script>

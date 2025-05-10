@@ -3,7 +3,12 @@ import autosize from 'autosize';
 import imask from 'imask';
 import List from 'list.js';
 import Litepicker from 'litepicker';
-import 'litepicker/dist/css/litepicker.css';
+// import 'litepicker/dist/css/litepicker.css';
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import { Indonesian } from "flatpickr/dist/l10n/id.js"; // opsional jika ingin bahasa Indonesia
+// Register locale jika pakai bahasa Indonesia
+flatpickr.localize(Indonesian);
 
 window.List = List;
 window.Litepicker = Litepicker;
@@ -12,24 +17,26 @@ window.Litepicker = Litepicker;
 import "@tabler/core/dist/js/tabler.min.js";
 import Swal from 'sweetalert2';
 window.Swal = Swal;
-// Ambil tema yang disimpan atau gunakan default 'light'
+
 const currentTheme = localStorage.getItem('theme') || 'light';
-console.log('Current Theme:', currentTheme); // Cek apakah nilai yang diambil sudah benar
 
-// Fungsi untuk mengubah tema
+
 function setTheme(theme) {
-    console.log('Setting theme:', theme); // Cek apakah fungsi dipanggil dengan benar
-
-    // Menghapus kelas tema lama dan menambahkan yang baru
     document.body.classList.remove('theme-light', 'theme-dark');
     document.body.classList.add(`theme-${theme}`);
-
-    // Simpan tema ke localStorage
     localStorage.setItem('theme', theme);
-
-    // Terapkan perubahan tema ke elemen root (html)
     document.documentElement.setAttribute('data-bs-theme', theme);
+
+    // Perbarui tema pada calendar Flatpickr yang terbuka
+    const calendars = document.querySelectorAll('.flatpickr-calendar');
+    calendars.forEach(calendar => {
+        calendar.classList.remove('dark-theme');
+        if (theme === 'dark') {
+            calendar.classList.add('dark-theme');
+        }
+    });
 }
+
 
 // Terapkan tema saat halaman dimuat
 setTheme(currentTheme);
@@ -44,6 +51,25 @@ document.querySelectorAll('[data-theme]').forEach(button => {
         setTheme(theme);
     });
 });
+
+window.initializeFlatpickr = function (selector, options = {}) {
+    const instance = flatpickr(selector, {
+        ...options,
+        onOpen: function (selectedDates, dateStr, instance) {
+            const theme = localStorage.getItem('theme') || 'light';
+            const calendar = instance.calendarContainer;
+
+            // Hapus class lama jika ada
+            calendar.classList.remove('dark-theme');
+
+            if (theme === 'dark') {
+                calendar.classList.add('dark-theme');
+            }
+        }
+    });
+    return instance;
+};
+
 
 import Alpine from 'alpinejs';
 window.Alpine = Alpine;
@@ -104,3 +130,17 @@ window.showAlert = function (type, message) {
     });
 };
 
+
+/************************************
+ * LITEPICKER THEME MANAGER (Global)
+ ************************************/
+const LitepickerTheme = {
+    updateThemeVariables: (isDark) => { /* ... */ },
+    initThemeObserver: () => { /* ... */ },
+    create: (options) => { /* ... */ }
+  };
+
+  // Inisialisasi theme observer secara global
+  document.addEventListener('DOMContentLoaded', function() {
+    LitepickerTheme.initThemeObserver();
+  });

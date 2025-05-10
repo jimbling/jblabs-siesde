@@ -135,21 +135,26 @@
                             <div class="tab-pane fade" id="tabs-registrasi">
                                 <div class="row g-2">
                                     <h3>Riwayat Sekolah</h3>
-                                    <table>
-                                        <tr>
-                                            <th>Sekolah Asal</th>
-                                            <td>{{ $student->riwayatSekolah->sekolah_asal }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Jenis Pendaftar</th>
-                                            <td>{{ $student->riwayatSekolah->jenis_pendaftar }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Tanggal Masuk</th>
-                                            <td>{{ \Carbon\Carbon::parse($student->riwayatSekolah->tanggal_masuk)->format('d-m-Y') }}
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    @if ($student->riwayatSekolah)
+                                        <table>
+                                            <tr>
+                                                <th>Sekolah Asal</th>
+                                                <td>{{ $student->riwayatSekolah->sekolah_asal }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Jenis Pendaftar</th>
+                                                <td>{{ $student->riwayatSekolah->jenis_pendaftar }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tanggal Masuk</th>
+                                                <td>{{ \Carbon\Carbon::parse($student->riwayatSekolah->tanggal_masuk)->format('d-m-Y') }}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    @else
+                                        <p class="text-muted fst-italic">Belum ada data riwayat sekolah.</p>
+                                    @endif
+
                                 </div>
                             </div>
 
@@ -165,7 +170,7 @@
                                                     Semester:
                                                     {{ $rombel->semester ? $rombel->semester->semester : 'Semester Tidak Ditemukan' }},
                                                     Kelas:
-                                                    {{ $rombel->rombel ? $rombel->rombel->nama : 'Kelas Tidak Ditemukan' }}
+                                                    {{ $rombel->rombel ? $rombel->rombel->tingkat : 'Kelas Tidak Ditemukan' }}
                                                 </li>
                                             @endforeach
                                         </ul>

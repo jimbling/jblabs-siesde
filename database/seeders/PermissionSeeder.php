@@ -30,6 +30,7 @@ class PermissionSeeder extends Seeder
             ['atur semester', 'Buku Induk'],
             ['atur kenaikan', 'Buku Induk'],
             ['atur foto', 'Buku Induk'],
+            ['cetak buku induk', 'Buku Induk'],
 
 
 
