@@ -113,30 +113,35 @@
                         <h3 class="card-title"><i class="fas fa-school me-2"></i>RIWAYAT SEKOLAH</h3>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm">
-                                <tbody>
-                                    <tr>
-                                        <th width="25%" class="bg-light">Sekolah Asal</th>
-                                        <td>{{ $riwayatSekolah->sekolah_asal }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">Jenis Pendaftaran</th>
-                                        <td>{{ $riwayatSekolah->jenis_pendaftar }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">Tanggal Masuk</th>
-                                        <td>{{ \Carbon\Carbon::parse($riwayatSekolah->tanggal_masuk)->isoFormat('D MMMM Y') }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">Tahun Lulus</th>
-                                        <td>{{ $riwayatSekolah->tahun_lulus ?? 'Masih Bersekolah' }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        @if ($riwayatSekolah)
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <th width="25%" class="bg-light">Sekolah Asal</th>
+                                            <td>{{ $riwayatSekolah->sekolah_asal }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Jenis Pendaftaran</th>
+                                            <td>{{ $riwayatSekolah->jenis_pendaftar }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Tanggal Masuk</th>
+                                            <td>{{ \Carbon\Carbon::parse($riwayatSekolah->tanggal_masuk)->isoFormat('D MMMM Y') }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Tahun Lulus</th>
+                                            <td>{{ $riwayatSekolah->tahun_lulus ?? 'Masih Bersekolah' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-muted fst-italic">Data riwayat sekolah belum tersedia.</div>
+                        @endif
                     </div>
+
                 </div>
 
                 <!-- Class History -->

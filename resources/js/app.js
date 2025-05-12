@@ -6,7 +6,8 @@ import Litepicker from 'litepicker';
 // import 'litepicker/dist/css/litepicker.css';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { Indonesian } from "flatpickr/dist/l10n/id.js"; // opsional jika ingin bahasa Indonesia
+import { Indonesian } from "flatpickr/dist/l10n/id.js";
+import 'animate.css';
 // Register locale jika pakai bahasa Indonesia
 flatpickr.localize(Indonesian);
 

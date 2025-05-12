@@ -125,7 +125,7 @@ class BindukController extends Controller
         ])->where('uuid', $uuid)->firstOrFail();
 
         // Ambil data riwayat sekolah dan rombel
-        $riwayatSekolah = $student->riwayatSekolah->first();
+        $riwayatSekolah = $student->riwayatSekolah;
         $riwayatRombel = $student->studentRombels;
 
         // Tampilkan halaman detail siswa

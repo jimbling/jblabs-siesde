@@ -572,33 +572,31 @@
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Fungsi untuk update icon
-                const updateChevron = (trigger) => {
-                    const target = document.querySelector(trigger.getAttribute('href'));
-                    const icon = trigger.querySelector('.collapse-icon path:last-child');
-
-                    if (target.classList.contains('show')) {
-                        icon.setAttribute('d', 'M6 15l6 -6l6 6'); // Chevron up
-                    } else {
-                        icon.setAttribute('d', 'M6 9l6 6l6 -6'); // Chevron down
-                    }
-                };
-
+                // Tidak perlu mengubah SVG path, karena CSS menangani rotasi
                 // Inisialisasi untuk semua collapse element
                 document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(trigger => {
                     const target = document.querySelector(trigger.getAttribute('href'));
 
-                    // Update icon saat pertama kali load
-                    updateChevron(trigger);
+                    // Pastikan aria-expanded sesuai saat load
+                    const isExpanded = target.classList.contains('show');
+                    trigger.setAttribute('aria-expanded', isExpanded.toString());
 
-                    // Gunakan event Bootstrap resmi
-                    target.addEventListener('shown.bs.collapse', () => updateChevron(trigger));
-                    target.addEventListener('hidden.bs.collapse', () => updateChevron(trigger));
-
-                    // Fallback untuk click langsung
-                    trigger.addEventListener('click', () => {
-                        setTimeout(() => updateChevron(trigger), 50);
+                    // Gunakan event Bootstrap untuk sinkronisasi
+                    target.addEventListener('shown.bs.collapse', () => {
+                        trigger.setAttribute('aria-expanded', 'true');
                     });
+                    target.addEventListener('hidden.bs.collapse', () => {
+                        trigger.setAttribute('aria-expanded', 'false');
+                    });
+
+                    // Tangani saat modal dibuka (opsional, jika collapse dalam modal)
+                    const modal = target.closest('.modal');
+                    if (modal) {
+                        modal.addEventListener('shown.bs.modal', () => {
+                            const isExpanded = target.classList.contains('show');
+                            trigger.setAttribute('aria-expanded', isExpanded.toString());
+                        });
+                    }
                 });
             });
         </script>
@@ -635,13 +633,24 @@
                         altFormat: "d F Y",
                         dateFormat: "Y-m-d",
                         maxDate: "today",
-                        defaultDate: "1994-01-01",
+                        allowInput: true, // Tambahkan ini
                         locale: "id",
                         onChange: function(selectedDates, dateStr) {
                             document.getElementById('tanggal_lahir').value = dateStr;
                         }
                     });
                 });
+            });
+            document.getElementById('formSiswa').addEventListener('submit', function(e) {
+                const displayInput = document.getElementById('tanggal_lahir_display');
+                const hiddenInput = document.getElementById('tanggal_lahir');
+
+                if (!hiddenInput.value) {
+                    displayInput.classList.add('is-invalid');
+                    e.preventDefault(); // Mencegah form terkirim
+                } else {
+                    displayInput.classList.remove('is-invalid');
+                }
             });
         </script>
 
@@ -730,6 +739,427 @@
                     kelurahan: document.getElementById('kelurahan').selectedOptions[0]?.dataset.nama || ''
                 };
             }
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const icon = header.querySelector('.collapse-icon');
+                        icon.classList.toggle('rotate');
+                    });
+                });
+
+
+                let pendidikans = [];
+                let pekerjaans = [];
+                let penghasilans = [];
+                try {
+                    pendidikans = @json($pendidikans ?? []);
+                    pekerjaans = @json($pekerjaans ?? []);
+                    penghasilans = @json($penghasilans ?? []);
+                    // Validasi data
+                    if (!Array.isArray(pendidikans) || !Array.isArray(pekerjaans) || !Array.isArray(penghasilans)) {
+                        throw new Error('Data dari database bukan array');
+                    }
+                } catch (e) {
+                    console.error('Gagal memuat data dari database:', e);
+                    pendidikans = [];
+                    pekerjaans = [];
+                    penghasilans = [];
+                }
+
+                // Fungsi untuk mengisi dropdown dengan penanganan karakter khusus
+                function populateDropdowns(section) {
+                    const pendidikanSelect = section.querySelector('[name="wali_pendidikan_id"]');
+                    const pekerjaanSelect = section.querySelector('[name="wali_pekerjaan_id"]');
+                    const penghasilanSelect = section.querySelector('[name="wali_penghasilan_id"]');
+
+                    if (!pendidikanSelect || !pekerjaanSelect || !penghasilanSelect) {
+                        console.error('Elemen select tidak ditemukan di section wali.');
+                        return;
+                    }
+
+                    pendidikans.forEach(p => {
+                        if (p && typeof p.id !== 'undefined' && typeof p.jenjang !== 'undefined') {
+                            const option = document.createElement('option');
+                            option.value = p.id;
+                            option.textContent = p.jenjang || '';
+                            pendidikanSelect.appendChild(option);
+                        }
+                    });
+
+                    pekerjaans.forEach(p => {
+                        if (p && typeof p.id !== 'undefined' && typeof p.nama !== 'undefined') {
+                            const option = document.createElement('option');
+                            option.value = p.id;
+                            option.textContent = p.nama || '';
+                            pekerjaanSelect.appendChild(option);
+                        }
+                    });
+
+                    penghasilans.forEach(p => {
+                        if (p && typeof p.id !== 'undefined' && typeof p.rentang !== 'undefined') {
+                            const option = document.createElement('option');
+                            option.value = p.id;
+                            option.textContent = p.rentang || '';
+                            penghasilanSelect.appendChild(option);
+                        }
+                    });
+                }
+
+                // Flag untuk melacak keberadaan form wali
+                let guardianExists = false;
+
+                // Fungsi untuk menambah form wali
+                function addGuardianForm() {
+                    if (guardianExists) {
+                        console.warn('Form wali sudah ada. Hanya satu form wali yang diizinkan.');
+                        return;
+                    }
+
+                    const guardianSections = document.getElementById('guardian-sections');
+                    if (!guardianSections) {
+                        console.error('Elemen dengan ID "guardian-sections" tidak ditemukan.');
+                        return;
+                    }
+
+                    const guardianSection = document.createElement('div');
+                    guardianSection.classList.add('parent-form-section', 'form-wali', 'guardian-section', 'mt-4');
+                    guardianSection.setAttribute('data-title', 'Data Wali');
+                    guardianSection.id = 'guardian-1';
+                    guardianSection.innerHTML = `
+            <div class="form-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 text-success"><i class="ti ti-user-shield me-2"></i>Informasi Wali</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeGuardianForm('guardian-1')">
+                    <i class="ti ti-trash"></i> Hapus
+                </button>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3 col-form-label">Nama Wali</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="wali_nama" placeholder="Nama Wali" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3 col-form-label">Tahun Lahir</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="wali_tahun_lahir" placeholder="Tahun Lahir" />
+                </div>
+            </div>
+             <div class="row mb-3">
+                    <label class="col-md-3 col-form-label required">Kewarganegaraan</label>
+                    <div class="col-md-9">
+                    <select class="form-select" name="wali_kewarganegaraan" required>
+                    <option value="WNI">WNI</option>
+                    <option value="WNA">WNA</option>
+                    </select>
+                    </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3 col-form-label">Pendidikan</label>
+                <div class="col-md-9">
+                    <select class="form-select" name="wali_pendidikan_id">
+                        <option value="">Pilih Pendidikan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3 col-form-label">Pekerjaan</label>
+                <div class="col-md-9">
+                    <select class="form-select" name="wali_pekerjaan_id">
+                        <option value="">Pilih Pekerjaan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3 col-form-label">Penghasilan</label>
+                <div class="col-md-9">
+                    <select class="form-select" name="wali_penghasilan_id">
+                        <option value="">Pilih Penghasilan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-md-3 col-form-label">NIK</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="wali_nik" placeholder="Nomor Induk Kependudukan" />
+                </div>
+            </div>
+        `;
+                    guardianSections.appendChild(guardianSection);
+                    populateDropdowns(guardianSection);
+
+                    // Sembunyikan tombol "Tambah Wali"
+                    const addButton = document.getElementById('add-guardian-btn');
+                    if (addButton) {
+                        addButton.classList.add('d-none');
+                    } else {
+                        console.error('Tombol dengan ID "add-guardian-btn" tidak ditemukan.');
+                    }
+
+                    // Setel flag wali ada
+                    guardianExists = true;
+                }
+
+                // Fungsi untuk menghapus form wali
+                function removeGuardianForm(id) {
+                    const section = document.getElementById(id);
+                    if (!section) {
+                        console.error(`Elemen dengan ID "${id}" tidak ditemukan.`);
+                        return;
+                    }
+
+                    section.classList.add('animate__animated', 'animate__fadeOut');
+                    setTimeout(() => {
+                        section.remove();
+
+                        // Tampilkan kembali tombol "Tambah Wali"
+                        const addButton = document.getElementById('add-guardian-btn');
+                        if (addButton) {
+                            addButton.classList.remove('d-none');
+                        } else {
+                            console.error('Tombol dengan ID "add-guardian-btn" tidak ditemukan.');
+                        }
+
+                        // Reset flag wali
+                        guardianExists = false;
+                    }, 500);
+                }
+
+                // Ekspos fungsi addGuardianForm ke global scope agar bisa dipanggil dari HTML
+                window.addGuardianForm = addGuardianForm;
+                window.removeGuardianForm = removeGuardianForm;
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const jenisPendaftarSelect = document.getElementById('jenis-pendaftar');
+                const dynamicFieldsContainer = document.getElementById('dynamic-fields');
+
+                // Fungsi untuk menghasilkan field berdasarkan jenis pendaftaran
+                function renderDynamicFields(jenis) {
+                    // Kosongkan container dengan animasi fadeOut
+                    dynamicFieldsContainer.classList.add('animate__animated', 'animate__fadeOut');
+                    setTimeout(() => {
+                        dynamicFieldsContainer.innerHTML = '';
+                        dynamicFieldsContainer.classList.remove('animate__animated', 'animate__fadeOut');
+
+                        let fieldsHTML = '';
+
+                        if (jenis === 'Siswa Baru') {
+                            fieldsHTML = `
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label required">Sekolah Asal</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="sekolah_asal" placeholder="Sekolah Asal. Contoh : TK ABA" required>
+                        <div class="invalid-feedback">Sekolah Asal wajib diisi</div>
+                            </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label required">Tanggal Ijazah</label>
+                        <div class="col-md-9">
+                            <input type="text" id="tanggal_ijazah_display" class="form-control" placeholder="Pilih tanggal..." required>
+                            <input type="hidden" id="tanggal_ijazah" name="tanggal_ijazah" required>
+                            <div class="invalid-feedback">Tanggal ijazah wajib diisi.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label required">Nomor Ijazah</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="nomor_ijazah" placeholder="Nomor Ijazah Sebelumnya" required>
+                        <div class="invalid-feedback">Nomor Ijazah wajib diisi</div>
+                            </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label">Lama Belajar</label>
+                        <div class="col-md-9">
+                            <input type="number" class="form-control" name="lama_belajar" placeholder="Lama belajar di sekolah sebelumnya">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label">Kelas Diterima</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="kelas_diterima" placeholder="Kelas Diterima">
+                        </div>
+                    </div>
+                `;
+                        } else if (jenis === 'Pindahan') {
+                            fieldsHTML = `
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label">Dari Sekolah</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="dari_sekolah" placeholder="Nama Sekolah Sebelumnya">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label">Alasan Pindah</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control" name="alasan_pindah" placeholder="Alasan pindah sekolah" rows="4"></textarea>
+                        </div>
+                    </div>
+                `;
+                        } else if (jenis === 'Kembali Bersekolah') {
+                            // Tidak ada field tambahan untuk Kembali Bersekolah (atau tambahkan field jika diperlukan)
+                            fieldsHTML = `
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label">Catatan</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="catatan_kembali" placeholder="Catatan tambahan (opsional)">
+                        </div>
+                    </div>
+                `;
+                        }
+
+                        // Tambahkan field dengan animasi fadeIn
+                        dynamicFieldsContainer.innerHTML = fieldsHTML;
+                        dynamicFieldsContainer.classList.add('animate__animated', 'animate__fadeIn');
+
+                        // Inisialisasi datepicker untuk tanggal_ijazah (jika ada)
+                        if (jenis === 'Siswa Baru') {
+                            flatpickr('#tanggal_ijazah_display', {
+                                dateFormat: 'd-m-Y',
+                                allowInput: true,
+                                onChange: (selectedDates, dateStr) => {
+                                    document.getElementById('tanggal_ijazah').value = dateStr;
+                                }
+                            });
+                        }
+
+                        // Hapus class animasi setelah selesai
+                        setTimeout(() => {
+                            dynamicFieldsContainer.classList.remove('animate__animated',
+                                'animate__fadeIn');
+                        }, 1000);
+                    }, 500);
+                }
+
+                // Event listener untuk perubahan dropdown
+                jenisPendaftarSelect.addEventListener('change', () => {
+                    const selectedJenis = jenisPendaftarSelect.value;
+                    renderDynamicFields(selectedJenis);
+                });
+
+                // Render field awal berdasarkan nilai default
+                renderDynamicFields(jenisPendaftarSelect.value);
+            });
+        </script>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const pipSelect = document.getElementById('layak_pip_select');
+                const alasanSection = document.getElementById('alasan_layak_pip_section');
+
+                pipSelect.addEventListener('change', function() {
+                    if (this.value === '1') {
+                        // Tampilkan alasan layak PIP
+                        alasanSection.classList.remove('d-none', 'animate__fadeOut');
+                        alasanSection.classList.add('animate__animated', 'animate__fadeIn');
+                    } else {
+                        // Sembunyikan dengan animasi
+                        alasanSection.classList.remove('animate__fadeIn');
+                        alasanSection.classList.add('animate__animated', 'animate__fadeOut');
+
+                        setTimeout(() => {
+                            alasanSection.classList.add('d-none');
+                            alasanSection.classList.remove('animate__animated', 'animate__fadeOut');
+
+                            // 🔑 Kosongkan semua input/textarea/select di dalamnya
+                            const inputs = alasanSection.querySelectorAll('input, textarea, select');
+                            inputs.forEach(input => {
+                                input.value = '';
+                                if (input.type === 'checkbox' || input.type === 'radio') {
+                                    input.checked = false;
+                                }
+                            });
+                        }, 500); // Sesuaikan dengan durasi animasi
+                    }
+                });
+            });
+        </script>
+
+
+
+        <script>
+            const form = document.getElementById('form-siswa');
+
+            form.addEventListener('submit', function(e) {
+                if (!form.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const penerimaKPS = document.getElementById('penerima-kps');
+                const penerimaKIP = document.getElementById('penerima-kip');
+
+                const fieldNoKPS = document.getElementById('field-no-kps');
+                const fieldNoKIP = document.getElementById('field-no-kip');
+                const fieldNamaDiKIP = document.getElementById('field-nama-di-kip');
+
+                function showField(field) {
+                    field.classList.remove('animate__fadeOut');
+                    field.style.display = '';
+                    field.classList.add('animate__animated', 'animate__fadeIn');
+                }
+
+                function hideField(field) {
+                    field.classList.remove('animate__fadeIn');
+                    field.classList.add('animate__animated', 'animate__fadeOut');
+
+                    setTimeout(() => {
+                        // Sembunyikan elemen
+                        field.style.display = 'none';
+
+                        // Kosongkan semua nilai input, select, textarea di dalamnya
+                        const inputs = field.querySelectorAll('input, textarea, select');
+                        inputs.forEach(input => {
+                            input.value = '';
+
+                            // Untuk checkbox/radio jika ada
+                            if (input.type === 'checkbox' || input.type === 'radio') {
+                                input.checked = false;
+                            }
+                        });
+
+                        // Bersihkan kelas animasi agar siap digunakan lagi nanti
+                        field.classList.remove('animate__animated', 'animate__fadeOut');
+                    }, 500);
+                }
+
+
+                function toggleKPSFields() {
+                    if (penerimaKPS.value === '1') {
+                        showField(fieldNoKPS);
+                    } else {
+                        hideField(fieldNoKPS);
+                    }
+                }
+
+                function toggleKIPFields() {
+                    if (penerimaKIP.value === '1') {
+                        showField(fieldNoKIP);
+                        showField(fieldNamaDiKIP);
+                    } else {
+                        hideField(fieldNoKIP);
+                        hideField(fieldNamaDiKIP);
+                    }
+                }
+
+                // Jalankan saat halaman load
+                toggleKPSFields();
+                toggleKIPFields();
+
+                // Event listener
+                penerimaKPS.addEventListener('change', toggleKPSFields);
+                penerimaKIP.addEventListener('change', toggleKIPFields);
+            });
         </script>
     @endpush
 

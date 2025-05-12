@@ -11,6 +11,7 @@ use App\Models\Pendidikan;
 use App\Models\Penghasilan;
 use App\Models\JenisTinggal;
 use Illuminate\Http\Request;
+use App\Models\RiwayatSekolah;
 use App\Imports\StudentsImport;
 use App\Models\KebutuhanKhusus;
 use App\Models\AlatTransportasi;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StudentStoreRequest;
+use Illuminate\Support\Facades\DB;
 
 class SiswaController extends Controller
 {
@@ -152,58 +154,88 @@ class SiswaController extends Controller
         ]);
     }
 
-    /**
-     * Store a new student along with the parent's data (father and mother) if provided.
-     *
-     * @param  \App\Http\Requests\StudentStoreRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+
     public function store(StudentStoreRequest $request)
     {
+        try {
+            DB::transaction(function () use ($request) {
+                // Create and save new student
+                $student = new Student();
+                $student->fill($request->all());
+                $student->save();
 
+                // Simpan data orang tua
+                $orangTuas = [];
+                if ($request->filled('ayah_nama')) {
+                    $orangTuas[] = [
+                        'siswa_uuid'     => $student->uuid,
+                        'tipe'           => 'ayah',
+                        'nama'           => $request->input('ayah_nama'),
+                        'tahun_lahir'    => $request->input('ayah_tahun_lahir'),
+                        'pendidikan_id'  => $request->input('ayah_pendidikan_id'),
+                        'pekerjaan_id'   => $request->input('ayah_pekerjaan_id'),
+                        'penghasilan_id' => $request->input('ayah_penghasilan_id'),
+                        'nik'            => $request->input('ayah_nik'),
+                        'kewarganegaraan' => $request->input('ayah_kewarganegaraan'), // Tambahkan jika ada di form
+                    ];
+                }
+                if ($request->filled('ibu_nama')) {
+                    $orangTuas[] = [
+                        'siswa_uuid'     => $student->uuid,
+                        'tipe'           => 'ibu',
+                        'nama'           => $request->input('ibu_nama'),
+                        'tahun_lahir'    => $request->input('ibu_tahun_lahir'),
+                        'pendidikan_id'  => $request->input('ibu_pendidikan_id'),
+                        'pekerjaan_id'   => $request->input('ibu_pekerjaan_id'),
+                        'penghasilan_id' => $request->input('ibu_penghasilan_id'),
+                        'nik'            => $request->input('ibu_nik'),
+                        'kewarganegaraan' => $request->input('ibu_kewarganegaraan'), // Tambahkan jika ada di form
+                    ];
+                }
+                if ($request->filled('wali_nama')) {
+                    $orangTuas[] = [
+                        'siswa_uuid'     => $student->uuid,
+                        'tipe'           => 'wali',
+                        'nama'           => $request->input('wali_nama'),
+                        'tahun_lahir'    => $request->input('wali_tahun_lahir'),
+                        'pendidikan_id'  => $request->input('wali_pendidikan_id'),
+                        'pekerjaan_id'   => $request->input('wali_pekerjaan_id'),
+                        'penghasilan_id' => $request->input('wali_penghasilan_id'),
+                        'nik'            => $request->input('wali_nik'),
+                        'kewarganegaraan' => $request->input('wali_kewarganegaraan'), // Tambahkan jika ada di form
+                    ];
+                }
 
-        // Create and save new student
-        $student = new Student();
-        $student->fill($request->all()); // Pastikan $fillable di model Student terisi lengkap
-        $student->save();
+                // Simpan data orang tua menggunakan create() untuk mengaktifkan timestamps
+                foreach ($orangTuas as $orangTuaData) {
+                    OrangTua::create($orangTuaData);
+                }
 
-        // Array untuk menyimpan data orang tua
-        $orangTuas = [];
+                // Simpan data riwayat sekolah
+                $riwayatSekolah = new RiwayatSekolah([
+                    'siswa_uuid'       => $student->uuid,
+                    'jenis_pendaftar'  => $request->input('jenis_pendaftar'),
+                    'sekolah_asal'     => $request->input('sekolah_asal'),
+                    'dari_sekolah'     => $request->input('dari_sekolah'),
+                    'alasan_pindah'    => $request->input('alasan_pindah'),
+                    'catatan_kembali'  => $request->input('catatan_kembali'),
+                    'lama_belajar'     => $request->input('lama_belajar'),
+                    'nomor_ijazah'     => $request->input('nomor_ijazah'),
+                    'tanggal_ijazah'   => $request->filled('tanggal_ijazah') ? \Carbon\Carbon::createFromFormat('d-m-Y', $request->input('tanggal_ijazah'))->toDateString() : null,
+                    'skhun'            => $request->input('skhun'),
+                    'tanggal_masuk'    => now()->toDateString(),
+                    'kelas_diterima'   => $request->input('kelas_diterima'),
+                ]);
+                $riwayatSekolah->save();
 
-        // Simpan data Ayah jika tersedia
-        if ($request->filled('ayah_nama')) {
-            $orangTuas[] = new OrangTua([
-                'siswa_uuid'     => $student->uuid,
-                'tipe'           => 'ayah',
-                'nama'           => $request->input('ayah_nama'),
-                'tahun_lahir'    => $request->input('ayah_tahun_lahir'),
-                'pendidikan_id'  => $request->input('ayah_pendidikan_id'),
-                'pekerjaan_id'   => $request->input('ayah_pekerjaan_id'),
-                'penghasilan_id' => $request->input('ayah_penghasilan_id'),
-                'nik'            => $request->input('ayah_nik'),
-            ]);
+                // Update student dengan riwayat_sekolah_id
+                $student->riwayat_sekolah_id = $riwayatSekolah->id;
+                $student->save();
+            });
+
+            return redirect()->route('induk.siswa')->with('success', 'Data siswa berhasil disimpan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
         }
-
-        // Simpan data Ibu jika tersedia
-        if ($request->filled('ibu_nama')) {
-            $orangTuas[] = new OrangTua([
-                'siswa_uuid'     => $student->uuid,
-                'tipe'           => 'ibu',
-                'nama'           => $request->input('ibu_nama'),
-                'tahun_lahir'    => $request->input('ibu_tahun_lahir'),
-                'pendidikan_id'  => $request->input('ibu_pendidikan_id'),
-                'pekerjaan_id'   => $request->input('ibu_pekerjaan_id'),
-                'penghasilan_id' => $request->input('ibu_penghasilan_id'),
-                'nik'            => $request->input('ibu_nik'),
-            ]);
-        }
-
-        // Simpan ke tabel orang_tua jika ada data
-        if (!empty($orangTuas)) {
-            OrangTua::insert(collect($orangTuas)->map->toArray()->toArray());
-        }
-
-        // Redirect dengan pesan sukses
-        return redirect()->route('induk.siswa')->with('success', 'Data siswa dan orang tua berhasil disimpan.');
     }
 }

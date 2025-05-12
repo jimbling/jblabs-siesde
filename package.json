@@ -14,6 +14,7 @@
     },
     "dependencies": {
         "@tabler/core": "^1.1.1",
+        "animate.css": "^4.1.1",
         "autosize": "^6.0.1",
         "flatpickr": "^4.6.13",
         "imask": "^7.6.1",

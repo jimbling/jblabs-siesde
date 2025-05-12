@@ -20,6 +20,7 @@ class OrangTua extends Model
         'pekerjaan_id',
         'penghasilan_id',
         'nik',
+        'kewarganegaraan',
     ];
 
 

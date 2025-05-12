@@ -9,16 +9,33 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <div class="avatar avatar-xl me-3"
-                            style="background-image: url('{{ $student->fotoTerbaru ? asset('storage/' . $student->fotoTerbaru->path_foto) : asset('default-avatar.png') }}');
-                               background-size: cover;
-                               background-position: center;">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <!-- Tambah justify-content-between -->
+                        <!-- Bagian kiri (foto & nama) -->
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xl me-3"
+                                style="background-image: url('{{ $student->fotoTerbaru ? asset('storage/' . $student->fotoTerbaru->path_foto) : asset('default-avatar.png') }}');
+                                        background-size: cover;
+                                        background-position: center;">
+                            </div>
+                            <div>
+                                <h2 class="card-title mb-0">{{ $student->nama }}</h2>
+                                <small class="text-muted">{{ $student->nipd }} | {{ $student->nisn }}</small>
+                            </div>
                         </div>
-                        <div>
-                            <h2 class="card-title mb-0">{{ $student->nama }}</h2>
-                            <small class="text-muted">{{ $student->nipd }} | {{ $student->nisn }}</small>
-                        </div>
+
+                        <!-- Tombol Kembali -->
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-warning me-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M5 12l14 0" />
+                                <path d="M5 12l6 6" />
+                                <path d="M5 12l6 -6" />
+                            </svg>
+                            Kembali
+                        </a>
                     </div>
 
 
@@ -136,25 +153,67 @@
                                 <div class="row g-2">
                                     <h3>Riwayat Sekolah</h3>
                                     @if ($student->riwayatSekolah)
-                                        <table>
-                                            <tr>
-                                                <th>Sekolah Asal</th>
-                                                <td>{{ $student->riwayatSekolah->sekolah_asal }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Jenis Pendaftar</th>
-                                                <td>{{ $student->riwayatSekolah->jenis_pendaftar }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Tanggal Masuk</th>
-                                                <td>{{ \Carbon\Carbon::parse($student->riwayatSekolah->tanggal_masuk)->format('d-m-Y') }}
-                                                </td>
-                                            </tr>
+                                        <table class="table table-bordered">
+                                            <tbody>
+
+                                                <tr>
+                                                    <th>Jenis Pendaftar</th>
+                                                    <td>{{ $student->riwayatSekolah->jenis_pendaftar ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Tanggal Masuk</th>
+                                                    <td>{{ $riwayatSekolah->tanggal_masuk_indo ?? '-' }}</td>
+                                                </tr>
+                                                @if ($student->riwayatSekolah->kelas_diterima)
+                                                    <tr>
+                                                        <th>Kelas Diterima</th>
+                                                        <td>{{ $student->riwayatSekolah->kelas_diterima ?? '-' }}</td>
+                                                    </tr>
+                                                @endif
+                                                <tr>
+                                                    <th>SKHUN</th>
+                                                    <td>{{ $student->riwayatSekolah->skhun ?? '-' }}</td>
+                                                </tr>
+
+
+                                                @if ($student->riwayatSekolah->jenis_pendaftar === 'Siswa Baru')
+                                                    <tr>
+                                                        <th>Sekolah Asal</th>
+                                                        <td>{{ $student->riwayatSekolah->sekolah_asal ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tanggal Ijazah</th>
+                                                        <td>{{ $student->riwayatSekolah->tanggal_ijazah_indo ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Nomor Ijazah</th>
+                                                        <td>{{ $student->riwayatSekolah->nomor_ijazah ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Lama Belajar</th>
+                                                        <td>{{ $student->riwayatSekolah->lama_belajar ? $student->riwayatSekolah->lama_belajar . ' tahun' : '-' }}
+                                                        </td>
+                                                    </tr>
+                                                @elseif ($student->riwayatSekolah->jenis_pendaftar === 'Pindahan')
+                                                    <tr>
+                                                        <th>Dari Sekolah</th>
+                                                        <td>{{ $student->riwayatSekolah->dari_sekolah ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Alasan Pindah</th>
+                                                        <td>{{ $student->riwayatSekolah->alasan_pindah ?? '-' }}</td>
+                                                    </tr>
+                                                @elseif ($student->riwayatSekolah->jenis_pendaftar === 'Kembali Bersekolah')
+                                                    <tr>
+                                                        <th>Catatan Kembali</th>
+                                                        <td>{{ $student->riwayatSekolah->catatan_kembali ?? '-' }}</td>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
                                         </table>
                                     @else
                                         <p class="text-muted fst-italic">Belum ada data riwayat sekolah.</p>
                                     @endif
-
                                 </div>
                             </div>
 
@@ -182,20 +241,7 @@
 
                         </div>
 
-                        <!-- Tombol Kembali -->
-                        <div class="mt-4">
-                            <a href="{{ route('induk.siswa') }}" class="btn btn-outline-warning d-flex align-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back-up me-2">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M9 14l-4 -4l4 -4" />
-                                    <path d="M5 10h11a4 4 0 1 1 0 8h-1" />
-                                </svg>
-                                Kembali
-                            </a>
-                        </div>
+
 
                     </div>
                 </div>

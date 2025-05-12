@@ -36,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
+        // Atur lokal Carbon dan PHP
         Carbon::setLocale('id');
+        setlocale(LC_TIME, 'id_ID.UTF-8', 'id_ID', 'Indonesian_indonesia', 'Indonesian');
     }
 }

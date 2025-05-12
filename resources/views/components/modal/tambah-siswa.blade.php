@@ -10,7 +10,8 @@
             </div>
             <div class="modal-body">
                 <!-- Form Import Siswa -->
-                <form action="{{ route('induk.siswa.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="form-siswa" action="{{ route('induk.siswa.store') }}" method="POST"
+                    enctype="multipart/form-data" novalidate>
                     @csrf
 
                     <div class="card-body">
@@ -27,13 +28,33 @@
                                     <path d="M6 9l6 6l6 -6" />
                                 </svg>
                             </div>
+
                             <div class="collapse show" id="identitasPribadi">
                                 <div class="card-body">
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">NIPD</label>
+                                        <div class="col-md-9">
+                                            <input type="number" class="form-control" name="nipd" id="nipd"
+                                                placeholder="Nomor Induk Peserta Didik" required>
+                                            <div class="invalid-feedback">NIPD wajib diisi.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label required">NISN</label>
+                                        <div class="col-md-9">
+                                            <input type="number" class="form-control" name="nisn"
+                                                placeholder="Nomor Induk Siswa Nasional" required>
+                                            <div class="invalid-feedback">NISN wajib diisi.</div>
+                                        </div>
+                                    </div>
+
                                     <div class="row mb-3">
                                         <label class="col-md-3 col-form-label required">Nama Lengkap</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="nama"
                                                 placeholder="Nama lengkap sesuai akta" required>
+                                            <div class="invalid-feedback">Nama Peserta Didik wajib diisi.</div>
                                         </div>
                                     </div>
 
@@ -59,12 +80,14 @@
                                     <div class="row mb-3">
                                         <label class="col-md-3 col-form-label required">Tanggal Lahir</label>
                                         <div class="col-md-9">
-                                            <!-- Input yang akan terlihat -->
                                             <input type="text" id="tanggal_lahir_display" class="form-control"
                                                 placeholder="Pilih tanggal..." required>
+                                            <div class="invalid-feedback">
+                                                Tanggal lahir wajib diisi.
+                                            </div>
 
-                                            <!-- Input tersembunyi untuk dikirim ke server -->
                                             <input type="hidden" id="tanggal_lahir" name="tanggal_lahir" required>
+
                                         </div>
                                     </div>
 
@@ -74,6 +97,14 @@
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="tempat_lahir"
                                                 placeholder="Kota/kabupaten lahir" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">No. Registrasi Akta</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="no_registrasi_akta"
+                                                placeholder="Nomor akta kelahiran">
                                         </div>
                                     </div>
 
@@ -107,10 +138,10 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label class="col-md-3 col-form-label">No. KK</label>
+                                        <label class="col-md-3 col-form-label required">No. KK</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="no_kk"
-                                                placeholder="Nomor Kartu Keluarga">
+                                                placeholder="Nomor Kartu Keluarga" required>
                                         </div>
                                     </div>
 
@@ -304,7 +335,7 @@
                                         <label class="col-md-3 col-form-label">Koordinat (Lintang)</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="lintang"
-                                                placeholder="Koordinat lintang">
+                                                placeholder="Contoh: -7.819759 (Lintang Selatan)">
                                         </div>
                                     </div>
 
@@ -312,9 +343,10 @@
                                         <label class="col-md-3 col-form-label">Koordinat (Bujur)</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="bujur"
-                                                placeholder="Koordinat bujur">
+                                                placeholder="Contoh: 110.133455 (Bujur Timur)">
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -343,10 +375,10 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label class="col-md-3 col-form-label">Nomor HP</label>
+                                        <label class="col-md-3 col-form-label required">Nomor HP</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="hp"
-                                                placeholder="Nomor handphone aktif">
+                                                placeholder="Nomor handphone aktif" required>
                                         </div>
                                     </div>
 
@@ -395,6 +427,15 @@
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control" name="ayah_tahun_lahir"
                                                     placeholder="Tahun Lahir" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label required">Kewarganegaraan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ayah_kewarganegaraan" required>
+                                                    <option value="WNI">WNI</option>
+                                                    <option value="WNA">WNA</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -464,6 +505,15 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
+                                            <label class="col-md-3 col-form-label required">Kewarganegaraan</label>
+                                            <div class="col-md-9">
+                                                <select class="form-select" name="ibu_kewarganegaraan" required>
+                                                    <option value="WNI">WNI</option>
+                                                    <option value="WNA">WNA</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
                                             <label class="col-md-3 col-form-label">Pendidikan</label>
                                             <div class="col-md-9">
                                                 <select class="form-select" name="ibu_pendidikan_id">
@@ -509,6 +559,27 @@
                                         </div>
                                     </div>
 
+                                    <!-- Dynamic Guardian Section -->
+                                    <div id="guardian-sections"></div>
+
+                                    <!-- Add Guardian Button -->
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button id="add-guardian-btn" type="button"
+                                            class="btn btn-outline-success btn-add-guardian"
+                                            onclick="addGuardianForm()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                                <path d="M16 19h6" />
+                                                <path d="M19 16v6" />
+                                                <path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
+                                            </svg>Tambah Wali
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -520,7 +591,7 @@
                         <div class="card mb-4">
                             <div class="card-header card-header-custom d-flex justify-content-between align-items-center"
                                 data-bs-toggle="collapse" href="#dataLainnya" style="cursor: pointer;">
-                                <h5 class="mb-0">Data Lainnya</h5>
+                                <h5 class="mb-0">Data Kesejahteraan</h5>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round"
@@ -534,14 +605,14 @@
                                     <div class="row mb-3">
                                         <label class="col-md-3 col-form-label">Penerima KPS</label>
                                         <div class="col-md-9">
-                                            <select class="form-select" name="penerima_kps">
+                                            <select class="form-select" name="penerima_kps" id="penerima-kps">
                                                 <option value="0">Tidak</option>
                                                 <option value="1">Ya</option>
                                             </select>
                                         </div>
                                     </div>
 
-                                    <div class="row mb-3">
+                                    <div class="row mb-3" id="field-no-kps">
                                         <label class="col-md-3 col-form-label">Nomor KPS</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="no_kps"
@@ -552,14 +623,14 @@
                                     <div class="row mb-3">
                                         <label class="col-md-3 col-form-label">Penerima KIP</label>
                                         <div class="col-md-9">
-                                            <select class="form-select" name="penerima_kip">
+                                            <select class="form-select" name="penerima_kip" id="penerima-kip">
                                                 <option value="0">Tidak</option>
                                                 <option value="1">Ya</option>
                                             </select>
                                         </div>
                                     </div>
 
-                                    <div class="row mb-3">
+                                    <div class="row mb-3" id="field-no-kip">
                                         <label class="col-md-3 col-form-label">Nomor KIP</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="nomor_kip"
@@ -567,7 +638,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="row mb-3">
+                                    <div class="row mb-3" id="field-nama-di-kip">
                                         <label class="col-md-3 col-form-label">Nama di KIP</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="nama_di_kip"
@@ -586,51 +657,38 @@
                                     <div class="row mb-3">
                                         <label class="col-md-3 col-form-label">Layak PIP</label>
                                         <div class="col-md-9">
-                                            <select class="form-select" name="layak_pip">
+                                            <select class="form-select" name="layak_pip" id="layak_pip_select">
                                                 <option value="0">Tidak</option>
                                                 <option value="1">Ya</option>
                                             </select>
                                         </div>
                                     </div>
 
-                                    <div class="row mb-3">
+                                    <div class="row mb-3 d-none" id="alasan_layak_pip_section">
                                         <label class="col-md-3 col-form-label">Alasan Layak PIP</label>
                                         <div class="col-md-9">
-                                            <textarea class="form-control" name="alasan_layak_pip" rows="2" placeholder="Alasan jika layak PIP"></textarea>
+                                            <select class="form-select" name="alasan_layak_pip">
+                                                <option value="">Pilih Alasan Layak PIP</option>
+                                                <option value="Daerah Konflik">Daerah Konflik</option>
+                                                <option value="Dampak Bencana Alam">Dampak Bencana Alam</option>
+                                                <option value="Kelainan Fisik">Kelainan Fisik</option>
+                                                <option value="Keluarga terpidana / berada di LAPAS">Keluarga terpidana
+                                                    / berada di LAPAS</option>
+                                                <option value="Pemegang PKH/KPS/KKS">Pemegang PKH/KPS/KKS</option>
+                                                <option value="Pernah Drop Out">Pernah Drop Out</option>
+                                                <option value="Siswa Miskin/Rentan Miskin">Siswa Miskin/Rentan Miskin
+                                                </option>
+                                                <option value="Yatim Piatu/Panti Asuhan/Panti Sosial">Yatim Piatu/Panti
+                                                    Asuhan/Panti Sosial</option>
+                                            </select>
                                         </div>
                                     </div>
 
-                                    <div class="row mb-3">
-                                        <label class="col-md-3 col-form-label">No. Registrasi Akta</label>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control" name="no_registrasi_akta"
-                                                placeholder="Nomor akta kelahiran">
-                                        </div>
-                                    </div>
 
-                                    <div class="row mb-3">
-                                        <label class="col-md-3 col-form-label">SKHUN</label>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control" name="skhun"
-                                                placeholder="Nomor SKHUN">
-                                        </div>
-                                    </div>
 
-                                    <div class="row mb-3">
-                                        <label class="col-md-3 col-form-label required">NIPD</label>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control" name="nipd"
-                                                placeholder="Nomor Induk Peserta Didik" required>
-                                        </div>
-                                    </div>
 
-                                    <div class="row mb-3">
-                                        <label class="col-md-3 col-form-label">NISN</label>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control" name="nisn"
-                                                placeholder="Nomor Induk Siswa Nasional">
-                                        </div>
-                                    </div>
+
+
 
                                     <div class="row mb-3">
                                         <label class="col-md-3 col-form-label">Bank</label>
@@ -657,6 +715,49 @@
                                     </div>
 
 
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Registrasi -->
+                        <div class="card mb-4">
+                            <div class="card-header card-header-custom d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse" href="#registrasi" style="cursor: pointer;">
+                                <h5 class="mb-0">Data Registrasi</h5>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down collapse-icon">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </div>
+                            <div class="collapse show" id="registrasi">
+                                <div class="card-body">
+                                    <!-- Dropdown Jenis Pendaftaran -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">Jenis Pendaftaran</label>
+                                        <div class="col-md-9">
+                                            <select class="form-select" name="jenis_pendaftar" id="jenis-pendaftar">
+                                                <option value="Siswa Baru">Siswa Baru</option>
+                                                <option value="Pindahan">Pindahan</option>
+                                                <option value="Kembali Bersekolah">Kembali Bersekolah</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Container untuk field dinamis -->
+                                    <div id="dynamic-fields" class="dynamic-fields"></div>
+
+                                    <!-- Field umum yang selalu ada -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-3 col-form-label">SKHUN</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="skhun"
+                                                placeholder="Nomor SKHUN">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
