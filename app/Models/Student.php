@@ -125,4 +125,13 @@ class Student extends Model
     {
         return $this->hasOne(FotoSiswa::class, 'siswa_uuid', 'uuid')->latestOfMany('created_at');
     }
+
+    public function fotoSiswa()
+    {
+        return $this->hasMany(FotoSiswa::class, 'siswa_uuid', 'uuid')->orderByDesc('created_at');
+    }
+
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
 }

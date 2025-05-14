@@ -39,4 +39,7 @@ class CreateDocumentLogsTable extends Migration
     {
         Schema::dropIfExists('document_logs');
     }
+    protected $casts = [
+        'waktu_cetak' => 'datetime',
+    ];
 }

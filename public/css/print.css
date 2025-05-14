@@ -1,0 +1,333 @@
+/* Gaya umum untuk layar, tetap menggunakan estetika Tabler */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-size: 0.875rem; /* Sesuai dengan font size default Tabler */
+    line-height: 0.5;
+    color: #1a1a1a; /* Warna teks Tabler */
+}
+
+.card {
+    border: 1px solid #e6e8e9; /* Border default Tabler */
+    border-radius: 0.25rem; /* Border radius Tabler */
+}
+
+.card-header {
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa; /* Latar belakang header Tabler */
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    border: 1px solid #e6e8e9; /* Border tabel Tabler */
+    padding: 0.5rem;
+}
+
+.bg-light-theme {
+    background-color: #f8f9fa; /* Warna latar belakang kolom header tabel */
+}
+
+.bg-primary-lt {
+    background-color: #e7f1ff; /* Warna primary light Tabler */
+}
+
+.bg-success-lt {
+    background-color: #e6f4ea; /* Warna success light Tabler */
+}
+
+.bg-info-lt {
+    background-color: #e5f3ff; /* Warna info light Tabler */
+}
+
+.bg-warning-lt {
+    background-color: #fef6e7; /* Warna warning light Tabler */
+}
+
+.bg-secondary-lt {
+    background-color: #f2f3f5; /* Warna secondary light Tabler */
+}
+
+.student-photo {
+    border: 1px solid #e6e8e9;
+    border-radius: 0.25rem;
+}
+
+
+/* Sembunyikan header print saat tampilan layar */
+.prints-headers {
+    display: none !important;
+}
+
+.headers-infos {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    font-size: 10pt;
+    margin-top: 0.5rem;
+}
+
+/* Gradient Theme */
+.bg-theme-gradient {
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+    border: none;
+    box-shadow: 0 10px 30px -5px rgba(58, 123, 213, 0.3);
+    transition: all 0.3s ease;
+}
+
+.bg-theme-gradient:hover {
+    box-shadow: 0 15px 40px -5px rgba(58, 123, 213, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Animated Divider */
+.divider-animated {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.divider-animated .line {
+    height: 1px;
+    background: rgba(255,255,255,0.5);
+    flex-grow: 1;
+    transition: all 0.3s ease;
+}
+
+.divider-animated .circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    margin: 0 15px;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Additional Effects */
+.card-cover {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card-cover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.03) 100%);
+    z-index: 0;
+}
+
+.z-index-1 {
+    position: relative;
+    z-index: 1;
+}
+
+.bg-gradient-dark {
+    background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 100%);
+}
+/* Media query untuk print */
+@media print {
+    /* Sembunyikan elemen yang tidak diperlukan saat print */
+    .d-print-none {
+        display: none !important;
+    }
+
+    /* Atur ukuran kertas A4 dan margin */
+    @page {
+        size: A4;
+        margin: 15mm 10mm; /* Margin untuk kertas A4 */
+    }
+
+    body {
+        font-size: 10pt; /* Ukuran font untuk keterbacaan saat print */
+        color: #000; /* Warna teks hitam untuk kontras */
+        background: #fff; /* Latar belakang putih */
+    }
+
+
+
+    /* Pastikan card tidak memiliki bayangan atau efek yang tidak diperlukan */
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #000; /* Border hitam untuk kejelasan */
+        page-break-inside: avoid; /* Hindari card terpotong di antara halaman */
+        margin-bottom: 1rem;
+    }
+
+    .card-header {
+        background-color: #f0f0f0; /* Latar belakang header abu-abu untuk print */
+        border-bottom: 1px solid #000;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    /* Atur tabel untuk print */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th, .table td {
+        border: 1px solid #000; /* Border hitam untuk tabel */
+        padding: 0.4rem;
+        font-size: 10pt;
+    }
+
+    .bg-light-theme {
+        background-color: #f5f5f5; /* Latar belakang ringan untuk header tabel */
+    }
+
+    /* Atur warna latar belakang untuk header card agar tetap konsisten */
+    .bg-primary-lt {
+        background-color: #e7f1ff;
+    }
+
+    .bg-success-lt {
+        background-color: #e6f4ea;
+    }
+
+    .bg-info-lt {
+        background-color: #e5f3ff;
+    }
+
+    .bg-warning-lt {
+        background-color: #fef6e7;
+    }
+
+    .bg-secondary-lt {
+        background-color: #f2f3f5;
+    }
+
+    /* Atur gambar agar ukurannya tetap konsisten */
+.student-photo {
+    width: 2.7cm !important;
+    height: 3.6cm !important;
+    object-fit: cover;
+    border: 1px solid #000;
+    display: inline-block; /* Agar foto tidak terpisah */
+    margin-right: 1rem; /* Memberikan jarak antar foto */
+}
+
+/* Atur foto dan caption agar sejajar horizontal */
+.foto-wrapper {
+    display: inline-block; /* Menjadikan foto dan caption berada dalam satu baris */
+    margin-bottom: 1rem; /* Memberikan jarak antar foto */
+    text-align: center;
+}
+
+/* Foto caption */
+.foto-caption {
+    font-size: 9pt;
+    color: #000;
+    margin-top: 0.3rem; /* Memberikan jarak antara foto dan caption */
+}
+
+
+    .foto-wrapper {
+        display: inline-block; /* Menjadikan foto dan caption berada dalam satu baris */
+    }
+    .col-md-3 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+
+    .col-md-3 img {
+        width: 2.7cm !important;
+        height: 3.6cm !important;
+    }
+
+
+
+
+    .print-header {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 1rem;
+        page-break-after: avoid;
+    }
+
+    .print-header h1 {
+        font-size: 14pt;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .header-info {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        font-size: 10pt;
+        margin-top: 0.5rem;
+    }
+
+    /* Atur tanda tangan */
+    .signature-section {
+        page-break-before: always; /* Mulai tanda tangan di halaman baru */
+        margin-top: 2rem;
+    }
+
+    .signature-line {
+        border-bottom: 1px solid #000 !important;
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    /* Hindari elemen terpotong */
+    .printable-page {
+        page-break-inside: avoid; /* Pastikan setiap card tidak terpotong */
+        margin-bottom: 1rem;
+    }
+
+    /* Atur teks untuk kontras tinggi */
+    .text-primary, .text-success, .text-info, .text-warning, .text-secondary {
+        color: #000 !important; /* Warna teks hitam untuk kontras saat print */
+    }
+
+
+
+
+    .col-md-3 {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; /* ✅ Pusatkan secara horizontal */
+        gap: 1rem;
+    }
+
+    .foto-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* ✅ Pusatkan isi di dalam wrapper */
+        page-break-inside: avoid;
+    }
+
+    .foto-caption {
+        margin-top: 0.3rem;
+        font-size: 9pt;
+        color: #000 !important;
+        text-align: center;
+    }
+
+}
+

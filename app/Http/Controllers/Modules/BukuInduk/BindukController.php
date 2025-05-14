@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Modules\BukuInduk;
 
+use Mpdf\Mpdf;
 use App\Models\Student;
 use App\Models\DocumentLog;
-use App\Helpers\BreadcrumbHelper;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
+use App\Helpers\BreadcrumbHelper;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Mpdf\Mpdf;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BindukController extends Controller
 {
@@ -22,6 +23,11 @@ class BindukController extends Controller
             return $query->whereNull('nomor_dokumen');
         })->get();
 
+        // Tentukan apakah siswa sudah memiliki nomor dokumen
+        foreach ($students as $student) {
+            $student->can_generate_pdf = !is_null($student->nomor_dokumen);
+        }
+
         return view('modules.buku-induk.binduk-index', [
             'title' => 'Data Siswa Buku Induk',
             'breadcrumbs' => BreadcrumbHelper::generate([['name' => 'Data Siswa Buku Induk']]),
@@ -29,6 +35,7 @@ class BindukController extends Controller
             'totalStudents' => $students->count(),
         ]);
     }
+
 
     // Fungsi untuk generate nomor dokumen untuk siswa yang dipilih
     public function generateNomorDokumen(Request $request)
@@ -73,39 +80,79 @@ class BindukController extends Controller
 
 
     // Fungsi untuk generate PDF Buku Induk
-    public function generatePDF($uuid)
+    public function generatePDF($studentUuid)
     {
-        // Ambil data siswa berdasarkan UUID
-        $student = Student::with([
-            'agama',
-            'alatTransportasi',
-            'jenisTinggal',
-            'orangTuas.pendidikan',
-            'orangTuas.pekerjaan',
-            'orangTuas.penghasilan',
-            'riwayatSekolah',
-            'studentRombels.tahunPelajaran',
-            'studentRombels.semester',
-            'studentRombels.rombel',
-            'fotoTerbaru',
-        ])->where('uuid', $uuid)->firstOrFail();
+        $student = Student::where('uuid', $studentUuid)->firstOrFail();
 
-        // Debug untuk melihat data siswa beserta relasinya
-        dd($student);
+        // Cek apakah sudah ada log yang valid untuk student_id dan jenis 'generate_pdf'
+        $existingLog = DocumentLog::where('student_id', $student->id)
+            ->where('jenis', 'generate_pdf')
+            ->where('is_valid', true)
+            ->first();
 
-        $riwayatSekolah = $student->riwayatSekolah->first();
+        if ($existingLog) {
+            // Jika log valid sudah ada, perbarui log lama dan set is_valid = 0 untuk yang lama
+            $existingLog->update(['is_valid' => false]);
+        }
+
+        // Persiapkan data PDF
+        $riwayatSekolah = $student->riwayatSekolah;
         $riwayatRombel = $student->studentRombels;
+        $fotoSiswa = $student->fotoSiswa()->with('tahunPelajaran')->orderByDesc('created_at')->take(3)->get();
+        $qrUrl = route('induk.dokumen.verifikasi', ['uuid' => Str::uuid()]);
 
-        // Membuat PDF menggunakan DOMPDF
-        $pdf = Mpdf::loadView('modules.buku-induk.pdf', [
-            'student' => $student,
-            'riwayatSekolah' => $riwayatSekolah,
-            'riwayatRombel' => $riwayatRombel,
+        $html = view('modules.buku-induk.binduk-pdf', compact('student', 'riwayatSekolah', 'riwayatRombel', 'fotoSiswa', 'qrUrl'))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'orientation' => 'P',
         ]);
 
-        // Menyimpan atau mengirimkan PDF ke browser
-        return $pdf->download('Buku_Induk_' . $student->nomor_dokumen . '.pdf');
+        $mpdf->SetWatermarkText('DOKUMEN RESMI', 0.1);
+        $mpdf->showWatermarkText = true;
+
+        $mpdf->SetHTMLFooter('
+        <div style="border-top:1px solid #ccc; padding-top:4px;">
+            <table width="100%" style="font-size:10px; font-family: sans-serif;">
+                <tr>
+                    <td width="50%" align="left">Buku Induk - SD Negeri Kedungrejo</td>
+                    <td width="50%" align="right">Halaman {PAGENO} dari {nbpg}</td>
+                </tr>
+            </table>
+        </div>
+        ');
+
+        try {
+            // Generate PDF
+            $mpdf->WriteHTML($html);
+
+            // Simpan log setelah PDF berhasil dihasilkan
+            $log = DocumentLog::create([
+                'uuid' => Str::uuid(),
+                'student_id' => $student->id,
+                'user_id' => auth()->id(),
+                'jenis' => 'generate_pdf',
+                'keterangan' => 'Generate PDF Buku Induk',
+                'is_valid' => true,
+                'jenis_dokumen' => 'Buku Induk',
+                'nomor_dokumen'  => $student->nomor_dokumen,
+                'dicetak_oleh'   => Auth::id(),
+                'waktu_cetak'    => now(),
+            ]);
+
+            // Log info
+            Log::info('GENERATE PDF CALLED for UUID: ' . $studentUuid);
+
+            // Output PDF
+            return $mpdf->Output('Buku_Induk_' . $student->nama . '.pdf', 'D');
+        } catch (\Exception $e) {
+            // Jika terjadi error saat generate PDF, rollback atau lakukan penanganan error
+            Log::error('Error generating PDF for UUID: ' . $studentUuid . ' - ' . $e->getMessage());
+            // Anda bisa menambahkan penanganan error di sini
+        }
     }
+
 
     public function showStudentDetail($uuid)
     {
@@ -124,35 +171,94 @@ class BindukController extends Controller
             'fotoTerbaru',
         ])->where('uuid', $uuid)->firstOrFail();
 
-        // Ambil data riwayat sekolah dan rombel
+        // Ambil maksimal 6 foto dari relasi foto_siswa
+        $fotoSiswa = $student->fotoSiswa()->with('tahunPelajaran')->orderByDesc('created_at')->take(3)->get();
+
+        // Ambil data riwayat
         $riwayatSekolah = $student->riwayatSekolah;
         $riwayatRombel = $student->studentRombels;
 
+        // Ambil data log dokumen berdasarkan uuid
+        $log = DocumentLog::where('student_id', $student->id)->first();  // Gantilah dengan log yang relevan jika berbeda query
+
+        // Set judul halaman dengan nama siswa
+        $title = 'Detail Siswa - ' . $student->nama;
+
         // Tampilkan halaman detail siswa
-        return view('modules.buku-induk.binduk-detail-siswa', compact('student', 'riwayatSekolah', 'riwayatRombel'));
+        return view('modules.buku-induk.binduk-detail-siswa', compact('student', 'riwayatSekolah', 'riwayatRombel', 'fotoSiswa', 'title', 'log'));
+    }
+
+
+
+
+    public function cetak(Request $request)
+    {
+        $student = Student::findOrFail($request->student_id);
+
+        // Tandai log sebelumnya sebagai tidak valid (jika ingin hanya 1 log aktif per siswa & jenis)
+        DocumentLog::where('student_id', $student->id)
+            ->where('jenis', 'print_view')
+            ->update(['is_valid' => false]);
+
+        $log = DocumentLog::create([
+            'student_id'     => $student->id,
+            'jenis_dokumen'  => 'Buku Induk',
+            'nomor_dokumen'  => $student->nomor_dokumen,
+            'dicetak_oleh'   => Auth::id(),
+            'waktu_cetak'    => now(),
+            'keterangan'     => 'Cetak Buku Induk dari halaman detail siswa',
+            'is_valid'       => true,
+            'jenis'          => 'print_view',
+        ]);
+
+        return redirect()->route('induk.buku-induk.print', $log->uuid);
+    }
+
+
+    public function print($uuid)
+    {
+        $log = DocumentLog::with(['student', 'user'])->where('uuid', $uuid)->firstOrFail();
+
+        $student = Student::with([
+            'agama',
+            'alatTransportasi',
+            'jenisTinggal',
+            'orangTuas.pendidikan',
+            'orangTuas.pekerjaan',
+            'orangTuas.penghasilan',
+            'riwayatSekolah',
+            'studentRombels.tahunPelajaran',
+            'studentRombels.semester',
+            'studentRombels.rombel',
+            'fotoTerbaru',
+        ])->findOrFail($log->student_id);
+
+        $riwayatSekolah = $student->riwayatSekolah;
+        $riwayatRombel = $student->studentRombels;
+        $fotoSiswa = $student->fotoSiswa()->with('tahunPelajaran')->orderByDesc('created_at')->take(3)->get();
+
+        // Menambahkan URL untuk QR code (misalnya, URL untuk verifikasi dokumen)
+        $qrUrl = route('induk.dokumen.verifikasi', ['uuid' => $log->uuid]);
+
+        return view('modules.buku-induk.binduk-print', compact('student', 'log', 'riwayatSekolah', 'riwayatRombel', 'fotoSiswa', 'qrUrl'));
     }
 
 
     // Fungsi untuk verifikasi dokumen dan menyimpan log verifikasi
-    public function verifikasiDokumen(Request $request, $uuid)
+    public function verifikasiDokumen($uuid)
     {
-        $request->validate([
-            'keterangan' => 'required|string|max:255',
-        ]);
+        try {
+            // Ambil data DocumentLog berdasarkan uuid, termasuk data siswa
+            $log = DocumentLog::with('student')->where('uuid', $uuid)->firstOrFail();
 
-        $student = Student::where('uuid', $uuid)->firstOrFail();
+            $student = $log->student;
 
-        // Catat log verifikasi
-        DocumentLog::create([
-            'uuid' => Str::uuid(),
-            'student_id' => $student->id,
-            'jenis_dokumen' => 'buku_induk',
-            'nomor_dokumen' => $student->nomor_dokumen,
-            'dicetak_oleh' => auth()->id(),
-            'waktu_cetak' => now(),
-            'keterangan' => $request->keterangan,
-        ]);
-
-        return redirect()->route('binduk.index')->with('success', 'Dokumen telah berhasil diverifikasi.');
+            return view('modules.buku-induk.binduk-verifikasi', compact('student', 'log'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Tampilkan halaman khusus jika UUID tidak ditemukan
+            return response()->view('modules.errors.verifikasi-tidak-ditemukan', [
+                'title' => 'Dokumen Tidak Ditemukan',
+            ], 404);
+        }
     }
 }

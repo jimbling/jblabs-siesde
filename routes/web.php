@@ -134,14 +134,20 @@ Route::middleware(['auth', 'can:atur foto'])->group(function () {
     })->name('get-semesters');
 });
 
-// Buku Induk - Cetak Dokumen
+// Route khusus verifikasi dokumen (dapat diakses publik)
+Route::get('induk/verifikasi-dokumen/{uuid}', [BindukController::class, 'verifikasiDokumen'])
+    ->name('induk.dokumen.verifikasi');
+
+// Buku Induk - Cetak Dokumen (akses terbatas)
 Route::prefix('induk')->name('induk.')->middleware(['auth', 'can:cetak buku induk'])->group(function () {
     Route::get('/', [BindukController::class, 'index'])->name('index');
     Route::post('/generate-nomor-dokumen', [BindukController::class, 'generateNomorDokumen'])->name('generateNomorDokumen');
     Route::get('/generate-pdf/{uuid}', [BindukController::class, 'generatePDF'])->name('generatePDF');
-    Route::post('/verifikasi-dokumen/{uuid}', [BindukController::class, 'verifikasiDokumen'])->name('verifikasiDokumen');
+    Route::post('/buku-induk/cetak', [BindukController::class, 'cetak'])->name('buku-induk.cetak');
+    Route::get('/buku-induk/print/{uuid}', [BindukController::class, 'print'])->name('buku-induk.print');
     Route::get('/siswa/{uuid}/detail', [BindukController::class, 'showStudentDetail'])->name('siswa.detail');
 });
+
 
 
 // Rombel Siswa (Kenaikan Kelas)

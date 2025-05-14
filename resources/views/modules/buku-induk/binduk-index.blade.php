@@ -143,7 +143,6 @@
                                                     @endif
                                                 </td>
 
-
                                                 <td class="sort-nisn">{{ $student->nisn }}</td>
                                                 <td class="sort-tempat-lahir">{{ $student->tempat_lahir }}</td>
                                                 <td class="sort-tanggal-lahir">{{ $student->tanggal_lahir_formatted }}</td>
@@ -154,7 +153,7 @@
                                                         <a href="{{ route('induk.siswa.detail', $student->uuid) }}"
                                                             class="btn btn-outline-primary btn-icon"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Lihat Detail">
+                                                            title="Lihat Buku Induk">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" viewBox="0 0 24 24" fill="none"
                                                                 stroke="currentColor" stroke-width="2"
@@ -169,8 +168,79 @@
                                                             </svg>
                                                         </a>
 
+                                                        {{-- Tombol Cetak Buku Induk --}}
+                                                        <form action="{{ route('induk.buku-induk.cetak') }}"
+                                                            method="POST" target="_blank" class="d-inline">
+                                                            @csrf
+                                                            <input type="hidden" name="student_id"
+                                                                value="{{ $student->id }}">
+                                                            <button type="submit"
+                                                                class="btn btn-outline-success btn-icon"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Cetak Buku Induk" @disabled(!$student->can_generate_pdf)>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-printer">
+                                                                    <path stroke="none" d="M0 0h24v24H0z"
+                                                                        fill="none" />
+                                                                    <path
+                                                                        d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
+                                                                    <path
+                                                                        d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
+                                                                    <path
+                                                                        d="M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z" />
+                                                                </svg>
+                                                            </button>
+                                                        </form>
 
+                                                        {{-- Tombol Unduh PDF --}}
 
+                                                        @if ($student->can_generate_pdf)
+                                                            <a href="{{ route('induk.generatePDF', ['uuid' => $student->uuid]) }}"
+                                                                class="btn btn-outline-warning btn-icon"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Unduh PDF">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-type-pdf">
+                                                                    <path stroke="none" d="M0 0h24v24H0z"
+                                                                        fill="none" />
+                                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                                                    <path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" />
+                                                                    <path d="M5 18h1.5a1.5 1.5 0 0 0 0 -3h-1.5v6" />
+                                                                    <path d="M17 18h2" />
+                                                                    <path d="M20 15h-3v6" />
+                                                                    <path
+                                                                        d="M11 15v6h1a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2h-1z" />
+                                                                </svg>
+                                                            </a>
+                                                        @else
+                                                            <a href="#"
+                                                                class="btn btn-outline-warning btn-icon disabled"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Tidak bisa diunduh karena belum ada Nomor Dokumen"
+                                                                onclick="return false;">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-type-pdf">
+                                                                    <path stroke="none" d="M0 0h24v24H0z"
+                                                                        fill="none" />
+                                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                                                    <path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" />
+                                                                    <path d="M5 18h1.5a1.5 1.5 0 0 0 0 -3h-1.5v6" />
+                                                                    <path d="M17 18h2" />
+                                                                    <path d="M20 15h-3v6" />
+                                                                    <path
+                                                                        d="M11 15v6h1a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2h-1z" />
+                                                                </svg>
+                                                            </a>
+                                                        @endif
 
                                                     </div>
                                                 </td>
@@ -196,8 +266,9 @@
                                                 </td>
                                             </tr>
                                         @endforelse
-
                                     </tbody>
+
+
 
                                 </table>
                             </div>

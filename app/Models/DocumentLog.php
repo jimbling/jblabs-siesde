@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DocumentLog extends Model
 {
@@ -19,6 +20,8 @@ class DocumentLog extends Model
         'dicetak_oleh',
         'waktu_cetak',
         'keterangan',
+        'jenis',
+        'is_valid',
     ];
 
     // Relasi dengan model Student
@@ -40,7 +43,7 @@ class DocumentLog extends Model
 
         static::creating(function ($model) {
             if (empty($model->uuid)) {
-                $model->uuid = \Str::uuid();
+                $model->uuid = Str::uuid();
             }
         });
     }

@@ -792,4 +792,84 @@ body.theme-dark .ts-wrapper.focus .ts-control {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* CSS Buku Induk Belum Ada Foto */
+.empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+    background-color: var(--tblr-bg-surface); /* Sesuai tema */
+    border-radius: 8px;
+    border: 1px dashed var(--tblr-border-color);
+    transition: all 0.3s ease;
+    color: var(--tblr-body-color);
+}
+
+.empty-state:hover {
+    background-color: var(--tblr-bg-surface-hover);
+    border-color: var(--tblr-primary-border);
+}
+
+.empty-state-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    background-color: var(--tblr-bg-surface-secondary);
+    color: var(--tblr-primary);
+}
+
+.empty-state-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 1.5;
+}
+
+.empty-state-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--tblr-body-color);
+}
+
+.empty-state-subtitle {
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--tblr-secondary-color);
+}
+
+.student-photo {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.student-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.card-sm {
+    border-radius: 8px;
+    height: 100%;
+}
+.table-borderless td {
+    padding: 0.35rem 0;
+    vertical-align: middle;
+}
+.avatar {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+
+.badge {
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+}
+
 
