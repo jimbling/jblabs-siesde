@@ -24,12 +24,16 @@
             <div class="col-12 col-lg-auto mt-3 mt-lg-0">
                 <ul class="list-inline list-inline-dots mb-0">
                     <li class="list-inline-item">
-                        Copyright &copy; 2025
-                        <a href="." class="link-secondary">Tabler</a>. All rights reserved.
+                        Copyright &copy; 2025 - {{ date('Y') }}
+                        <a href="{{ system_setting('website') }}" class="link-secondary" target="_blank"
+                            rel="noopener noreferrer">
+                            {{ system_setting('nama_sekolah') }}
+                        </a>
                     </li>
-                    <li class="list-inline-item">Generated 2025-04-26 17:34 +0000</li>
                 </ul>
             </div>
+
+
         </div>
     </div>
 </footer>

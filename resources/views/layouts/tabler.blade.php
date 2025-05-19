@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard')</title>
+
+    @php $favicon = system_setting('favicon'); @endphp
+
+    @if ($favicon)
+        <link rel="icon" href="{{ asset('storage/' . $favicon) }}" type="image/x-icon">
+        <link rel="shortcut icon" href="{{ asset('storage/' . $favicon) }}" type="image/x-icon">
+    @else
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    @endif
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <style>
         @import url("https://rsms.me/inter/inter.css");
     </style>
@@ -15,7 +28,6 @@
     @vite('resources/css/app.css')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-
 </head>
 
 <body class="d-flex flex-column">

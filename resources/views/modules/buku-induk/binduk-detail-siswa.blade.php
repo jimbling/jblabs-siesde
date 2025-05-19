@@ -51,12 +51,15 @@
                                     </svg>
                                     Kembali
                                 </a>
+                                {{-- Tombol Cetak --}}
                                 <form action="{{ route('induk.buku-induk.cetak') }}" method="POST" target="_blank"
                                     class="d-inline">
                                     @csrf
                                     <input type="hidden" name="student_id" value="{{ $student->id }}">
                                     <button type="submit" class="btn btn-primary btn-icon" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="Cetak Buku Induk">
+                                        data-bs-placement="top"
+                                        title="{{ $student->can_generate_pdf ? 'Cetak Buku Induk' : 'Nomor dokumen belum tersedia' }}"
+                                        {{ $student->can_generate_pdf ? '' : 'disabled' }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler-printer">
@@ -70,9 +73,11 @@
                                     </button>
                                 </form>
 
-                                <a href="{{ route('induk.generatePDF', ['uuid' => $student->uuid]) }}"
-                                    class="btn btn-danger btn-icon" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="Unduh PDF">
+                                {{-- Tombol Unduh PDF --}}
+                                <a href="{{ $student->can_generate_pdf ? route('induk.generatePDF', ['uuid' => $student->uuid]) : '#' }}"
+                                    class="btn btn-danger btn-icon {{ $student->can_generate_pdf ? '' : 'disabled' }}"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    title="{{ $student->can_generate_pdf ? 'Unduh PDF' : 'Nomor dokumen belum tersedia' }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
@@ -86,6 +91,7 @@
                                         <path d="M11 15v6h1a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2h-1z" />
                                     </svg>
                                 </a>
+
                             </div>
                         </div>
                     </div>
@@ -639,15 +645,7 @@
             </div>
         </div>
 
-        <div class="signature-section mt-5 printable-page">
-            <div class="row justify-content-end">
-                <div class="col-md-6 text-center">
-                    <div class="signature-line mb-1 border-bottom border-dark w-50 mx-auto"></div>
-                    <p class="mb-0">Kepala Sekolah</p>
-                    <p class="mt-3">(..................................................)</p>
-                </div>
-            </div>
-        </div>
+
 
 
     @endsection

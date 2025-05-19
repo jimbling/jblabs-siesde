@@ -134,4 +134,16 @@ class Student extends Model
     protected $casts = [
         'tanggal_lahir' => 'date',
     ];
+
+    public function getTanggalLahirIndoAttribute()
+    {
+        return $this->tanggal_lahir
+            ? \Carbon\Carbon::parse($this->tanggal_lahir)->translatedFormat('d F Y')
+            : null;
+    }
+
+    public function dokumen()
+    {
+        return $this->hasMany(StudentDocument::class, 'student_id', 'id');
+    }
 }

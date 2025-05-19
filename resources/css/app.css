@@ -873,3 +873,174 @@ body.theme-dark .ts-wrapper.focus .ts-control {
 }
 
 
+.signature-container {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.qr-section {
+    flex: 0 0 auto;
+    max-width: 160px;
+}
+
+.signature-section {
+    flex: 1;
+    min-width: 200px;
+}
+
+@media print {
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #aaa !important;
+    }
+}
+
+.qr-title {
+    color: #007BFF;
+}
+
+.footer-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-top: 1px solid #ddd;
+    color: #555;
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 0;
+    background: white;
+  }
+
+  .footer-left {
+    text-align: left;
+  }
+
+  .footer-right {
+    text-align: right;
+  }
+
+
+
+  /* CSS Spesifik untuk halaman detail siswa */
+.detail-siswa-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.detail-siswa-main-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* Bungkus bagian teks agar bisa fleksibel */
+.detail-siswa-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-siswa-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.detail-siswa-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.detail-siswa-avatar {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Badge khusus untuk halaman detail siswa */
+.detail-siswa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .detail-siswa-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .detail-siswa-main-content {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .detail-siswa-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .detail-siswa-badges .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .detail-siswa-actions {
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .detail-siswa-info h1 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+}
+
+
+.alert-danger {
+    --tblr-alert-bg: rgba(var(--tblr-danger-rgb), 0.1);
+    --tblr-alert-color: var(--tblr-danger);
+    --tblr-alert-border-color: var(--tblr-danger);
+}
+
+
+
+            .input-group-text {
+                background-color: transparent;
+            }
+
+            .form-control:focus {
+                box-shadow: 0 0 0 2px rgba(70, 127, 207, 0.25);
+            }
+
+            #loginButton {
+                transition: all 0.3s ease;
+                height: 42px;
+            }
+
+            #loginButton:hover {
+                transform: translateY(-1px);
+            }
+
+

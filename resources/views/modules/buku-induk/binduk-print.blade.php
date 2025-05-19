@@ -327,21 +327,43 @@
     </div>
 </div>
 
-<div class="signature-section mt-5 printable-page">
-    <div class="row justify-content-end">
-        <div class="col-md-6 text-center">
-            <div class="signature-line mb-1 border-bottom border-dark w-50 mx-auto"></div>
-            <p class="mb-0">Kepala Sekolah</p>
-            <p class="mt-3">(..................................................)</p>
+<div class="card shadow-sm rounded p-4 mb-4" style="width: 100%; page-break-inside: avoid;">
+    <div class="d-flex justify-content-between align-items-start">
+        <!-- QR Code Section -->
+        <div class="text-center">
+            <h6 class="mb-2 text-primary">VERIFIKASI DIGITAL</h6>
+            <img src="{{ $qrDataUri }}" alt="QR Code" style="width: 140px; height: auto;" class="mb-2">
+            <p class="text-muted small">Scan QR code untuk verifikasi</p>
+        </div>
+
+        <!-- Spacer -->
+        <div style="flex-grow: 1;"></div>
+
+        <!-- Signature Section -->
+        <div class="text-start" style="min-width: 260px;">
+            <p class="mb-2">{{ system_setting('kecamatan') }},
+                {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+            <p class="mb-2">Kepala Sekolah</p>
+
+            <!-- Ruang kosong untuk tanda tangan -->
+            <div style="height: 80px;"></div>
+
+            <p class="mb-2"><strong>{{ system_setting('kepala_sekolah') }}</strong></p>
+            <p class="mb-2">NIP. {{ system_setting('nip_kepala_sekolah') }}</p>
         </div>
     </div>
 </div>
 
-<div class="text-center my-4">
-    <h6 class="fw-semibold">Verifikasi Dokumen</h6>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($qrUrl) }}" alt="QR Code">
-    <div class="mt-2 small text-muted">Pindai untuk verifikasi keaslian</div>
-</div>
+<footer class="footer-container">
+    <div class="footer-left">
+        Buku Induk - {{ system_setting('nama_sekolah') }} | NPSN {{ system_setting('npsn') }}
+    </div>
+
+</footer>
+
+
+
+
 <script>
     window.onload = () => window.print();
 </script>

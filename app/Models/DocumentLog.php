@@ -22,6 +22,7 @@ class DocumentLog extends Model
         'keterangan',
         'jenis',
         'is_valid',
+        'short_code',
     ];
 
     // Relasi dengan model Student
@@ -43,7 +44,16 @@ class DocumentLog extends Model
 
         static::creating(function ($model) {
             if (empty($model->uuid)) {
-                $model->uuid = Str::uuid();
+                $uuid = Str::uuid()->toString();
+                $model->uuid = $uuid;
+                $model->short_code = substr($uuid, 0, 8);
+
+                // Optional: pastikan unik
+                while (self::where('short_code', $model->short_code)->exists()) {
+                    $uuid = Str::uuid()->toString();
+                    $model->uuid = $uuid;
+                    $model->short_code = substr($uuid, 0, 8);
+                }
             }
         });
     }

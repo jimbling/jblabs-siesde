@@ -6,6 +6,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Modules\Admin\DashboardController;
 use App\Http\Controllers\Modules\BukuInduk\SiswaController;
 use App\Http\Controllers\Modules\BukuInduk\BindukController;
+use App\Http\Controllers\Modules\BukuInduk\DokumenSiswa;
+use App\Http\Controllers\Modules\BukuInduk\DokumenSiswaController;
 use App\Http\Controllers\Modules\BukuInduk\RombelController;
 use App\Http\Controllers\Modules\Pengaturan\AksesController;
 use App\Http\Controllers\Modules\Pengaturan\SistemController;
@@ -31,6 +33,8 @@ Route::prefix('pengaturan')->middleware(['auth', 'verified'])->name('pengaturan.
 
     Route::get('/sistem', [SistemController::class, 'sistem'])
         ->can('lihat sistem')->name('sistem');
+    Route::put('/sistem', [SistemController::class, 'update'])
+        ->can('atur sistem')->name('sistem.update');
 
     Route::get('/akses', [AksesController::class, 'akses'])
         ->can('lihat hak akses')->name('akses');
@@ -58,6 +62,8 @@ Route::prefix('pengaturan/akses')->name('pengaturan.akses.')->group(function () 
         ->can('hapus akun')->name('hapus-akun');
 });
 
+
+
 // Buku Induk
 Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])
@@ -68,6 +74,13 @@ Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(
     Route::get('/siswa/{uuid}', [SiswaController::class, 'show'])->name('siswa.show');
     Route::delete('/siswa/{uuid}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
     Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
+
+    Route::put('/siswa/{student}/biodata', [SiswaController::class, 'updateBiodata'])
+        ->name('siswa.update.biodata');
+    Route::put('/siswa/{student}/ortu', [SiswaController::class, 'updateOrtu'])->name('siswa.update.ortu');
+    Route::put('/siswa/{student}/update-lokasi', [SiswaController::class, 'updateLokasi'])->name('siswa.update-lokasi');
+    Route::put('/siswa/{student}/sosial', [SiswaController::class, 'updateSosial'])
+        ->name('siswa.update-sosial');
 });
 
 
@@ -93,7 +106,6 @@ Route::prefix('induk')->middleware(['auth', 'verified'])->name('induk.')->group(
 });
 
 Route::prefix('induk/akademik')->middleware('auth')->group(function () {
-    // Route untuk mengaktifkan semester
     Route::patch('/tp/{tahunPelajaran}/sem/{semester}/aktifkan', [SemesterController::class, 'aktifkan'])
         ->name('semesters.aktifkan');
 
@@ -101,7 +113,6 @@ Route::prefix('induk/akademik')->middleware('auth')->group(function () {
         ->name('semester.nonaktifkan')
         ->middleware('can:atur semester');
 
-    // Route untuk menghapus semester
     Route::delete('semester/{tahunPelajaran}/hapus', [SemesterController::class, 'hapus'])
         ->name('semester.hapus');
 });
@@ -119,11 +130,9 @@ Route::prefix('induk/akademik')
     ->middleware(['auth', 'can:atur foto'])
     ->group(function () {
 
-        // Route khusus menampilkan semua foto untuk siswa tertentu
         Route::get('foto-siswa/by/{siswa_uuid}', [FotoSiswaController::class, 'index'])
             ->name('foto-siswa.by-siswa');
 
-        // Resource route standar (show, create, store, etc)
         Route::resource('foto-siswa', FotoSiswaController::class)
             ->parameters(['foto-siswa' => 'foto_siswa']); // Hindari bentrok dengan siswa_uuid
     });
@@ -137,6 +146,7 @@ Route::middleware(['auth', 'can:atur foto'])->group(function () {
 // Route khusus verifikasi dokumen (dapat diakses publik)
 Route::get('induk/verifikasi-dokumen/{uuid}', [BindukController::class, 'verifikasiDokumen'])
     ->name('induk.dokumen.verifikasi');
+Route::get('/v/{shortCode}', [BindukController::class, 'verifikasiDokumenShort'])->name('short.dokumen.verifikasi');
 
 // Buku Induk - Cetak Dokumen (akses terbatas)
 Route::prefix('induk')->name('induk.')->middleware(['auth', 'can:cetak buku induk'])->group(function () {
@@ -168,8 +178,19 @@ Route::prefix('rombel/siswa')
         Route::delete('/hapus-rombel', 'hapusDariRombel')->name('hapus-rombel');
     });
 
+Route::prefix('student-documents')->middleware(['auth', 'can:atur dokumen'])->group(function () {
+    Route::post('/{student}', [DokumenSiswaController::class, 'store'])
+        ->name('student.documents.store');
 
+    Route::get('/{student}/list', [DokumenSiswaController::class, 'index'])
+        ->name('student.documents.list');
 
+    Route::delete('/{document}', [DokumenSiswaController::class, 'destroy'])
+        ->name('student.documents.destroy');
+
+    Route::get('/{student}/documents/partial', [DokumenSiswaController::class, 'partial'])
+        ->name('student.documents.partial');
+});
 
 
 // Profile

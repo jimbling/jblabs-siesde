@@ -66,27 +66,7 @@
                                             </span>
                                         </div>
 
-                                        <form id="form-mass-delete" method="POST"
-                                            action="{{ route('induk.siswa.massDelete') }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <input type="hidden" name="ids[]" id="selected-students">
-                                            <button type="button" class="btn btn-outline-danger"
-                                                id="btn-konfirmasi-hapus-pd">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M4 7l16 0" />
-                                                    <path d="M10 11l0 6" />
-                                                    <path d="M14 11l0 6" />
-                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                                </svg>
-                                                Hapus
-                                            </button>
-                                        </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -136,8 +116,7 @@
                                                 <td class="sort-nama">{{ $student->nama }}</td>
                                                 <td class="sort-nomor-dokumen">
                                                     @if ($student->nomor_dokumen)
-                                                        <span
-                                                            class="badge bg-azure-lt">{{ $student->nomor_dokumen }}</span>
+                                                        <span class="badge bg-azure-lt">{{ $student->nomor_dokumen }}</span>
                                                     @else
                                                         <span class="badge bg-default-lt">Belum Dibuat</span>
                                                     @endif
@@ -314,8 +293,8 @@
 
     {{-- Modal Peringatan Tidak Ada Data --}}
     <x-modal.peringatan id="modalPeringatanTidakAdaData" title="Tidak Ada Data Dipilih"
-        message="Silakan pilih setidaknya satu data untuk dihapus." btnLabel="Tutup" btnColor="warning" formAction="#"
-        method="GET" />
+        message="Silakan pilih setidaknya satu data untuk di generate nomor dokumen." btnLabel="Tutup" btnColor="warning"
+        formAction="#" method="GET" />
 
 
     @push('scripts')
@@ -398,19 +377,21 @@
             document.addEventListener("DOMContentLoaded", function() {
                 const generateButton = document.getElementById("btn-generate-dokumen");
                 const inputContainer = document.getElementById("selected-students-generate");
+                const modalPeringatan = new bootstrap.Modal(document.getElementById('modalPeringatanTidakAdaData'));
 
                 generateButton.addEventListener("click", function() {
                     const selectedIds = getSelectedStudentIds();
 
                     if (selectedIds.length === 0) {
-                        alert("Silakan pilih minimal satu siswa untuk generate dokumen.");
+
+                        modalPeringatan.show();
                         return;
                     }
 
-                    // Bersihkan input sebelumnya
+
                     inputContainer.innerHTML = '';
 
-                    // Tambahkan hidden input untuk setiap ID
+
                     selectedIds.forEach(id => {
                         const input = document.createElement('input');
                         input.type = 'hidden';
@@ -419,7 +400,21 @@
                         inputContainer.appendChild(input);
                     });
 
-                    document.getElementById("form-generate-nomor").submit();
+
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Silakan tunggu, sedang membuat nomor dokumen.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+
+                    setTimeout(() => {
+                        document.getElementById("form-generate-nomor").submit();
+                    }, 500);
                 });
             });
         </script>

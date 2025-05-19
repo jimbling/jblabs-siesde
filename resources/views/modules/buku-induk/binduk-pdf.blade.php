@@ -105,25 +105,46 @@
             /* Warna secondary light Tabler */
         }
 
+
+
+        .photo-frame {
+            background-color: white;
+            padding: 0.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid #e0e0e0;
+            /* Border warna abu-abu muda */
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efek hover yang lebih menonjol */
+        .photo-frame:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: #4a90e2;
+            /* Warna biru saat hover */
+        }
+
         .student-photo {
             width: 2.7cm;
             height: 3.6cm;
             object-fit: cover;
-            border: 1px solid #000;
-            /* Seperti pas foto */
-            border-radius: 2px;
+            border-radius: 8px;
             display: block;
             margin: 0 auto;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-            /* opsional untuk efek lebih halus */
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            /* Border halus untuk foto */
         }
 
         .foto-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 0.2rem;
-            margin-bottom: 0.2rem;
+            border-collapse: separate;
+
         }
+
 
         .foto-table tr {
             page-break-inside: avoid;
@@ -132,15 +153,23 @@
         .foto-cell {
             text-align: center;
             vertical-align: top;
-            padding: 0.2rem;
+            padding: 0;
             border: none;
         }
 
         .foto-caption {
-            font-size: 9pt;
-            color: #000;
-            margin-top: 0.3rem;
+            font-size: 0.75rem;
+            color: #555;
+
             text-align: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            background: #f8f9fa;
+            /* Background caption */
+            padding: 0.3rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            /* Border untuk caption */
         }
 
         /* Atur header untuk PDF */
@@ -315,17 +344,22 @@
         </div>
         <div class="card-body">
             <div class="row align-items-start">
-                <div class="col-md-3 text-center ">
+                <div class="col-md-3 text-center">
                     <table class="foto-table">
                         @foreach ($fotoSiswa->chunk(3) as $chunk)
                             <tr>
                                 @foreach ($chunk as $foto)
                                     <td class="foto-cell">
-                                        <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Foto Siswa"
-                                            class="student-photo">
-                                        <div class="foto-caption">
-                                            Foto Tahun - {{ $foto->tahunPelajaran->tahun_ajaran ?? 'Tidak Diketahui' }}
+
+                                        <div class="photo-frame">
+                                            <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Foto Siswa"
+                                                class="student-photo">
                                         </div>
+                                        <div class="foto-caption">
+                                            Foto Tahun -
+                                            {{ $foto->tahunPelajaran->tahun_ajaran ?? 'Tidak Diketahui' }}
+                                        </div>
+
                                     </td>
                                 @endforeach
                             </tr>
@@ -616,9 +650,7 @@
                     <td class="qr-section">
                         <div class="qr-container">
                             <h6 class="qr-title">VERIFIKASI DIGITAL</h6>
-                            <img class="qr-code"
-                                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($qrUrl) }}&margin=0"
-                                alt="QR Code">
+                            <img src="{{ $qrDataUri }}" alt="QR Code" style="width:150px; height:auto;">
                             <p class="qr-caption">Scan QR code untuk verifikasi</p>
                         </div>
                     </td>
@@ -631,15 +663,15 @@
                     <!-- Signature Section -->
                     <td class="signature-section">
                         <div class="signature-content">
-                            <p class="signature-location">Pengasih,
+                            <p class="signature-location">{{ system_setting('kecamatan') }},
                                 {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                             <p class="signature-role">Kepala Sekolah</p>
                             <br>
                             <br>
                             <br>
                             <br>
-                            <p class="signature-name"><strong>Titanium, S.Pd.</strong></p>
-                            <p class="signature-nip">NIP. 1996998 200019 2 002</p>
+                            <p class="signature-name"><strong>{{ system_setting('kepala_sekolah') }}</strong></p>
+                            <p class="signature-nip">NIP. {{ system_setting('nip_kepala_sekolah') }}</p>
                         </div>
                     </td>
                 </tr>

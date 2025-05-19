@@ -81,7 +81,6 @@ class SiswaController extends Controller
 
     public function show($uuid)
     {
-
         $student = Student::with([
             'agama',
             'alatTransportasi',
@@ -99,7 +98,13 @@ class SiswaController extends Controller
         $riwayatSekolah = $student->riwayatSekolah;
         $riwayatRombel = $student->studentRombels;
 
-        // Log::info('Student Rombels: ', $student->studentRombels->toArray());
+        // Ambil data referensi untuk form edit
+        $agamaList = Agama::pluck('nama', 'id'); // [id => nama]
+        $jenisTinggalList = JenisTinggal::pluck('nama', 'id');
+        $alatTransportasiList = AlatTransportasi::pluck('nama', 'id');
+        $pendidikans = Pendidikan::pluck('jenjang', 'id'); // [id => jenjang]
+        $pekerjaans = Pekerjaan::pluck('nama', 'id');      // [id => nama]
+        $penghasilans = Penghasilan::pluck('rentang', 'id'); // [id => rentang]
 
         return view('modules.buku-induk.detail-siswa', [
             'title' => 'Detail Siswa',
@@ -111,8 +116,17 @@ class SiswaController extends Controller
             'riwayatSekolah' => $riwayatSekolah,
             'riwayatRombel' => $riwayatRombel,
 
+            // Kirim ke view
+            'agamaList' => $agamaList,
+            'jenisTinggalList' => $jenisTinggalList,
+            'alatTransportasiList' => $alatTransportasiList,
+
+            'pendidikans' => $pendidikans,
+            'pekerjaans' => $pekerjaans,
+            'penghasilans' => $penghasilans,
         ]);
     }
+
 
     public function destroy($uuid)
     {
@@ -165,5 +179,102 @@ class SiswaController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
         }
+    }
+
+
+    public function updateBiodata(Request $request, Student $student)
+    {
+        $validated = $request->validate([
+            'nik' => 'nullable|string|max:20',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
+            'agama_id' => 'nullable|exists:agama,id',
+            'telepon' => 'nullable|string|max:20',
+            'hp' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:100',
+            'alamat' => 'nullable|string',
+            'rt' => 'nullable|string|max:5',
+            'rw' => 'nullable|string|max:5',
+            'dusun' => 'nullable|string|max:100',
+            'kelurahan' => 'nullable|string|max:100',
+            'kecamatan' => 'nullable|string|max:100',
+            'jenis_tinggal_id' => 'nullable|exists:jenis_tinggal,id',
+            'alat_transportasi_id' => 'nullable|exists:alat_transportasi,id',
+        ]);
+
+        $student->update($validated);
+
+        return redirect()
+            ->to(route('induk.siswa.show', $student->uuid) . '#tabs-biodata')
+            ->with('success', 'Biodata berhasil diperbarui.');
+    }
+
+    public function updateOrtu(Request $request, Student $student)
+    {
+        foreach (['ayah', 'ibu'] as $tipe) {
+            $data = $request->input($tipe);
+            if (!$data) continue;
+
+            $student->orangTuas()->updateOrCreate(
+                ['id' => $data['id'] ?? null],
+                [
+                    'tipe' => $tipe,
+                    'nama' => $data['nama'],
+                    'tahun_lahir' => $data['tahun_lahir'],
+                    'nik' => $data['nik'],
+                    'pendidikan_id' => $data['pendidikan_id'] ?? null,
+                    'pekerjaan_id' => $data['pekerjaan_id'] ?? null,
+                    'penghasilan_id' => $data['penghasilan_id'] ?? null,
+                ]
+            );
+        }
+
+        return redirect()
+            ->to(route('induk.siswa.show', $student->uuid) . '#tabs-ortu')
+            ->with('success', 'Data orang tua berhasil diperbarui.');
+    }
+
+    public function updateLokasi(Request $request, Student $student)
+    {
+        $validated = $request->validate([
+            'jarak_rumah_km' => 'nullable|numeric',
+            'lintang' => 'nullable|string|max:50',
+            'bujur' => 'nullable|string|max:50',
+            'bank' => 'nullable|string|max:255',
+            'nomor_rekening' => 'nullable|string|max:50',
+            'rekening_atas_nama' => 'nullable|string|max:255',
+        ]);
+
+        $student->update($validated);
+
+        return redirect()
+            ->to(route('induk.siswa.show', $student->uuid) . '#tabs-lokasi') // kalau mau redirect ke show, gunakan route show
+            ->with('success', 'Data lokasi dan bank berhasil diperbarui.');
+    }
+
+    public function updateSosial(Request $request, Student $student)
+    {
+        $validated = $request->validate([
+            'penerima_kps' => 'nullable|boolean',
+            'no_kps' => 'nullable|string|max:100',
+            'penerima_kip' => 'nullable|boolean',
+            'nomor_kip' => 'nullable|string|max:100',
+            'nama_di_kip' => 'nullable|string|max:255',
+            'nomor_kks' => 'nullable|string|max:100',
+            'layak_pip' => 'nullable|boolean',
+            'alasan_layak_pip' => 'nullable|string|max:255',
+        ]);
+
+        // Convert checkbox to boolean
+        $validated['penerima_kps'] = $request->has('penerima_kps');
+        $validated['penerima_kip'] = $request->has('penerima_kip');
+        $validated['layak_pip'] = $request->has('layak_pip');
+
+        $student->update($validated);
+
+        return redirect()
+            ->route('induk.siswa.show', $student->uuid)
+            ->with('success', 'Data sosial berhasil diperbarui.')
+            ->withFragment('tabs-sosial');
     }
 }

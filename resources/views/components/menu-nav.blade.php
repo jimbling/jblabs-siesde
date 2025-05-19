@@ -131,57 +131,16 @@
                     </a>
                 </li>
 
-                <!-- Administrator Dropdown -->
-                <li class="nav-item dropdown {{ Request::is('pengaturan/*') ? 'active' : '' }}">
-                    <a class="nav-link dropdown-toggle" href="#navbar-admin" data-bs-toggle="dropdown" role="button"
-                        aria-expanded="false">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <!-- Settings Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M12 21a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3c.568 1.933 .635 3.957 .223 5.89" />
-                                <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                <path d="M19.001 15.5v1.5" />
-                                <path d="M19.001 21v1.5" />
-                                <path d="M22.032 17.25l-1.299 .75" />
-                                <path d="M17.27 20l-1.3 .75" />
-                                <path d="M15.97 17.25l1.3 .75" />
-                                <path d="M20.733 20l1.3 .75" />
-                            </svg>
-                        </span>
-                        <span class="nav-link-title">Administrator</span>
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item {{ request()->routeIs('pengaturan.sistem') ? 'active' : '' }}"
-                            href="{{ route('pengaturan.sistem') }}">
-                            Pengaturan Sistem
-                        </a>
-                        <a class="dropdown-item {{ request()->routeIs('pengaturan.akses') ? 'active' : '' }}"
-                            href="{{ route('pengaturan.akses') }}">
-                            Pengaturan Akses
-                        </a>
-                        <a class="dropdown-item {{ request()->routeIs('pengaturan.pembaruan') ? 'active' : '' }}"
-                            href="{{ route('pengaturan.pembaruan') }}">
-                            Pembaruan Aplikasi
-                        </a>
-                        <a class="dropdown-item {{ request()->routeIs('pengaturan.pemeliharaan') ? 'active' : '' }}"
-                            href="{{ route('pengaturan.pemeliharaan') }}">
-                            Pemeliharaan
-                        </a>
-                    </div>
-                </li>
+
 
                 <li class="nav-item dropdown {{ request()->routeIs('induk.*') ? 'active' : '' }}">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button"
                         aria-expanded="false" data-bs-auto-close="outside">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <!-- Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
                                 class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path
@@ -236,7 +195,48 @@
                     </div>
                 </li>
 
-
+                <!-- Administrator Dropdown -->
+                <li class="nav-item dropdown {{ Request::is('pengaturan/*') ? 'active' : '' }}">
+                    <a class="nav-link dropdown-toggle" href="#navbar-admin" data-bs-toggle="dropdown"
+                        role="button" aria-expanded="false">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Settings Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M12 21a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3c.568 1.933 .635 3.957 .223 5.89" />
+                                <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M19.001 15.5v1.5" />
+                                <path d="M19.001 21v1.5" />
+                                <path d="M22.032 17.25l-1.299 .75" />
+                                <path d="M17.27 20l-1.3 .75" />
+                                <path d="M15.97 17.25l1.3 .75" />
+                                <path d="M20.733 20l1.3 .75" />
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">Administrator</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item {{ request()->routeIs('pengaturan.sistem') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.sistem') }}">
+                            Pengaturan Sistem
+                        </a>
+                        <a class="dropdown-item {{ request()->routeIs('pengaturan.akses') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.akses') }}">
+                            Pengaturan Akses
+                        </a>
+                        <a class="dropdown-item {{ request()->routeIs('pengaturan.pembaruan') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.pembaruan') }}">
+                            Pembaruan Aplikasi
+                        </a>
+                        <a class="dropdown-item {{ request()->routeIs('pengaturan.pemeliharaan') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.pemeliharaan') }}">
+                            Pemeliharaan
+                        </a>
+                    </div>
+                </li>
 
 
 

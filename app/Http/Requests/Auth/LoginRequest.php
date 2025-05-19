@@ -41,45 +41,53 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        $this->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+        $user = \App\Models\User::where('email', $this->email)->first();
+
+        if (! $user) {
+            RateLimiter::hit($this->throttleKey());
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => 'Email tidak terdaftar.',
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        if (! \Illuminate\Support\Facades\Hash::check($this->password, $user->password)) {
+            RateLimiter::hit($this->throttleKey());
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'password' => 'Kata sandi salah.',
+            ]);
+        }
+
+        RateLimiter::clear($this->throttleKey()); // Clear attempts if successful
+
+        Auth::login($user, $this->boolean('remember'));
     }
+
 
     /**
      * Ensure the login request is not rate limited.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function ensureIsNotRateLimited(): void
+    protected function ensureIsNotRateLimited()
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
-        event(new Lockout($this));
-
-        $seconds = RateLimiter::availableIn($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
+        throw \Illuminate\Validation\ValidationException::withMessages([
+            'email' => __('Terlalu banyak percobaan login. Coba lagi dalam :seconds detik.', [
+                'seconds' => RateLimiter::availableIn($this->throttleKey()),
             ]),
         ]);
     }
 
-    /**
-     * Get the rate limiting throttle key for the request.
-     */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::lower($this->input('email')) . '|' . $this->ip();
     }
 }
