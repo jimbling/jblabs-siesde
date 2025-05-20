@@ -27,7 +27,10 @@ class SiswaController extends Controller
 {
     public function index()
     {
-        $students = Student::all();
+        $students = Student::whereHas('statusTerakhir', function ($query) {
+            $query->where('status', 'aktif');
+        })->orderBy('nipd', 'asc')->get();
+
         $agamas = Agama::all();
         $alatTransportasis = AlatTransportasi::all();
         $jenisTinggals = JenisTinggal::all();

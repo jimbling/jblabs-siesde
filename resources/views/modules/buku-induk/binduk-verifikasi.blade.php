@@ -244,7 +244,7 @@
                     <h3 class="font-semibold text-blue-800 mb-2">Tentang Verifikasi Ini</h3>
                     <p class="text-blue-700">Dokumen ini telah diverifikasi keasliannya melalui sistem digital.
                         Informasi yang tercantum sesuai dengan data resmi yang tercatat dalam database sekolah dan
-                        diterbitkan melalui domain resmi sekolah www.sdnkedungrejo.sch.id</p>
+                        diterbitkan melalui domain resmi sekolah : {{ system_setting('website') }}</p>
                 </div>
             </div>
         </div>

@@ -15,17 +15,17 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class DokumenSiswaController extends Controller
 {
-    // Simpan dokumen baru
+
     public function store(Request $request, Student $student)
     {
 
         $request->validate([
             'tipe_dokumen' => 'required|in:kk,akta_kelahiran,surat_pindah,ijazah_tk,ijazah_sd,lainnya',
-            'file' => 'required|image|mimes:jpg,jpeg,png|max:150', // ukuran dalam KB
+            'file' => 'required|image|mimes:jpg,jpeg,png|max:150',
             'keterangan' => 'nullable|string|max:255'
         ]);
 
-        // Cek duplikat dokumen untuk siswa
+
         $exists = $student->dokumen()
             ->where('tipe_dokumen', $request->tipe_dokumen)
             ->exists();
@@ -33,7 +33,7 @@ class DokumenSiswaController extends Controller
         if ($exists) {
             return response()->json([
                 'message' => 'Dokumen dengan tipe ini sudah pernah diupload.'
-            ], 422); // status 422: Unprocessable Entity (validasi)
+            ], 422);
         }
 
         $file = $request->file('file');
@@ -45,12 +45,12 @@ class DokumenSiswaController extends Controller
             mkdir($fullPath, 0755, true);
         }
 
-        // Gunakan ImageManager untuk konversi webp
+
         $imageManager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
         $webpImage = $imageManager->read($file)->toWebp(85);
         Storage::disk('public')->put($directory . '/' . $fileName, (string) $webpImage);
 
-        // Simpan ke database
+
         $student->dokumen()->create([
             'tipe_dokumen' => $request->tipe_dokumen,
             'path_file' => $directory . '/' . $fileName,
@@ -68,12 +68,10 @@ class DokumenSiswaController extends Controller
         try {
             $document = StudentDocument::findOrFail($id);
 
-            // Hapus file fisik
             if ($document->path_file && Storage::disk('public')->exists($document->path_file)) {
                 Storage::disk('public')->delete($document->path_file);
             }
 
-            // Hapus record database
             $document->delete();
 
             return response()->json([

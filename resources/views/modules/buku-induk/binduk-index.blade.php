@@ -100,6 +100,10 @@
                                                     Lahir</button>
                                             </th>
                                             <th>
+                                                <button class="table-sort text-center"
+                                                    data-sort="sort-status">Status</button>
+                                            </th>
+                                            <th>
                                                 <button class="table-sort text-center">Aksi</button>
                                             </th>
                                         </tr>
@@ -125,7 +129,22 @@
                                                 <td class="sort-nisn">{{ $student->nisn }}</td>
                                                 <td class="sort-tempat-lahir">{{ $student->tempat_lahir }}</td>
                                                 <td class="sort-tanggal-lahir">{{ $student->tanggal_lahir_formatted }}</td>
+                                                @php
+                                                    $status = $student->statusTerakhir?->status ?? 'tidak_diketahui';
 
+                                                    $bgClass = match ($status) {
+                                                        'aktif' => 'bg-lime-lt',
+                                                        'lulus' => 'bg-blue-lt',
+                                                        'pindah' => 'bg-yellow-lt',
+                                                        'keluar' => 'bg-red-lt',
+                                                        default => 'bg-muted-lt',
+                                                    };
+                                                @endphp
+                                                <td class="sort-status">
+                                                    <span class="badge {{ $bgClass }}">
+                                                        {{ ucfirst($status) }}
+                                                    </span>
+                                                </td>
                                                 <td class="text-center">
                                                     <div class="btn-list justify-content-center">
                                                         {{-- Lihat Detail --}}
@@ -322,6 +341,10 @@
                         {
                             "data-sort": "sort-tanggal-lahir",
                             name: "Tanggal Lahir"
+                        },
+                        {
+                            "data-sort": "sort-status",
+                            name: "Status"
                         },
                     ],
                 };

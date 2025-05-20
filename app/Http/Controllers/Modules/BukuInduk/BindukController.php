@@ -29,9 +29,12 @@ class BindukController extends Controller
     public function index(Request $request)
     {
 
-        $students = Student::when($request->has('filter') && $request->filter === 'no_nomor_dokumen', function ($query) {
-            return $query->whereNull('nomor_dokumen');
-        })->get();
+        $students = Student::with('statusTerakhir')
+            ->when($request->has('filter') && $request->filter === 'no_nomor_dokumen', function ($query) {
+                return $query->whereNull('nomor_dokumen');
+            })
+            ->get();
+
 
         // Tentukan apakah siswa sudah memiliki nomor dokumen
         foreach ($students as $student) {

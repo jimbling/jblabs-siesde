@@ -146,4 +146,25 @@ class Student extends Model
     {
         return $this->hasMany(StudentDocument::class, 'student_id', 'id');
     }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(StudentStatus::class, 'student_uuid', 'uuid')->orderBy('tanggal', 'desc');
+    }
+
+    public function statusTerakhir()
+    {
+        return $this->hasOne(StudentStatus::class, 'student_uuid', 'uuid')->latestOfMany('tanggal');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($student) {
+            $student->statusHistories()->create([
+                'status' => 'aktif',
+                'tanggal' => now(),
+                'alasan' => 'Pendaftaran awal',
+            ]);
+        });
+    }
 }
