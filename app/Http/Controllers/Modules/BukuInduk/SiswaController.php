@@ -2,60 +2,56 @@
 
 namespace App\Http\Controllers\Modules\BukuInduk;
 
-use Str;
-use App\Models\Agama;
 use App\Models\Student;
-use App\Models\OrangTua;
-use App\Models\Pekerjaan;
-use App\Models\Pendidikan;
-use App\Models\Penghasilan;
-use App\Models\JenisTinggal;
-use Illuminate\Http\Request;
-use App\Models\RiwayatSekolah;
-use App\Imports\StudentsImport;
-use App\Models\KebutuhanKhusus;
-use App\Models\AlatTransportasi;
-use App\Services\StudentService;
 use App\Helpers\BreadcrumbHelper;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StudentStoreRequest;
+use App\Services\BukuInduk\PesertaDidik\ImportService;
+use App\Services\BukuInduk\PesertaDidik\StudentService;
+use App\Services\BukuInduk\PesertaDidik\SimpanStudentService;
+use App\Services\BukuInduk\PesertaDidik\ReferenceDataService;
+use App\Services\BukuInduk\PesertaDidik\StudentUpdateService;
+use App\Services\BukuInduk\PesertaDidik\StudentDataService;
+
 
 class SiswaController extends Controller
 {
+    protected $studentService;
+    protected $referenceDataService;
+    protected $importService;
+    protected $studentUpdateService;
+    protected $studentDataService;
+    protected $simpanstudentService;
+
+    public function __construct(
+        StudentService $studentService,
+        ReferenceDataService $referenceDataService,
+        ImportService $importService,
+        StudentUpdateService $studentUpdateService,
+        StudentDataService $studentDataService,
+        SimpanStudentService $simpanstudentService
+    ) {
+        $this->studentService = $studentService;
+        $this->referenceDataService = $referenceDataService;
+        $this->importService = $importService;
+        $this->studentUpdateService = $studentUpdateService;
+        $this->studentDataService = $studentDataService;
+        $this->simpanstudentService = $simpanstudentService;
+    }
+
     public function index()
     {
-        $students = Student::whereHas('statusTerakhir', function ($query) {
-            $query->where('status', 'aktif');
-        })->orderBy('nipd', 'asc')->get();
+        $students = $this->studentService->getActiveStudents();
+        $references = $this->referenceDataService->getAllReferences();
 
-        $agamas = Agama::all();
-        $alatTransportasis = AlatTransportasi::all();
-        $jenisTinggals = JenisTinggal::all();
-        $kebutuhanKhususes = KebutuhanKhusus::all();
-
-        // Tambahan untuk dropdown orang tua
-        $pekerjaans = Pekerjaan::all();
-        $pendidikans = Pendidikan::all();
-        $penghasilans = Penghasilan::all();
-
-        return view('modules.buku-induk.data-siswa', [
+        return view('modules.buku-induk.data-siswa', array_merge([
             'title' => 'Data Siswa',
             'breadcrumbs' => BreadcrumbHelper::generate([['name' => 'Data Siswa']]),
             'students' => $students,
             'totalStudents' => $students->count(),
-            'agamas' => $agamas,
-            'alatTransportasis' => $alatTransportasis,
-            'jenisTinggals' => $jenisTinggals,
-            'kebutuhanKhususes' => $kebutuhanKhususes,
-            'pekerjaans' => $pekerjaans,
-            'pendidikans' => $pendidikans,
-            'penghasilans' => $penghasilans,
-        ]);
+        ], $references));
     }
-
 
     public function import(Request $request)
     {
@@ -63,71 +59,32 @@ class SiswaController extends Controller
             'file' => 'required|mimes:xlsx,xls',
         ], [
             'file.required' => 'Silakan unggah file Excel terlebih dahulu.',
-            'file.mimes'    => 'Format file tidak valid. Harus berupa file dengan ekstensi .xlsx atau .xls.',
+            'file.mimes' => 'Format file tidak valid. Harus berupa file dengan ekstensi .xlsx atau .xls.',
         ]);
 
         try {
-            $importer = new StudentsImport;
-            Excel::import($importer, $request->file('file'));
-
-            // Cek apakah ada error dari proses import
-            if ($importer->hasErrors()) {
-                return back()->with('import_error_file', session('import_error_file'));
-            }
-
-            return redirect()->route('induk.siswa')->with('success', 'Data siswa berhasil diimpor');
+            $this->importService->importStudents($request->file('file'));
+            return redirect()->route('induk.siswa')->with('success', 'Data siswa berhasil diimpor.');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
-
     public function show($uuid)
     {
-        $student = Student::with([
-            'agama',
-            'alatTransportasi',
-            'jenisTinggal',
-            'orangTuas.pendidikan',
-            'orangTuas.pekerjaan',
-            'orangTuas.penghasilan',
-            'riwayatSekolah',
-            'studentRombels.tahunPelajaran',
-            'studentRombels.semester',
-            'studentRombels.rombel',
-            'fotoTerbaru',
-        ])->where('uuid', $uuid)->firstOrFail();
+        $student = $this->studentService->getStudentDetails($uuid);
+        $references = $this->referenceDataService->getAllReferences();
 
-        $riwayatSekolah = $student->riwayatSekolah;
-        $riwayatRombel = $student->studentRombels;
-
-        // Ambil data referensi untuk form edit
-        $agamaList = Agama::pluck('nama', 'id'); // [id => nama]
-        $jenisTinggalList = JenisTinggal::pluck('nama', 'id');
-        $alatTransportasiList = AlatTransportasi::pluck('nama', 'id');
-        $pendidikans = Pendidikan::pluck('jenjang', 'id'); // [id => jenjang]
-        $pekerjaans = Pekerjaan::pluck('nama', 'id');      // [id => nama]
-        $penghasilans = Penghasilan::pluck('rentang', 'id'); // [id => rentang]
-
-        return view('modules.buku-induk.detail-siswa', [
+        return view('modules.buku-induk.detail-siswa', array_merge([
             'title' => 'Detail Siswa',
             'breadcrumbs' => BreadcrumbHelper::generate([
                 ['name' => 'Data Siswa', 'url' => route('induk.siswa')],
                 ['name' => 'Detail Siswa'],
             ]),
             'student' => $student,
-            'riwayatSekolah' => $riwayatSekolah,
-            'riwayatRombel' => $riwayatRombel,
-
-            // Kirim ke view
-            'agamaList' => $agamaList,
-            'jenisTinggalList' => $jenisTinggalList,
-            'alatTransportasiList' => $alatTransportasiList,
-
-            'pendidikans' => $pendidikans,
-            'pekerjaans' => $pekerjaans,
-            'penghasilans' => $penghasilans,
-        ]);
+            'riwayatSekolah' => $student->riwayatSekolah,
+            'riwayatRombel' => $student->studentRombels,
+        ], $references));
     }
 
 
@@ -152,31 +109,19 @@ class SiswaController extends Controller
 
     public function addSiswa()
     {
+        $studentsData = $this->studentDataService->getAllStudentsData();
 
-
-        $students = Student::all();
-        $agamas = Agama::all();
-        $alatTransportasis = AlatTransportasi::all();
-        $jenisTinggals = JenisTinggal::all();
-        $kebutuhanKhususes = KebutuhanKhusus::all();
-
-        return view('modules.buku-induk.data-siswa', [
+        return view('modules.buku-induk.data-siswa', array_merge([
             'title' => 'Tambah Data Siswa',
             'breadcrumbs' => BreadcrumbHelper::generate([['name' => 'Tambah Baru']]),
-            'students' => $students,
-            'totalStudents' => $students->count(),
-            'agamas' => $agamas,
-            'alatTransportasis' => $alatTransportasis,
-            'jenisTinggals' => $jenisTinggals,
-            'kebutuhanKhususes' => $kebutuhanKhususes,
-        ]);
+        ], $studentsData));
     }
 
 
-    public function store(StudentStoreRequest $request, StudentService $studentService)
+    public function store(StudentStoreRequest $request, SimpanStudentService $simpanstudentService)
     {
         try {
-            $studentService->store($request->validated());
+            $simpanstudentService->store($request->validated());
 
             return redirect()->route('induk.siswa')->with('success', 'Data siswa berhasil disimpan.');
         } catch (\Exception $e) {
@@ -205,35 +150,19 @@ class SiswaController extends Controller
             'alat_transportasi_id' => 'nullable|exists:alat_transportasi,id',
         ]);
 
-        $student->update($validated);
+        $this->studentUpdateService->updateBiodata($student, $validated);
 
-        return redirect()
-            ->to(route('induk.siswa.show', $student->uuid) . '#tabs-biodata')
+        return redirect()->to(route('induk.siswa.show', $student->uuid) . '#tabs-biodata')
             ->with('success', 'Biodata berhasil diperbarui.');
     }
 
     public function updateOrtu(Request $request, Student $student)
     {
-        foreach (['ayah', 'ibu'] as $tipe) {
-            $data = $request->input($tipe);
-            if (!$data) continue;
+        $ortuData = $request->only(['ayah', 'ibu']);
 
-            $student->orangTuas()->updateOrCreate(
-                ['id' => $data['id'] ?? null],
-                [
-                    'tipe' => $tipe,
-                    'nama' => $data['nama'],
-                    'tahun_lahir' => $data['tahun_lahir'],
-                    'nik' => $data['nik'],
-                    'pendidikan_id' => $data['pendidikan_id'] ?? null,
-                    'pekerjaan_id' => $data['pekerjaan_id'] ?? null,
-                    'penghasilan_id' => $data['penghasilan_id'] ?? null,
-                ]
-            );
-        }
+        $this->studentUpdateService->updateOrtu($student, $ortuData);
 
-        return redirect()
-            ->to(route('induk.siswa.show', $student->uuid) . '#tabs-ortu')
+        return redirect()->to(route('induk.siswa.show', $student->uuid) . '#tabs-ortu')
             ->with('success', 'Data orang tua berhasil diperbarui.');
     }
 
@@ -248,10 +177,9 @@ class SiswaController extends Controller
             'rekening_atas_nama' => 'nullable|string|max:255',
         ]);
 
-        $student->update($validated);
+        $this->studentUpdateService->updateLokasi($student, $validated);
 
-        return redirect()
-            ->to(route('induk.siswa.show', $student->uuid) . '#tabs-lokasi') // kalau mau redirect ke show, gunakan route show
+        return redirect()->to(route('induk.siswa.show', $student->uuid) . '#tabs-lokasi')
             ->with('success', 'Data lokasi dan bank berhasil diperbarui.');
     }
 
@@ -268,15 +196,9 @@ class SiswaController extends Controller
             'alasan_layak_pip' => 'nullable|string|max:255',
         ]);
 
-        // Convert checkbox to boolean
-        $validated['penerima_kps'] = $request->has('penerima_kps');
-        $validated['penerima_kip'] = $request->has('penerima_kip');
-        $validated['layak_pip'] = $request->has('layak_pip');
+        $this->studentUpdateService->updateSosial($student, $validated);
 
-        $student->update($validated);
-
-        return redirect()
-            ->route('induk.siswa.show', $student->uuid)
+        return redirect()->route('induk.siswa.show', $student->uuid)
             ->with('success', 'Data sosial berhasil diperbarui.')
             ->withFragment('tabs-sosial');
     }

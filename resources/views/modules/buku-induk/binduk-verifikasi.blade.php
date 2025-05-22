@@ -112,7 +112,15 @@
             }
         }
     </style>
+    @php $favicon = system_setting('favicon'); @endphp
 
+    @if ($favicon)
+        <link rel="icon" href="{{ asset('storage/' . $favicon) }}" type="image/x-icon">
+        <link rel="shortcut icon" href="{{ asset('storage/' . $favicon) }}" type="image/x-icon">
+    @else
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    @endif
 
     @vite('resources/css/app.css')
 </head>

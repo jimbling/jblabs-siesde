@@ -2,95 +2,40 @@
 
 namespace App\Http\Controllers\Modules\BukuInduk;
 
-use App\Models\Rombel;
-use App\Models\Student;
 use Illuminate\Http\Request;
-use App\Models\StudentRombel;
-use App\Helpers\BreadcrumbHelper;
-use App\Services\KenaikanService;
 use App\Http\Controllers\Controller;
+use App\Services\Akademik\Rombel\KenaikanService;
+use App\Services\Akademik\Rombel\ProsesKenaikanService;
 
 class KenaikanController extends Controller
 {
-    public function index(Request $request)
+    protected $kenaikanService;
+
+    public function __construct(KenaikanService $kenaikanService)
     {
-        $rombels = Rombel::all();
-        $tahunPelajarans = \App\Models\TahunPelajaran::with('semesters')->get();
-
-        $tingkat = $request->get('tingkat');
-        $tahun_pelajaran_id = $request->get('tahun_pelajaran_id');
-
-        return view('modules.buku-induk.akademik-rombel', [
-            'title' => 'Pengaturan Rombel',
-            'breadcrumbs' => BreadcrumbHelper::generate([
-                ['name' => 'Akademik'],
-                ['name' => 'Data Rombel'],
-            ]),
-            'rombels' => $rombels,
-            'tahunPelajarans' => $tahunPelajarans,
-            'tingkat' => $tingkat,
-            'tahun_pelajaran_id' => $tahun_pelajaran_id
-        ]);
+        $this->kenaikanService = $kenaikanService;
     }
 
+    public function index(Request $request)
+    {
+        $data = $this->kenaikanService->getIndexData($request);
+        return view('modules.buku-induk.akademik-rombel', $data);
+    }
 
     public function getFilteredStudents(Request $request)
     {
-        $tingkat = $request->get('tingkat');
-        $tahun_pelajaran_id = $request->get('tahun_pelajaran_id');
-
-        if ($tingkat && $tahun_pelajaran_id) {
-
-            $students = Student::whereHas('studentRombels', function ($query) use ($tingkat, $tahun_pelajaran_id) {
-                $query->where('tahun_pelajaran_id', $tahun_pelajaran_id)
-                    ->whereHas('rombel', function ($q) use ($tingkat) {
-                        $q->where('tingkat', $tingkat);
-                    });
-            })
-                ->with([
-                    'studentRombels' => function ($query) use ($tahun_pelajaran_id) {
-                        $query->where('tahun_pelajaran_id', $tahun_pelajaran_id);
-                    },
-                    'studentRombels.rombel',
-                    'studentRombels.tahunPelajaran'
-                ])
-                ->get();
-        } else {
-
-            $students = Student::whereDoesntHave('studentRombels')->get();
-        }
-
-        return response()->json([
-            'students' => $students,
-            'tingkat' => $tingkat,
-            'tahun_pelajaran_id' => $tahun_pelajaran_id,
-        ]);
+        return response()->json($this->kenaikanService->getFilteredStudents($request));
     }
-
 
     public function filterByTingkat(Request $request)
     {
-        $tingkat = $request->get('tingkat');
-        $rombels = Rombel::orderBy('tingkat')->get();
-
-        if ($tingkat) {
-            $students = \App\Models\Student::whereHas('currentRombel', function ($query) use ($tingkat) {
-                $query->whereHas('rombel', function ($q) use ($tingkat) {
-                    $q->where('tingkat', $tingkat);
-                });
-            })->with('currentRombel.rombel')->get();
-        } else {
-
-            $students = \App\Models\Student::doesntHave('currentRombel')->get();
-        }
-
-        return view('modules.buku-induk.akademik-rombel', compact('tingkat', 'rombels', 'students'));
+        $data = $this->kenaikanService->filterByTingkat($request);
+        return view('modules.buku-induk.akademik-rombel', $data);
     }
 
-
-
-    public function moveToNextClass(Request $request, KenaikanService $kenaikanService)
+    public function moveToNextClass(Request $request, ProsesKenaikanService $proseskenaikanService)
     {
+
         $siswaData = json_decode($request->input('siswa_terpilih'), true);
 
         if (!is_array($siswaData) || count($siswaData) === 0) {
@@ -103,7 +48,7 @@ class KenaikanController extends Controller
         ]);
 
         try {
-            $kenaikanService->prosesKenaikan(
+            $proseskenaikanService->prosesKenaikan(
                 $siswaData,
                 $request->input('tingkat_tujuan'),
                 $request->input('semester_id'),
@@ -117,19 +62,8 @@ class KenaikanController extends Controller
         return redirect()->route('rombel.siswa.index')->with('success', 'Siswa berhasil dipindahkan ke kelas tujuan.');
     }
 
-
-
     public function hapusDariRombel(Request $request)
     {
-        $request->validate([
-            'siswa_uuids' => 'required|array',
-        ]);
-
-        StudentRombel::whereIn('siswa_uuid', $request->siswa_uuids)->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Siswa berhasil dihapus dari rombel.'
-        ]);
+        return response()->json($this->kenaikanService->hapusDariRombel($request));
     }
 }

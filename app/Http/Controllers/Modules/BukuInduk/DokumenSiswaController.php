@@ -3,94 +3,32 @@
 namespace App\Http\Controllers\Modules\BukuInduk;
 
 use App\Models\Student;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\StudentDocument;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\Gd\Driver;
+use App\Services\BukuInduk\Dokumen\DokumenSiswaService;
 
 class DokumenSiswaController extends Controller
 {
+    protected $dokumenSiswaService;
+
+    public function __construct(DokumenSiswaService $dokumenSiswaService)
+    {
+        $this->dokumenSiswaService = $dokumenSiswaService;
+    }
 
     public function store(Request $request, Student $student)
     {
-
-        $request->validate([
-            'tipe_dokumen' => 'required|in:kk,akta_kelahiran,surat_pindah,ijazah_tk,ijazah_sd,lainnya',
-            'file' => 'required|image|mimes:jpg,jpeg,png|max:150',
-            'keterangan' => 'nullable|string|max:255'
-        ]);
-
-
-        $exists = $student->dokumen()
-            ->where('tipe_dokumen', $request->tipe_dokumen)
-            ->exists();
-
-        if ($exists) {
-            return response()->json([
-                'message' => 'Dokumen dengan tipe ini sudah pernah diupload.'
-            ], 422);
-        }
-
-        $file = $request->file('file');
-        $fileName = Str::slug($student->nama) . '_' . $request->tipe_dokumen . '_' . time() . '.webp';
-        $directory = 'doc_siswa/' . $student->id;
-        $fullPath = storage_path('app/public/' . $directory);
-
-        if (!file_exists($fullPath)) {
-            mkdir($fullPath, 0755, true);
-        }
-
-
-        $imageManager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
-        $webpImage = $imageManager->read($file)->toWebp(85);
-        Storage::disk('public')->put($directory . '/' . $fileName, (string) $webpImage);
-
-
-        $student->dokumen()->create([
-            'tipe_dokumen' => $request->tipe_dokumen,
-            'path_file' => $directory . '/' . $fileName,
-            'keterangan' => $request->keterangan,
-            'tanggal_upload' => now()
-        ]);
-
-        return redirect()->back()->with('success', 'Dokumen berhasil diupload.');
+        return $this->dokumenSiswaService->store($request, $student);
     }
 
-
-    // Hapus dokumen
     public function destroy($id)
     {
-        try {
-            $document = StudentDocument::findOrFail($id);
-
-            if ($document->path_file && Storage::disk('public')->exists($document->path_file)) {
-                Storage::disk('public')->delete($document->path_file);
-            }
-
-            $document->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Dokumen berhasil dihapus'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Delete document error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus dokumen'
-            ], 500);
-        }
+        return $this->dokumenSiswaService->destroy($id);
     }
 
     public function partial($studentId)
     {
-        $student = Student::with('dokumen')->findOrFail($studentId);
-
+        $student = $this->dokumenSiswaService->getStudentDocuments($studentId);
         return view('modules.students.partials.student-documents', compact('student'));
     }
 }
