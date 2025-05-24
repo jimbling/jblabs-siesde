@@ -211,6 +211,22 @@
                                 Dokumen PD
                             </a>
                         </li>
+
+                        <li class="nav-item" role="presentation">
+                            <a href="#tabs-rapor" class="nav-link" data-bs-toggle="tab" role="tab">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-search">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                    <path d="M12 21h-5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v4.5" />
+                                    <path d="M16.5 17.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0" />
+                                    <path d="M18.5 19.5l2.5 2.5" />
+                                </svg>
+                                Scan Nilai Rapor
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -556,7 +572,7 @@
                     <div class="modal fade" id="uploadDocumentModal" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
-                                <div class="modal-header">
+                                <div class="modal-header p-3">
                                     <h5 class="modal-title">Unggah Dokumen Siswa</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
@@ -565,7 +581,7 @@
                                     action="{{ route('student.documents.store', $student->id) }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf
-                                    <div class="modal-body">
+                                    <div class="modal-body p-3">
                                         <div class="mb-3">
                                             <label class="form-label">Jenis Dokumen</label>
                                             <select class="form-select" name="tipe_dokumen" required>
@@ -590,7 +606,7 @@
                                             <small class="text-muted">Format: PDF, JPG, PNG (Maks. 5MB)</small>
                                         </div>
                                     </div>
-                                    <div class="modal-footer">
+                                    <div class="modal-footer p-3">
                                         <button type="button" class="btn btn-link link-secondary"
                                             data-bs-dismiss="modal">
                                             Batal
@@ -608,17 +624,17 @@
                     <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                             <div class="modal-content">
-                                <div class="modal-header">
+                                <div class="modal-header p-3">
                                     <h5 class="modal-title">Preview Dokumen</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body text-center">
                                     <iframe id="previewFrame" src=""
-                                        style="width:100%; height:70vh; border:none;"></iframe>
-                                    <div id="imagePreview" class="text-center"></div>
+                                        style="width:100%; height:70vh; border:none; display:none;"></iframe>
+                                    <div id="imagePreview" class="text-center" style="display:none;"></div>
                                 </div>
-                                <div class="modal-footer">
+                                <div class="modal-footer p-3">
                                     <a id="downloadBtn" href="#" class="btn btn-primary">
                                         <i class="fas fa-download me-2"></i> Download
                                     </a>
@@ -627,13 +643,91 @@
                         </div>
                     </div>
 
+
+                    <!-- Tab Scan Nilai Rapor -->
+                    <div class="tab-pane fade" id="tabs-rapor" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-indigo-lt">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="card-title mb-1">Scan Nilai Rapor</h3>
+                                        <div class="text-muted small">Unggah scan rapor siswa ke Google Drive</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-pill" data-bs-toggle="modal"
+                                        data-bs-target="#uploadRaporModal">
+                                        <svg class="icon icon-tabler icon-tabler-upload" width="20" height="20"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                            <path d="M7 9l5 -5l5 5" />
+                                            <path d="M12 4l0 12" />
+                                        </svg>
+                                        Upload Scan Rapor
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @include('modules.students.partials.student-rapor-documents', [
+                                    'student' => $student,
+                                ])
+
+                                @if ($student->raporFiles->count())
+                                    <div class="table-responsive">
+                                        <table class="table card-table table-vcenter text-nowrap datatable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama File</th>
+                                                    <th>Tahun Pelajaran</th>
+                                                    <th>Semester</th>
+                                                    <th>Lihat</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($student->raporFiles as $file)
+                                                    <tr>
+                                                        <td>{{ $file->nama_file }}</td>
+                                                        <td>{{ $file->tahunPelajaran->tahun_ajaran ?? '-' }}</td>
+                                                        <td>{{ $file->semester->semester ?? '-' }}</td>
+
+                                                        <td>
+                                                            <a href="https://drive.google.com/file/d/{{ $file->file_id_drive }}/view"
+                                                                target="_blank" class="btn btn-sm btn-primary">
+                                                                Lihat File
+                                                            </a>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-danger btn-delete"
+                                                                data-id="{{ $file->id }}">
+                                                                Hapus
+                                                            </button>
+                                                        </td>
+
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <p class="text-muted">Belum ada file rapor yang diunggah.</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+
+
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Modal Konfirmasi Hapus --}}
-    <x-modal.konfirmasi id="modalKonfirmasiHapus" title="Hapus Data Terpilih?"
+    <x-modal.konfirmasi id="modalHapusDokumen" title="Hapus Data Terpilih?"
+        body="Data yang dipilih akan dihapus permanen. Tindakan ini tidak dapat dibatalkan." btnLabel="Ya, Hapus"
+        btnColor="danger" :formAction="''" {{-- formAction dikosongkan, nanti diisi JS --}} method="DELETE" />
+
+
+    <x-modal.konfirmasi id="modalHapusRapor" title="Hapus Data Terpilih?"
         body="Data yang dipilih akan dihapus permanen. Tindakan ini tidak dapat dibatalkan." btnLabel="Ya, Hapus"
         btnColor="danger" :formAction="''" {{-- formAction dikosongkan, nanti diisi JS --}} method="DELETE" />
 
@@ -711,20 +805,26 @@
             const STUDENT_ID = "{{ $student->id }}";
 
             function bindDocumentEvents() {
-                // Hapus semua event listener sebelumnya untuk menghindari duplikasi
+                // Hapus event listener sebelumnya untuk menghindari duplikasi
                 $(document).off('click', '.btn-preview');
                 $(document).off('click', '.btn-delete-doc');
 
-                // PREVIEW dengan event delegation
+                // Event preview dokumen / gambar
                 $(document).on('click', '.btn-preview', function() {
                     const url = $(this).data('url');
-                    const isImage = url.match(/\.(jpg|jpeg|png|webp)$/i);
+
+                    if (!url) {
+                        console.error('URL preview tidak ditemukan atau kosong.');
+                        return;
+                    }
+
+                    const isImage = /\.(jpg|jpeg|png|webp)$/i.test(url);
 
                     if (isImage) {
-                        $('#previewFrame').hide();
+                        $('#previewFrame').hide().attr('src', ''); // kosongkan src agar tidak loading
                         $('#imagePreview').html(`<img src="${url}" class="img-fluid" alt="Preview">`).show();
                     } else {
-                        $('#imagePreview').hide();
+                        $('#imagePreview').hide().html('');
                         $('#previewFrame').attr('src', url).show();
                     }
 
@@ -732,10 +832,17 @@
                     $('#previewModal').modal('show');
                 });
 
-                // DELETE MODAL dengan event delegation
+                // Event tombol hapus dokumen
                 $(document).on('click', '.btn-delete-doc', function() {
                     const actionUrl = $(this).data('action');
-                    const targetModal = $($(this).data('target-modal'));
+                    const targetModalSelector = $(this).data('target-modal');
+                    const targetModal = $(targetModalSelector);
+
+                    if (!actionUrl || targetModal.length === 0) {
+                        console.error('Action URL atau target modal tidak valid.');
+                        return;
+                    }
+
                     targetModal.find('form').attr('action', actionUrl);
                     targetModal.modal('show');
                 });
@@ -744,7 +851,7 @@
             function reloadDocumentSection(studentId) {
                 $.get(`/student-documents/${studentId}/documents/partial`, function(html) {
                     $('#document-content').html(html);
-                    bindDocumentEvents(); // Rebind events setelah konten diganti
+                    bindDocumentEvents(); // Bind ulang event setelah konten di-refresh
                 }).fail(function(xhr) {
                     Swal.fire({
                         icon: 'error',
@@ -755,9 +862,9 @@
             }
 
             $(document).ready(function() {
-                bindDocumentEvents(); // Bind awal
+                bindDocumentEvents(); // Bind event saat halaman siap
 
-                // === UPLOAD ===
+                // Handler upload dokumen
                 $('#documentUploadForm').on('submit', function(e) {
                     e.preventDefault();
                     const formData = new FormData(this);
@@ -774,9 +881,8 @@
                         },
                         success: function(response) {
                             $('#uploadDocumentModal').modal('hide');
-                            $('#documentUploadForm')[0].reset(); // Reset form
+                            $('#documentUploadForm')[0].reset();
 
-                            // ✅ Reset tombol submit ke keadaan awal
                             $('#documentUploadForm button[type="submit"]').prop('disabled', false)
                                 .html('<i class="fas fa-upload me-2"></i> Unggah');
 
@@ -791,11 +897,9 @@
 
                             reloadDocumentSection(STUDENT_ID);
                         },
-                        // Di dalam $('#documentUploadForm').on('submit', ...)
                         error: function(xhr) {
                             let errorMessage = 'Terjadi kesalahan saat upload';
                             if (xhr.responseJSON && xhr.responseJSON.errors) {
-                                // Jika ada error validasi
                                 errorMessage = Object.values(xhr.responseJSON.errors).join('<br>');
                             } else if (xhr.responseJSON?.message) {
                                 errorMessage = xhr.responseJSON.message;
@@ -815,34 +919,40 @@
                     });
                 });
 
-                // === HAPUS ===
-                $('#modalKonfirmasiHapus form').on('submit', function(e) {
+                // Handler hapus dokumen
+                $('#modalHapusDokumen form').on('submit', function(e) {
                     e.preventDefault();
+
                     const form = $(this);
                     const actionUrl = form.attr('action');
+                    const submitBtn = form.find('button[type="submit"]');
+                    const originalText = submitBtn.html();
+
+                    submitBtn.prop('disabled', true).html(
+                        '<i class="fas fa-spinner fa-spin me-2"></i> Menghapus...');
 
                     $.ajax({
                         url: actionUrl,
                         type: 'POST',
                         data: form.serialize(),
                         success: function(response) {
+                            submitBtn.prop('disabled', false).html(originalText);
+
                             if (response.success) {
                                 Swal.fire({
                                     toast: true,
                                     position: 'top-end',
                                     icon: 'success',
                                     text: response.message,
-                                    timer: 2000,
-                                    showConfirmButton: false,
                                     timer: 3000,
+                                    showConfirmButton: false,
                                     timerProgressBar: true,
                                     customClass: {
                                         popup: 'swal2-popup-custom'
                                     }
-
                                 });
 
-                                $('#modalKonfirmasiHapus').modal('hide');
+                                $('#modalHapusDokumen').modal('hide');
                                 reloadDocumentSection(STUDENT_ID);
                             } else {
                                 Swal.fire({
@@ -853,6 +963,8 @@
                             }
                         },
                         error: function(xhr) {
+                            submitBtn.prop('disabled', false).html(originalText);
+
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Gagal',
@@ -864,6 +976,7 @@
                 });
             });
         </script>
+
 
         {{-- SCRIPT TABS DAN EDIT --}}
         <script>
@@ -917,7 +1030,15 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Inisialisasi flatpickr untuk edit form tanggal lahir
+                const tanggalLahirInput = document.getElementById('tanggal_lahir');
+                const tanggalLahirDisplay = document.getElementById('tanggal_lahir_display');
+                const form = document.getElementById('formEditSiswa');
+
+                // Pastikan semua elemen ada
+                if (!tanggalLahirInput || !tanggalLahirDisplay || !form) {
+                    return;
+                }
+
                 window.initializeFlatpickr("#tanggal_lahir_display", {
                     altInput: true,
                     altFormat: "d F Y",
@@ -925,24 +1046,113 @@
                     maxDate: "today",
                     allowInput: true,
                     locale: "id",
-                    defaultDate: document.getElementById('tanggal_lahir').value || null,
+                    defaultDate: tanggalLahirInput.value || null,
                     onChange: function(selectedDates, dateStr) {
-                        document.getElementById('tanggal_lahir').value = dateStr;
+                        tanggalLahirInput.value = dateStr;
                     }
                 });
 
-                // Validasi sebelum submit (optional)
-                const form = document.getElementById('formEditSiswa'); // Ganti dengan ID form edit kamu
                 form.addEventListener('submit', function(e) {
-                    const displayInput = document.getElementById('tanggal_lahir_display');
-                    const hiddenInput = document.getElementById('tanggal_lahir');
-
-                    if (!hiddenInput.value) {
-                        displayInput.classList.add('is-invalid');
-                        e.preventDefault(); // Cegah submit
+                    if (!tanggalLahirInput.value) {
+                        tanggalLahirDisplay.classList.add('is-invalid');
+                        e.preventDefault();
                     } else {
-                        displayInput.classList.remove('is-invalid');
+                        tanggalLahirDisplay.classList.remove('is-invalid');
                     }
+                });
+            });
+        </script>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let deleteId = null;
+                let deleteButton = null;
+
+                // Event: Klik tombol hapus
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function() {
+                        deleteId = this.getAttribute('data-id');
+                        deleteButton = this;
+
+                        const form = document.querySelector('#modalHapusRapor form');
+                        form.action = `/students/rapor/${deleteId}`;
+
+                        const modal = new bootstrap.Modal(document.getElementById('modalHapusRapor'));
+                        modal.show();
+                    });
+                });
+
+                // Event: Submit form modal konfirmasi hapus
+                const modalForm = document.querySelector('#modalHapusRapor form');
+                modalForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (!deleteId) return;
+
+                    const url = this.action;
+                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const submitButton = modalForm.querySelector('button[type="submit"]');
+
+                    // Ubah tombol jadi loading
+                    submitButton.disabled = true;
+                    const originalText = submitButton.innerHTML;
+                    submitButton.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Menghapus...`;
+
+                    fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': token,
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const modalEl = document.getElementById('modalHapusRapor');
+                            const modal = bootstrap.Modal.getInstance(modalEl);
+                            modal.hide();
+
+                            // Kembalikan tombol seperti semula
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = originalText;
+
+                            if (data.success) {
+                                // Hapus baris dari tabel
+                                if (deleteButton) {
+                                    const row = deleteButton.closest('tr');
+                                    if (row) row.remove();
+                                }
+
+                                // ✅ SweetAlert toast
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: data.message || 'Data berhasil dihapus',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal',
+                                    text: data.message
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            // Kembalikan tombol seperti semula
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = originalText;
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Kesalahan',
+                                text: 'Terjadi kesalahan saat menghapus data.'
+                            });
+                            console.error(err);
+                        });
                 });
             });
         </script>

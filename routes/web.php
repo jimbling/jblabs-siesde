@@ -3,11 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GoogleDriveController;
+use App\Http\Controllers\Modules\BukuInduk\DokumenSiswa;
 use App\Http\Controllers\Modules\Admin\DashboardController;
 use App\Http\Controllers\Modules\BukuInduk\SiswaController;
 use App\Http\Controllers\Modules\BukuInduk\BindukController;
-use App\Http\Controllers\Modules\BukuInduk\DokumenSiswa;
-use App\Http\Controllers\Modules\BukuInduk\DokumenSiswaController;
 use App\Http\Controllers\Modules\BukuInduk\RombelController;
 use App\Http\Controllers\Modules\Pengaturan\AksesController;
 use App\Http\Controllers\Modules\Pengaturan\SistemController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\Modules\BukuInduk\SemesterController;
 use App\Http\Controllers\Modules\BukuInduk\FotoSiswaController;
 use App\Http\Controllers\Modules\Pengaturan\PembaruanController;
 use App\Http\Controllers\Modules\Pengaturan\PengaturanController;
+use App\Http\Controllers\Modules\BukuInduk\DokumenSiswaController;
 use App\Http\Controllers\Modules\Pengaturan\PemeliharaanController;
 use App\Http\Controllers\Modules\BukuInduk\TahunPelajaranController;
 
@@ -203,6 +204,36 @@ Route::middleware('auth')->group(function () {
 });
 
 
+// Route grup untuk pengaturan Google Drive (butuh login & izin)
+Route::prefix('pengaturan/gdrive')
+    ->middleware(['auth', 'can:atur gdrive'])
+    ->name('google.drive.')
+    ->group(function () {
+        Route::get('/', [GoogleDriveController::class, 'index'])->name('index');
+
+        Route::post('/revoke', [GoogleDriveController::class, 'revokeAccess'])->name('revoke');
+
+        Route::get('/upload', function () {
+            return view('google_drive_upload');
+        })->name('upload.view');
+
+        // Kalau ingin aktifkan upload:
+        // Route::post('/upload', [GoogleDriveController::class, 'uploadFile'])->name('upload');
+    });
+
+// 👇 Callback harus di luar middleware `auth`
+Route::get('/pengaturan/gdrive/callback', [GoogleDriveController::class, 'handleCallback'])
+    ->name('google.drive.callback');
+
+// Upload raport siswa (login saja)
+Route::post('/induk/siswa/{uuid}/upload-rapor', [GoogleDriveController::class, 'uploadRapor'])
+    ->middleware(['auth'])
+    ->name('students.rapor.upload');
+
+// Hapus file raport (login saja)
+Route::delete('/students/rapor/{id}', [GoogleDriveController::class, 'destroy'])
+    ->middleware(['auth'])
+    ->name('students.rapor.delete');
 
 Route::post('/clear-session-flash', function (Illuminate\Http\Request $request) {
     foreach ($request->keys as $key) {

@@ -235,6 +235,10 @@
                             href="{{ route('pengaturan.pemeliharaan') }}">
                             Pemeliharaan
                         </a>
+                        <a class="dropdown-item {{ request()->routeIs('google.drive.index') ? 'active' : '' }}"
+                            href="{{ route('google.drive.index') }}">
+                            Pengaturan GDrive
+                        </a>
                     </div>
                 </li>
 

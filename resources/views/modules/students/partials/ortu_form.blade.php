@@ -44,7 +44,7 @@
                 <label class="form-label">Pendidikan</label>
                 <select class="form-select" name="{{ $tipe }}[pendidikan_id]">
                     <option value="">Pilih Pendidikan</option>
-                    @foreach ($pendidikans as $id => $jenjang)
+                    @foreach ($pendidikanList as $id => $jenjang)
                         <option value="{{ $id }}"
                             {{ old($tipe . '.pendidikan_id', $ortu->pendidikan_id ?? '') == $id ? 'selected' : '' }}>
                             {{ $jenjang }}
@@ -58,7 +58,7 @@
                 <label class="form-label">Pekerjaan</label>
                 <select class="form-select" name="{{ $tipe }}[pekerjaan_id]">
                     <option value="">Pilih Pekerjaan</option>
-                    @foreach ($pekerjaans as $id => $nama)
+                    @foreach ($pekerjaanList as $id => $nama)
                         <option value="{{ $id }}"
                             {{ old($tipe . '.pekerjaan_id', $ortu->pekerjaan_id ?? '') == $id ? 'selected' : '' }}>
                             {{ $nama }}
@@ -72,7 +72,7 @@
                 <label class="form-label">Penghasilan</label>
                 <select class="form-select" name="{{ $tipe }}[penghasilan_id]">
                     <option value="">Pilih Penghasilan</option>
-                    @foreach ($penghasilans as $id => $rentang)
+                    @foreach ($penghasilanList as $id => $rentang)
                         <option value="{{ $id }}"
                             {{ old($tipe . '.penghasilan_id', $ortu->penghasilan_id ?? '') == $id ? 'selected' : '' }}>
                             {{ $rentang }}

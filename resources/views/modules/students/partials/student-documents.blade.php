@@ -129,7 +129,7 @@
                                     class="btn btn-md btn-icon btn-outline-danger d-flex align-items-center justify-content-center btn-delete-doc"
                                     data-id="{{ $doc->id }}"
                                     data-action="{{ route('student.documents.destroy', $doc->id) }}"
-                                    data-target-modal="#modalKonfirmasiHapus" data-bs-toggle="tooltip"
+                                    data-target-modal="#modalHapusDokumen" data-bs-toggle="tooltip"
                                     data-bs-placement="top" title="Hapus">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

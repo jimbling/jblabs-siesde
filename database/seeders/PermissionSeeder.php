@@ -33,6 +33,7 @@ class PermissionSeeder extends Seeder
             ['cetak buku induk', 'Buku Induk'],
             ['atur sistem', 'Administrator'],
             ['atur dokumen', 'Administrator'],
+            ['atur gdrive', 'Administrator'],
 
 
 

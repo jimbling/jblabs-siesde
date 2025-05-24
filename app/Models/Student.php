@@ -167,4 +167,9 @@ class Student extends Model
             ]);
         });
     }
+
+    public function raporFiles()
+    {
+        return $this->hasMany(StudentRaporFile::class, 'student_uuid', 'uuid');
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Modules\Akademik\Rombel;
+namespace App\Http\Controllers\Modules\BukuInduk;;
 
 use App\Models\Rombel;
 use Illuminate\Http\Request;

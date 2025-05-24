@@ -48,4 +48,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function googleDriveToken()
+    {
+        return $this->hasOne(UserGoogleDriveToken::class);
+    }
 }

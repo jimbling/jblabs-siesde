@@ -120,7 +120,7 @@
                                         <label class="col-md-3 col-form-label required">Agama</label>
                                         <div class="col-md-9">
                                             <select class="form-select" name="agama_id" required>
-                                                @foreach ($agamas as $agama)
+                                                @foreach ($agamaData as $agama)
                                                     <option value="{{ $agama->id }}">{{ $agama->nama }}</option>
                                                 @endforeach
                                             </select>
@@ -198,7 +198,7 @@
                                         <div class="col-md-9">
                                             <select id="select-kebutuhan-khusus" class="form-select"
                                                 name="kebutuhan_khusus" data-toggle="select">
-                                                @foreach ($kebutuhanKhususes as $item)
+                                                @foreach ($kebutuhanKhususData as $item)
                                                     <option value="{{ $item->nama }}">{{ $item->nama }}</option>
                                                 @endforeach
                                             </select>
@@ -310,7 +310,7 @@
                                         <label class="col-md-3 col-form-label">Alat Transportasi</label>
                                         <div class="col-md-9">
                                             <select class="form-select" name="alat_transportasi_id">
-                                                @foreach ($alatTransportasis as $transport)
+                                                @foreach ($alatTransportasiData as $transport)
                                                     <option value="{{ $transport->id }}">{{ $transport->nama }}
                                                     </option>
                                                 @endforeach
@@ -323,7 +323,7 @@
                                         <label class="col-md-3 col-form-label">Jenis Tinggal</label>
                                         <div class="col-md-9">
                                             <select class="form-select" name="jenis_tinggal_id">
-                                                @foreach ($jenisTinggals as $tinggal)
+                                                @foreach ($jenisTinggalData as $tinggal)
                                                     <option value="{{ $tinggal->id }}">{{ $tinggal->nama }}</option>
                                                 @endforeach
                                             </select>
@@ -443,7 +443,7 @@
                                             <div class="col-md-9">
                                                 <select class="form-select" name="ayah_pendidikan_id">
                                                     <option value="">Pilih Pendidikan</option>
-                                                    @foreach ($pendidikans as $pendidikan)
+                                                    @foreach ($pendidikanData as $pendidikan)
                                                         <option value="{{ $pendidikan->id }}">
                                                             {{ $pendidikan->jenjang }}</option>
                                                     @endforeach
@@ -455,7 +455,7 @@
                                             <div class="col-md-9">
                                                 <select class="form-select" name="ayah_pekerjaan_id">
                                                     <option value="">Pilih Pekerjaan</option>
-                                                    @foreach ($pekerjaans as $pekerjaan)
+                                                    @foreach ($pekerjaanData as $pekerjaan)
                                                         <option value="{{ $pekerjaan->id }}">
                                                             {{ $pekerjaan->nama }}
                                                         </option>
@@ -468,7 +468,7 @@
                                             <div class="col-md-9">
                                                 <select class="form-select" name="ayah_penghasilan_id">
                                                     <option value="">Pilih Penghasilan</option>
-                                                    @foreach ($penghasilans as $penghasilan)
+                                                    @foreach ($penghasilanData as $penghasilan)
                                                         <option value="{{ $penghasilan->id }}">
                                                             {{ $penghasilan->rentang }}</option>
                                                     @endforeach
@@ -518,7 +518,7 @@
                                             <div class="col-md-9">
                                                 <select class="form-select" name="ibu_pendidikan_id">
                                                     <option value="">Pilih Pendidikan</option>
-                                                    @foreach ($pendidikans as $pendidikan)
+                                                    @foreach ($pendidikanData as $pendidikan)
                                                         <option value="{{ $pendidikan->id }}">
                                                             {{ $pendidikan->jenjang }}</option>
                                                     @endforeach
@@ -530,7 +530,7 @@
                                             <div class="col-md-9">
                                                 <select class="form-select" name="ibu_pekerjaan_id">
                                                     <option value="">Pilih Pekerjaan</option>
-                                                    @foreach ($pekerjaans as $pekerjaan)
+                                                    @foreach ($pekerjaanData as $pekerjaan)
                                                         <option value="{{ $pekerjaan->id }}">
                                                             {{ $pekerjaan->nama }}
                                                         </option>
@@ -543,7 +543,7 @@
                                             <div class="col-md-9">
                                                 <select class="form-select" name="ibu_penghasilan_id">
                                                     <option value="">Pilih Penghasilan</option>
-                                                    @foreach ($penghasilans as $penghasilan)
+                                                    @foreach ($penghasilanData as $penghasilan)
                                                         <option value="{{ $penghasilan->id }}">
                                                             {{ $penghasilan->rentang }}</option>
                                                     @endforeach
