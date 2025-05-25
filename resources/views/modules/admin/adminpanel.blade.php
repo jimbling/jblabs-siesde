@@ -6,33 +6,54 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="card border border-danger shadow-xl mb-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    {{-- Ikon peringatan --}}
-                    <span class="text-danger me-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg" width="32" height="32"
-                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <circle cx="12" cy="12" r="9" />
-                            <line x1="12" y1="8" x2="12" y2="12" />
-                            <line x1="12" y1="16" x2="12" y2="16.01" />
-                        </svg>
-                    </span>
-                    <div>
-                        <h4 class="mb-1 text-danger">Perlu Tindakan!</h4>
-                        <div class="text-muted">
-                            Terdapat <strong class="text-danger">{{ $studentsIncompleteDocs->count() }}</strong> peserta
-                            didik yang
-                            belum melengkapi dokumen wajib
-                            <strong>(KK & Akta Kelahiran)</strong>.
+        <div class="card border border-danger shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <!-- Icon Column -->
+                    <div class="col-auto d-none d-sm-flex">
+                        <span class="text-danger">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg" width="32" height="32"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <circle cx="12" cy="12" r="9" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12" y2="16.01" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    <!-- Content Column -->
+                    <div class="col">
+                        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between">
+                            <div class="mb-2 mb-sm-0">
+                                <h4 class="mb-1 text-danger">Perlu Tindakan!</h4>
+                                <div class="text-muted">
+                                    <span class="d-block d-sm-inline">
+                                        Terdapat <strong class="text-danger">{{ $studentsIncompleteDocs->count() }}</strong>
+                                        peserta didik
+                                    </span>
+                                    <span class="d-none d-sm-inline"> </span>
+                                    <span class="d-block d-sm-inline">
+                                        yang belum melengkapi dokumen wajib <strong>(KK & Akta Kelahiran)</strong>.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Button - moves below on mobile -->
+                            <div class="mt-2 mt-sm-0">
+                                <button class="btn btn-outline-danger w-100 w-sm-auto" data-bs-toggle="modal"
+                                    data-bs-target="#incompleteDocsModal">
+                                    <span class="d-none d-sm-inline">Lihat Daftar</span>
+                                    <span class="d-inline d-sm-none">Detail</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Mobile Icon - only shows on mobile -->
+
                 </div>
-                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#incompleteDocsModal">
-                    Lihat Daftar
-                </button>
             </div>
         </div>
 
@@ -49,8 +70,8 @@
                                     lengkap dan terintegrasi.
                                 </p>
                                 <p class="text-muted">
-                                    Pantau data siswa, kelola rombel, semester, dan tahun pelajaran dengan lebih mudah dan
-                                    akurat.
+                                    Data peserta didik yang dicatat bersumber dari Dapodik yang dapat dipertanggung
+                                    jawabkan.
                                 </p>
                             </div>
 
@@ -309,16 +330,6 @@
                 </div>
             </div>
 
-            {{-- <div class="col-sm-6 col-lg-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="subheader">Distribusi Jenis Kelamin</div>
-
-                        <div id="gender-chart"></div>
-                    </div>
-
-                </div>
-            </div> --}}
 
             <div class="col-sm-6 col-lg-4">
                 <div class="card">
@@ -333,40 +344,52 @@
                                     <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
                                 </svg>
                             </span>
-                            <h3 class="card-title m-0">Informasi Sekolah</h3>
+                            <h3 class="card-title m-0">Informasi Sistem</h3>
                         </div>
 
                         <div class="list-group list-group-flush list-group-condensed">
                             <div class="list-group-item px-0 py-1">
                                 <div class="row align-items-center">
-                                    <div class="col-auto text-muted">Nama</div>
-                                    <div class="col text-end font-weight-medium text-truncate">SMAN 1 Jakarta Pusat</div>
+                                    <div class="col-auto text-muted">Nama Sekolah</div>
+                                    <div class="col text-end font-weight-medium text-truncate">
+                                        {{ system_setting('nama_sekolah') }}</div>
                                 </div>
                             </div>
                             <div class="list-group-item px-0 py-1">
                                 <div class="row align-items-center">
                                     <div class="col-auto text-muted">NPSN</div>
-                                    <div class="col text-end font-weight-medium">20229281</div>
+                                    <div class="col text-end font-weight-medium"> {{ system_setting('npsn') }}</div>
                                 </div>
                             </div>
                             <div class="list-group-item px-0 py-1">
                                 <div class="row align-items-center">
-                                    <div class="col-auto text-muted">Versi</div>
-                                    <div class="col text-end">
-                                        <span class="font-weight-medium">3.2.1</span>
-                                        <span class="badge bg-azure text-azure-fg ms-1">New</span>
+                                    <div class="col-auto text-muted ">Versi Aplikasi
+                                    </div>
+                                    <div class="col text-end d-flex justify-content-end align-items-center gap-2">
+                                        <span class="font-weight-medium">3.2.1
+
+                                        </span>
+
                                     </div>
                                 </div>
                             </div>
+
                             <div class="list-group-item px-0 py-1">
                                 <div class="row align-items-center">
                                     <div class="col-auto text-muted">Tahun Ajaran</div>
                                     <div class="col text-end">
-                                        <span class="font-weight-medium">2023/2024</span>
-                                        <span class="badge bg-orange text-orange-fg ms-1">Aktif</span>
+                                        <span class="font-weight-medium">
+                                            {{ $stats['tahun_pelajaran_aktif'] ?? 'Tidak tersedia' }}
+                                        </span>
+                                        @if ($stats['tahun_pelajaran_aktif'])
+                                            <span class="badge bg-orange text-orange-fg ms-1">Aktif</span>
+                                        @else
+                                            <span class="badge bg-secondary text-white ms-1">Tidak aktif</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
+
                         </div>
 
 

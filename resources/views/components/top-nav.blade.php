@@ -398,19 +398,158 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <!-- Add your menu items here -->
-        <ul class="navbar-nav flex-column">
-            <li class="nav-item">
+        <div class="nav flex-column">
+            <!-- Home -->
+            <div class="nav-item {{ Request::is('dashboard') ? 'active' : '' }}">
                 <a class="nav-link" href="/dashboard">
-                    Dashboard
+                    <span class="nav-link-icon me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">Home</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/profile">
-                    Profile
+            </div>
+
+            <!-- Buku Induk -->
+            <div class="nav-item {{ request()->routeIs('induk.*') ? 'active' : '' }}">
+                <a class="nav-link" href="#induk-collapse" data-bs-toggle="collapse" role="button"
+                    aria-expanded="{{ request()->routeIs('induk.*') ? 'true' : 'false' }}"
+                    aria-controls="induk-collapse">
+                    <span class="nav-link-icon me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+                            <path d="M10 16h6" />
+                            <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M4 8h3" />
+                            <path d="M4 12h3" />
+                            <path d="M4 16h3" />
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">Buku Induk</span>
+                    <span class="nav-link-chevron">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M9 6l6 6l-6 6"></path>
+                        </svg>
+                    </span>
                 </a>
-            </li>
-            <!-- Add more items as needed -->
-        </ul>
+                <div class="collapse {{ request()->routeIs('induk.*') ? 'show' : '' }}" id="induk-collapse">
+                    <div class="nav flex-column ps-4">
+                        <a class="nav-link {{ request()->routeIs('induk.siswa') ? 'active' : '' }}"
+                            href="{{ route('induk.siswa') }}">
+                            Data Siswa
+                        </a>
+
+                        <!-- Submenu Akademik -->
+                        <div class="nav-item">
+                            <a class="nav-link" href="#akademik-collapse" data-bs-toggle="collapse" role="button"
+                                aria-expanded="{{ request()->routeIs('induk.akademik.*') ? 'true' : 'false' }}"
+                                aria-controls="akademik-collapse">
+                                Akademik
+                                <span class="nav-link-chevron">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M9 6l6 6l-6 6"></path>
+                                    </svg>
+                                </span>
+                            </a>
+                            <div class="collapse {{ request()->routeIs('induk.akademik.*') ? 'show' : '' }}"
+                                id="akademik-collapse">
+                                <div class="nav flex-column ps-4">
+                                    <a href="{{ route('induk.akademik.kelas.index') }}"
+                                        class="nav-link {{ request()->routeIs('induk.akademik.kelas.index') ? 'active' : '' }}">
+                                        Kelas
+                                    </a>
+                                    <a href="{{ route('induk.akademik.rombel.index') }}"
+                                        class="nav-link {{ request()->routeIs('induk.akademik.rombel.index') ? 'active' : '' }}">
+                                        Rombel
+                                    </a>
+                                    <a href="{{ route('induk.akademik.tahun-pelajaran.index') }}"
+                                        class="nav-link {{ request()->routeIs('induk.akademik.tahun-pelajaran.index') ? 'active' : '' }}">
+                                        Tahun Pelajaran
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a class="nav-link {{ request()->routeIs('induk.index') ? 'active' : '' }}"
+                            href="{{ route('induk.index') }}">
+                            Cetak
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administrator -->
+            <div class="nav-item {{ Request::is('pengaturan/*') ? 'active' : '' }}">
+                <a class="nav-link" href="#admin-collapse" data-bs-toggle="collapse" role="button"
+                    aria-expanded="{{ Request::is('pengaturan/*') ? 'true' : 'false' }}"
+                    aria-controls="admin-collapse">
+                    <span class="nav-link-icon me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M12 21a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3c.568 1.933 .635 3.957 .223 5.89" />
+                            <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M19.001 15.5v1.5" />
+                            <path d="M19.001 21v1.5" />
+                            <path d="M22.032 17.25l-1.299 .75" />
+                            <path d="M17.27 20l-1.3 .75" />
+                            <path d="M15.97 17.25l1.3 .75" />
+                            <path d="M20.733 20l1.3 .75" />
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">Administrator</span>
+                    <span class="nav-link-chevron">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M9 6l6 6l-6 6"></path>
+                        </svg>
+                    </span>
+                </a>
+                <div class="collapse {{ Request::is('pengaturan/*') ? 'show' : '' }}" id="admin-collapse">
+                    <div class="nav flex-column ps-4">
+                        <a class="nav-link {{ request()->routeIs('pengaturan.sistem') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.sistem') }}">
+                            Pengaturan Sistem
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('pengaturan.akses') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.akses') }}">
+                            Pengaturan Akses
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('pengaturan.pembaruan') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.pembaruan') }}">
+                            Pembaruan Aplikasi
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('pengaturan.pemeliharaan') ? 'active' : '' }}"
+                            href="{{ route('pengaturan.pemeliharaan') }}">
+                            Pemeliharaan
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('google.drive.index') ? 'active' : '' }}"
+                            href="{{ route('google.drive.index') }}">
+                            Pengaturan GDrive
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

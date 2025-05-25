@@ -1,10 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\GoogleDriveController;
-use App\Http\Controllers\Modules\BukuInduk\DokumenSiswa;
+use App\Http\Controllers\Modules\Pengaturan\GoogleDriveController;
 use App\Http\Controllers\Modules\Admin\DashboardController;
 use App\Http\Controllers\Modules\BukuInduk\SiswaController;
 use App\Http\Controllers\Modules\BukuInduk\BindukController;
@@ -216,9 +213,6 @@ Route::prefix('pengaturan/gdrive')
         Route::get('/upload', function () {
             return view('google_drive_upload');
         })->name('upload.view');
-
-        // Kalau ingin aktifkan upload:
-        // Route::post('/upload', [GoogleDriveController::class, 'uploadFile'])->name('upload');
     });
 
 // 👇 Callback harus di luar middleware `auth`
@@ -234,6 +228,7 @@ Route::post('/induk/siswa/{uuid}/upload-rapor', [GoogleDriveController::class, '
 Route::delete('/students/rapor/{id}', [GoogleDriveController::class, 'destroy'])
     ->middleware(['auth'])
     ->name('students.rapor.delete');
+
 
 Route::post('/clear-session-flash', function (Illuminate\Http\Request $request) {
     foreach ($request->keys as $key) {

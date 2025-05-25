@@ -13,6 +13,7 @@ class DashboardService
 {
     public function getDashboardStats()
     {
+
         return [
             'total' => Student::count(),
             'new_this_month' => Student::whereMonth('created_at', now()->month)->count(),
@@ -24,7 +25,8 @@ class DashboardService
                 ->pluck('total', 'jk'),
             'incomplete_docs' => Student::has('dokumen', '<', 3)->count(),
             'top_kelurahan' => $this->getTopKelurahan(),
-            'studentsIncompleteDocs' => $this->getStudentsWithMissingSpecificDocuments()
+            'studentsIncompleteDocs' => $this->getStudentsWithMissingSpecificDocuments(),
+            'tahun_pelajaran_aktif' => $this->getActiveTahunPelajaran()?->tahun_ajaran ?? 'Tidak ada',
         ];
     }
 
@@ -177,5 +179,14 @@ class DashboardService
         });
 
         return $hasil;
+    }
+
+    public function getActiveTahunPelajaran()
+    {
+        $semesterAktif = Semester::with('tahunPelajaran')
+            ->where('is_aktif', 1)
+            ->first();
+
+        return $semesterAktif?->tahunPelajaran;
     }
 }
